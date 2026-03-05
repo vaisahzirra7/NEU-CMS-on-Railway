@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit {{ patient.get_full_name }} — VanaraUniCare</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:       #08131F;
+      --panel:     #0C1B2E;
+      --panel-2:   #0F2040;
+      --surface:   rgba(255,255,255,0.03);
+      --surface-2: rgba(255,255,255,0.055);
+      --border:    rgba(255,255,255,0.07);
+      --border-2:  rgba(255,255,255,0.12);
+      --gold:      #C9A84C;
+      --gold-2:    #E2C47A;
+      --slate:     #6B84A3;
+      --slate-2:   #4A6380;
+      --white:     #FFFFFF;
+      --success:   #3DB87A;
+      --warning:   #F0A04A;
+      --danger:    #E05555;
+      --sw:        252px;
+    }
+
+    html, body { height: 100%; font-family: 'Outfit', sans-serif; background: var(--ink); color: var(--white); }
+
+    /* ── SIDEBAR ── */
+    .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: var(--sw); background: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 200; }
+    .sb-logo { padding: 22px 20px 18px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .sb-mark { width: 38px; height: 38px; background: linear-gradient(145deg, var(--gold), #a07828); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; box-shadow: 0 4px 16px rgba(201,168,76,.2); flex-shrink: 0; }
+    .sb-name { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; color: var(--white); line-height: 1.2; }
+    .sb-sub  { font-size: 9.5px; color: var(--slate); text-transform: uppercase; letter-spacing: .1em; margin-top: 1px; }
+    .sb-nav  { flex: 1; overflow-y: auto; padding: 12px 10px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.06) transparent; }
+    .sb-section { font-size: 9.5px; font-weight: 600; color: var(--slate-2); text-transform: uppercase; letter-spacing: .12em; padding: 14px 10px 6px; }
+    .sb-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 9px; color: var(--slate); font-size: 13.5px; text-decoration: none; transition: background .15s, color .15s; margin-bottom: 1px; }
+    .sb-item:hover { background: var(--surface-2); color: var(--white); }
+    .sb-item.active { background: rgba(201,168,76,.1); color: var(--gold-2); font-weight: 500; }
+    .sb-item.active .sb-icon { background: rgba(201,168,76,.18); }
+    .sb-icon { width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,.05); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+    .sb-footer { padding: 12px 10px; border-top: 1px solid var(--border); flex-shrink: 0; }
+    .sb-user { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 9px; background: var(--surface); }
+    .sb-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), #a07828); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: var(--ink); flex-shrink: 0; }
+    .sb-uname { font-size: 13px; font-weight: 500; color: var(--white); line-height: 1.2; }
+    .sb-urole { font-size: 10.5px; color: var(--slate); }
+    .sb-logout { margin-left: auto; background: none; border: none; color: var(--slate-2); cursor: pointer; font-size: 15px; padding: 4px; text-decoration: none; display: flex; align-items: center; transition: color .2s; }
+    .sb-logout:hover { color: var(--danger); }
+
+    /* ── MAIN ── */
+    .main { margin-left: var(--sw); min-height: 100vh; display: flex; flex-direction: column; }
+    .topbar { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 64px; background: rgba(8,19,31,.9); border-bottom: 1px solid var(--border); backdrop-filter: blur(16px); flex-shrink: 0; }
+    .topbar-left h1 { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--white); }
+    .topbar-left p  { font-size: 12px; color: var(--slate); margin-top: 1px; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .content { padding: 28px 32px; flex: 1; }
+
+    /* ── ALERTS ── */
+    .alert { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 13px 16px; border-radius: 10px; font-size: 13.5px; margin-bottom: 16px; line-height: 1.5; animation: slideDown .3s cubic-bezier(.16,1,.3,1); }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    .alert-success { background: rgba(61,184,122,.08); border: 1px solid rgba(61,184,122,.25); color: #90deb5; }
+    .alert-danger, .alert-error { background: rgba(224,85,85,.08); border: 1px solid rgba(224,85,85,.25); color: #f0a0a0; }
+    .alert-warning { background: rgba(201,168,76,.08); border: 1px solid rgba(201,168,76,.25); color: var(--gold-2); }
+    .alert-close { background: none; border: none; color: inherit; cursor: pointer; font-size: 18px; opacity: .5; padding: 0; line-height: 1; flex-shrink: 0; }
+    .alert-close:hover { opacity: 1; }
+
+    /* ── BUTTONS ── */
+    .btn-primary { background: linear-gradient(135deg, var(--gold), #a07828); border: none; border-radius: 9px; padding: 10px 22px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; color: var(--ink); cursor: pointer; text-decoration: none; transition: transform .2s, box-shadow .2s; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(201,168,76,.25); }
+    .btn-secondary { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 10px 20px; font-family: 'Outfit', sans-serif; font-size: 14px; color: var(--slate); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: background .15s, color .15s; }
+    .btn-secondary:hover { background: var(--surface-2); color: var(--white); }
+    .btn-back { padding: 7px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 12.5px; color: var(--slate); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: background .15s, color .15s; }
+    .btn-back:hover { background: var(--surface-2); color: var(--white); }
+
+    /* ── UNSAVED BADGE ── */
+    .unsaved-badge { display: none; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(240,160,74,.1); border: 1px solid rgba(240,160,74,.25); border-radius: 100px; font-size: 12px; color: var(--warning); }
+    .unsaved-badge.show { display: flex; }
+
+    /* ── LAYOUT ── */
+    .edit-layout { display: grid; grid-template-columns: 1fr 260px; gap: 22px; align-items: start; }
+
+    /* ── FORM CARDS ── */
+    .form-card { background: var(--panel); border: 1px solid var(--border); border-radius: 13px; overflow: hidden; margin-bottom: 16px; }
+    .form-card:last-of-type { margin-bottom: 0; }
+    .form-card-header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+    .form-card-title { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; color: var(--white); }
+    .form-card-sub { font-size: 12px; color: var(--slate); margin-top: 2px; }
+    .form-card-body { padding: 22px 24px; }
+
+    /* ── FIELDS ── */
+    .form-grid { display: grid; gap: 16px; }
+    .cols-2 { grid-template-columns: 1fr 1fr; }
+    .cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .cols-1 { grid-template-columns: 1fr; }
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field.span-2 { grid-column: span 2; }
+    .field.span-3 { grid-column: span 3; }
+    label { font-size: 11px; font-weight: 600; color: var(--slate); letter-spacing: .08em; text-transform: uppercase; }
+    input[type=text], input[type=email], input[type=tel],
+    input[type=date], select, textarea {
+      background: rgba(255,255,255,.04); border: 1px solid var(--border);
+      border-radius: 9px; padding: 10px 14px; font-family: 'Outfit', sans-serif;
+      font-size: 13.5px; color: var(--white); outline: none; width: 100%;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201,168,76,.09);
+    }
+    input::placeholder, textarea::placeholder { color: var(--slate-2); }
+    select option { background: var(--panel-2); }
+    textarea { resize: vertical; min-height: 80px; }
+    .hint { font-size: 11.5px; color: var(--slate-2); line-height: 1.5; }
+    .field-locked { background: rgba(255,255,255,.02) !important; color: var(--slate) !important; cursor: not-allowed; }
+
+    /* ── PHOTO UPLOAD ── */
+    .photo-upload { display: flex; align-items: center; gap: 18px; margin-bottom: 22px; }
+    .photo-preview { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), #a07828); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; color: var(--ink); flex-shrink: 0; overflow: hidden; border: 2px solid rgba(201,168,76,.3); }
+    .photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .photo-upload-label { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 9px; font-size: 13px; color: var(--white); cursor: pointer; transition: background .15s; }
+    .photo-upload-label:hover { background: rgba(255,255,255,.08); }
+    #photoInput { display: none; }
+
+    /* ── SIDEBAR CARD ── */
+    .side-card { background: var(--panel); border: 1px solid var(--border); border-radius: 13px; overflow: hidden; margin-bottom: 14px; }
+    .side-card-header { padding: 14px 18px; border-bottom: 1px solid var(--border); font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 600; color: var(--white); }
+    .side-card-body { padding: 16px 18px; }
+    .side-link { display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-radius: 8px; color: var(--slate); font-size: 13px; text-decoration: none; transition: background .15s, color .15s; }
+    .side-link:hover { background: var(--surface-2); color: var(--white); }
+
+    /* ── PATIENT BANNER ── */
+    .patient-banner { display: flex; align-items: center; gap: 14px; padding: 16px 18px; }
+    .ban-avatar { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), #a07828); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: var(--ink); flex-shrink: 0; overflow: hidden; border: 2px solid rgba(201,168,76,.25); }
+    .ban-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .ban-name { font-size: 14px; font-weight: 600; color: var(--white); }
+    .ban-matric { font-size: 11.5px; font-family: monospace; color: var(--gold-2); margin-top: 2px; }
+    .ban-meta { font-size: 12px; color: var(--slate); margin-top: 3px; }
+
+    /* ── SAVE BAR ── */
+    .save-bar { position: sticky; bottom: 0; z-index: 50; padding: 14px 32px; background: rgba(8,19,31,.95); border-top: 1px solid var(--border); backdrop-filter: blur(16px); display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 24px -32px -28px; }
+    .save-bar-left { font-size: 13px; color: var(--slate); }
+    .save-bar-left strong { color: var(--white); }
+    .save-bar-right { display: flex; gap: 10px; }
+  </style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">⚕</div>
+    <div>
+      <div class="sb-name">VanaraUniCare</div>
+      <div class="sb-sub">NEU Health Center</div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-section">Main</div>
+    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    <div class="sb-section">Clinical</div>
+    <a href="{% url 'patient_list' %}" class="sb-item active"><div class="sb-icon">🩺</div>Patient Records</a>
+    <a href="#" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>
+    <a href="#" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>
+    <div class="sb-section">Pharmacy</div>
+    <a href="#" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>
+    <div class="sb-section">Administration</div>
+    <a href="#" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>
+    <a href="#" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>
+    <a href="#" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>
+    <div class="sb-section">System</div>
+    <a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>
+    <a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>
+    <a href="#" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🕐</div>Audit Trail</a>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>
+      <div>
+        <div class="sb-uname">{{ user.get_short_name }}</div>
+        <div class="sb-urole">{{ user.role|default:"Super Admin" }}</div>
+      </div>
+      <a href="{% url 'logout' %}" class="sb-logout" title="Sign out">⏻</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Edit Patient Record</h1>
+      <p>{{ patient.matric_no }} · {{ patient.get_full_name }}</p>
+    </div>
+    <div class="topbar-right">
+      <div class="unsaved-badge" id="unsavedBadge">● Unsaved changes</div>
+      <a href="{% url 'patient_detail' patient.matric_no %}" class="btn-back">← View Profile</a>
+    </div>
+  </div>
+
+  <div class="content">
+
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }}">
+      <span>{{ msg|safe }}</span>
+      <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+    </div>
+    {% endfor %}
+
+    <form method="POST" enctype="multipart/form-data" id="editForm">
+      {% csrf_token %}
+
+      <div class="edit-layout">
+
+        <!-- ── LEFT: FORM ── -->
+        <div>
+
+          <!-- PERSONAL -->
+          <div class="form-card">
+            <div class="form-card-header">
+              <div>
+                <div class="form-card-title">👤 Personal Information</div>
+                <div class="form-card-sub">Identity and contact details</div>
+              </div>
+            </div>
+            <div class="form-card-body">
+
+              <!-- Photo -->
+              <div class="photo-upload">
+                <div class="photo-preview" id="photoPreview">
+                  {% if patient.photo %}
+                    <img src="{{ patient.photo.url }}" alt="{{ patient.get_initials }}"/>
+                  {% else %}
+                    {{ patient.get_initials }}
+                  {% endif %}
+                </div>
+                <div>
+                  <label class="photo-upload-label" for="photoInput">📁 Change Photo</label>
+                  <input type="file" name="photo" id="photoInput" accept="image/*"/>
+                  <div class="hint" style="margin-top: 6px;">JPG or PNG, max 2MB.</div>
+                </div>
+              </div>
+
+              <div class="form-grid cols-3">
+                <div class="field">
+                  <label>First Name</label>
+                  <input type="text" name="first_name" value="{{ patient.first_name }}" required/>
+                </div>
+                <div class="field">
+                  <label>Last Name</label>
+                  <input type="text" name="last_name" value="{{ patient.last_name }}" required/>
+                </div>
+                <div class="field">
+                  <label>Other Names</label>
+                  <input type="text" name="other_names" value="{{ patient.other_names }}"/>
+                </div>
+                <div class="field">
+                  <label>Matric / Student ID</label>
+                  <input type="text" value="{{ patient.matric_no }}" class="field-locked" readonly/>
+                  <span class="hint">⚠ Matric number cannot be changed.</span>
+                </div>
+                <div class="field">
+                  <label>Patient Type</label>
+                  <select name="patient_type">
+                    {% for val, label in type_choices %}
+                    <option value="{{ val }}" {% if patient.patient_type == val %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="field">
+                  <label>National ID (NIN)</label>
+                  <input type="text" name="nin" value="{{ patient.nin }}"/>
+                </div>
+                <div class="field">
+                  <label>Date of Birth</label>
+                  <input type="date" name="date_of_birth" value="{{ patient.date_of_birth|date:'Y-m-d' }}"/>
+                </div>
+                <div class="field">
+                  <label>Gender</label>
+                  <select name="gender">
+                    <option value="">Select gender</option>
+                    {% for val, label in gender_choices %}
+                    <option value="{{ val }}" {% if patient.gender == val %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Marital Status</label>
+                  <select name="marital_status">
+                    <option value="">Select status</option>
+                    {% for val, label in marital_choices %}
+                    <option value="{{ val }}" {% if patient.marital_status == val %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Religion</label>
+                  <select name="religion">
+                    <option value="">Select religion</option>
+                    {% for val, label in religion_choices %}
+                    <option value="{{ val }}" {% if patient.religion == val %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Nationality</label>
+                  <input type="text" name="nationality" value="{{ patient.nationality }}"/>
+                </div>
+                <div class="field">
+                  <label>State of Origin</label>
+                  <input type="text" name="state_of_origin" value="{{ patient.state_of_origin }}"/>
+                </div>
+                <div class="field">
+                  <label>LGA of Origin</label>
+                  <input type="text" name="lga" value="{{ patient.lga }}"/>
+                </div>
+                <div class="field">
+                  <label>Phone Number</label>
+                  <input type="tel" name="phone" value="{{ patient.phone }}"/>
+                </div>
+                <div class="field">
+                  <label>Email Address</label>
+                  <input type="email" name="email" value="{{ patient.email }}"/>
+                </div>
+                <div class="field span-3">
+                  <label>Home Address</label>
+                  <textarea name="home_address">{{ patient.home_address }}</textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACADEMIC -->
+          <div class="form-card">
+            <div class="form-card-header">
+              <div>
+                <div class="form-card-title">🎓 Academic Information</div>
+                <div class="form-card-sub">Faculty, programme and level</div>
+              </div>
+            </div>
+            <div class="form-card-body">
+              <div class="form-grid cols-2">
+                <div class="field">
+                  <label>Faculty</label>
+                  <select name="faculty" id="facultySelect">
+                    <option value="">Select faculty</option>
+                    {% for f in faculties %}
+                    <option value="{{ f.id }}" {% if patient.faculty_id == f.id %}selected{% endif %}>{{ f.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Department</label>
+                  <select name="department" id="departmentSelect">
+                    <option value="">Select department</option>
+                    {% for d in departments %}
+                    <option value="{{ d.id }}" {% if patient.department_id == d.id %}selected{% endif %}>{{ d.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Programme of Study</label>
+                  <select name="programme" id="programmeSelect">
+                    <option value="">Select programme</option>
+                    {% for prog in programmes %}
+                    <option value="{{ prog.id }}" data-duration="{{ prog.duration }}"
+                            {% if patient.programme_id == prog.id %}selected{% endif %}>
+                      {{ prog.name }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Current Level</label>
+                  <select name="level">
+                    <option value="">Select level</option>
+                    {% for val, label in level_choices %}
+                    <option value="{{ val }}" {% if patient.level == val %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Entry Session</label>
+                  <input type="text" name="academic_session" value="{{ patient.academic_session }}" placeholder="e.g. 2023/2024"/>
+                </div>
+                <div class="field">
+                  <label>Programme Duration</label>
+                  <input type="text" id="durationHint" readonly
+                         value="{% if patient.programme %}{{ patient.programme.duration }} year{{ patient.programme.duration|pluralize }}{% endif %}"
+                         style="color: var(--slate); cursor: default;"/>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MEDICAL -->
+          <div class="form-card">
+            <div class="form-card-header">
+              <div>
+                <div class="form-card-title">🩺 Medical Information</div>
+                <div class="form-card-sub">Blood group, genotype, allergies and medical history</div>
+              </div>
+            </div>
+            <div class="form-card-body">
+              <div class="form-grid cols-2">
+                <div class="field">
+                  <label>Blood Group</label>
+                  <select name="blood_group">
+                    {% for val, label in blood_choices %}
+                    <option value="{{ val }}" {% if patient.blood_group == val %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Genotype</label>
+                  <select name="genotype">
+                    {% for val, label in genotype_choices %}
+                    <option value="{{ val }}" {% if patient.genotype == val %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="field span-2">
+                  <label>Known Allergies</label>
+                  <textarea name="allergies" placeholder="One allergy per line">{{ patient.allergies }}</textarea>
+                </div>
+                <div class="field span-2">
+                  <label>Chronic Conditions</label>
+                  <textarea name="chronic_conditions" placeholder="One condition per line">{{ patient.chronic_conditions }}</textarea>
+                </div>
+                <div class="field span-2">
+                  <label>Disabilities</label>
+                  <textarea name="disabilities">{{ patient.disabilities }}</textarea>
+                </div>
+                <div class="field span-2">
+                  <label>Current Medications</label>
+                  <textarea name="current_medications">{{ patient.current_medications }}</textarea>
+                </div>
+                <div class="field">
+                  <label>Surgical History</label>
+                  <textarea name="surgical_history">{{ patient.surgical_history }}</textarea>
+                </div>
+                <div class="field">
+                  <label>Family Medical History</label>
+                  <textarea name="family_history">{{ patient.family_history }}</textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- EMERGENCY CONTACT -->
+          <div class="form-card">
+            <div class="form-card-header">
+              <div>
+                <div class="form-card-title">🚨 Emergency Contact</div>
+              </div>
+            </div>
+            <div class="form-card-body">
+              <div class="form-grid cols-2">
+                <div class="field">
+                  <label>Full Name</label>
+                  <input type="text" name="emergency_name" value="{{ patient.emergency_name }}"/>
+                </div>
+                <div class="field">
+                  <label>Relationship</label>
+                  <input type="text" name="emergency_relationship" value="{{ patient.emergency_relationship }}"/>
+                </div>
+                <div class="field">
+                  <label>Phone Number</label>
+                  <input type="tel" name="emergency_phone" value="{{ patient.emergency_phone }}"/>
+                </div>
+                <div class="field">
+                  <label>Address</label>
+                  <input type="text" name="emergency_address" value="{{ patient.emergency_address }}"/>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- NEXT OF KIN -->
+          <div class="form-card">
+            <div class="form-card-header">
+              <div>
+                <div class="form-card-title">👪 Next of Kin</div>
+              </div>
+            </div>
+            <div class="form-card-body">
+              <div class="form-grid cols-2">
+                <div class="field">
+                  <label>Full Name</label>
+                  <input type="text" name="nok_name" value="{{ patient.nok_name }}"/>
+                </div>
+                <div class="field">
+                  <label>Relationship</label>
+                  <input type="text" name="nok_relationship" value="{{ patient.nok_relationship }}"/>
+                </div>
+                <div class="field">
+                  <label>Phone Number</label>
+                  <input type="tel" name="nok_phone" value="{{ patient.nok_phone }}"/>
+                </div>
+                <div class="field">
+                  <label>Address</label>
+                  <textarea name="nok_address">{{ patient.nok_address }}</textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- INTERNAL NOTES -->
+          <div class="form-card">
+            <div class="form-card-header">
+              <div>
+                <div class="form-card-title">📝 Internal Notes</div>
+                <div class="form-card-sub">Visible to clinic staff only</div>
+              </div>
+            </div>
+            <div class="form-card-body">
+              <div class="form-grid cols-1">
+                <div class="field">
+                  <textarea name="notes" rows="3" placeholder="Any internal notes about this patient">{{ patient.notes }}</textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── RIGHT: SIDEBAR ── -->
+        <div>
+
+          <!-- Patient Banner -->
+          <div class="side-card" style="margin-bottom: 14px;">
+            <div class="patient-banner">
+              <div class="ban-avatar">
+                {% if patient.photo %}
+                  <img src="{{ patient.photo.url }}" alt="{{ patient.get_initials }}"/>
+                {% else %}
+                  {{ patient.get_initials }}
+                {% endif %}
+              </div>
+              <div>
+                <div class="ban-name">{{ patient.get_full_name }}</div>
+                <div class="ban-matric">{{ patient.matric_no }}</div>
+                <div class="ban-meta">
+                  {% if patient.is_active %}
+                    <span style="color: #90deb5;">● Active</span>
+                  {% else %}
+                    <span style="color: #f0a0a0;">● Inactive</span>
+                  {% endif %}
+                  {% if patient.programme %}· {{ patient.programme.name }}{% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Links -->
+          <div class="side-card" style="margin-bottom: 14px;">
+            <div class="side-card-header">Quick Links</div>
+            <div class="side-card-body" style="display: flex; flex-direction: column; gap: 4px; padding: 10px 12px;">
+              <a href="{% url 'patient_detail' patient.matric_no %}" class="side-link">👁 View Full Profile</a>
+              <a href="{% url 'patient_list' %}" class="side-link">🩺 All Patients</a>
+              <a href="{% url 'patient_create' %}" class="side-link">＋ Register New Patient</a>
+            </div>
+          </div>
+
+          <!-- Info Box -->
+          <div style="padding: 14px 16px; background: rgba(74,158,224,.05); border: 1px solid rgba(74,158,224,.15); border-radius: 11px; font-size: 12.5px; color: var(--slate); line-height: 1.7;">
+            ℹ️ <strong style="color: var(--white);">Note:</strong> The matric number is locked and cannot be edited. All other fields can be updated freely.
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Sticky Save Bar -->
+      <div class="save-bar">
+        <div class="save-bar-left">
+          Editing <strong>{{ patient.get_full_name }}</strong>
+        </div>
+        <div class="save-bar-right">
+          <a href="{% url 'patient_detail' patient.matric_no %}" class="btn-secondary">Cancel</a>
+          <button type="submit" class="btn-primary" id="saveBtn">💾 Save Changes</button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script>
+  // ── UNSAVED CHANGES ──────────────────────────────────────────────────────
+  var changed = false;
+  var badge   = document.getElementById('unsavedBadge');
+
+  document.querySelectorAll('input, select, textarea').forEach(function(el) {
+    el.addEventListener('change', function() {
+      if (!changed) { changed = true; badge.classList.add('show'); }
+    });
+    el.addEventListener('input', function() {
+      if (!changed) { changed = true; badge.classList.add('show'); }
+    });
+  });
+
+  window.addEventListener('beforeunload', function(e) {
+    if (changed) { e.preventDefault(); e.returnValue = ''; }
+  });
+
+  document.getElementById('editForm').addEventListener('submit', function() {
+    changed = false;
+    var btn = document.getElementById('saveBtn');
+    btn.textContent = '💾 Saving…';
+    btn.disabled    = true;
+    btn.style.opacity = '.7';
+  });
+
+  // ── PHOTO PREVIEW ────────────────────────────────────────────────────────
+  document.getElementById('photoInput').addEventListener('change', function() {
+    var file = this.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var preview = document.getElementById('photoPreview');
+      preview.innerHTML = '<img src="' + e.target.result + '" alt="Preview"/>';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // ── AJAX: FACULTY → DEPARTMENTS + PROGRAMMES ─────────────────────────────
+  document.getElementById('facultySelect').addEventListener('change', function() {
+    var fid  = this.value;
+    var dSel = document.getElementById('departmentSelect');
+    var pSel = document.getElementById('programmeSelect');
+
+    if (!fid) {
+      dSel.innerHTML = '<option value="">Select faculty first</option>';
+      pSel.innerHTML = '<option value="">Select faculty first</option>';
+      return;
+    }
+
+    dSel.innerHTML = '<option value="">Loading…</option>';
+    pSel.innerHTML = '<option value="">Loading…</option>';
+
+    fetch('/ajax/faculty/' + fid + '/departments/')
+      .then(r => r.json())
+      .then(data => {
+        dSel.innerHTML = '<option value="">Select department</option>';
+        data.departments.forEach(function(d) {
+          dSel.innerHTML += '<option value="' + d.id + '">' + d.name + '</option>';
+        });
+      });
+
+    fetch('/ajax/faculty/' + fid + '/programmes/')
+      .then(r => r.json())
+      .then(data => {
+        pSel.innerHTML = '<option value="">Select programme</option>';
+        data.programmes.forEach(function(p) {
+          pSel.innerHTML += '<option value="' + p.id + '" data-duration="' + p.duration + '">' + p.name + '</option>';
+        });
+      });
+  });
+
+  // ── PROGRAMME DURATION HINT ──────────────────────────────────────────────
+  document.getElementById('programmeSelect').addEventListener('change', function() {
+    var selected = this.options[this.selectedIndex];
+    var duration = selected.getAttribute('data-duration');
+    document.getElementById('durationHint').value = duration
+      ? duration + ' year' + (duration > 1 ? 's' : '')
+      : '';
+  });
+</script>
+
+</body>
+</html>

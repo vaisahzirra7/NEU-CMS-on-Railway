@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book Appointment — VanaraUniCare</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.min.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ink: #08131F; --panel: #0C1B2E; --panel-2: #0F2040;
+      --surface: rgba(255,255,255,0.03); --surface-2: rgba(255,255,255,0.055);
+      --border: rgba(255,255,255,0.07); --border-2: rgba(255,255,255,0.12);
+      --gold: #C9A84C; --gold-2: #E2C47A; --slate: #6B84A3; --slate-2: #4A6380;
+      --white: #FFFFFF; --success: #3DB87A; --danger: #E05555; --warning: #F0A04A; --sw: 252px;
+    }
+    html, body { height: 100%; font-family: 'Outfit', sans-serif; background: var(--ink); color: var(--white); }
+
+    /* ── Sidebar ── */
+    .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: var(--sw); background: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 200; }
+    .sb-logo { padding: 22px 20px 18px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .sb-mark { width: 38px; height: 38px; background: linear-gradient(145deg, var(--gold), #a07828); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+    .sb-name { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; }
+    .sb-sub  { font-size: 9.5px; color: var(--slate); text-transform: uppercase; letter-spacing: .1em; }
+    .sb-nav  { flex: 1; overflow-y: auto; padding: 12px 10px; scrollbar-width: thin; }
+    .sb-section { font-size: 9.5px; font-weight: 600; color: var(--slate-2); text-transform: uppercase; letter-spacing: .12em; padding: 14px 10px 6px; }
+    .sb-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 9px; color: var(--slate); font-size: 13.5px; text-decoration: none; transition: background .15s, color .15s; margin-bottom: 1px; }
+    .sb-item:hover { background: var(--surface-2); color: var(--white); }
+    .sb-item.active { background: rgba(201,168,76,.1); color: var(--gold-2); font-weight: 500; }
+    .sb-icon { width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,.05); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+    .sb-footer { padding: 12px 10px; border-top: 1px solid var(--border); flex-shrink: 0; }
+    .sb-user { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 9px; background: var(--surface); }
+    .sb-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), #a07828); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: var(--ink); flex-shrink: 0; }
+    .sb-uname { font-size: 13px; font-weight: 500; }
+    .sb-urole { font-size: 10.5px; color: var(--slate); }
+    .sb-logout { margin-left: auto; background: none; border: none; color: var(--slate-2); cursor: pointer; font-size: 15px; padding: 4px; text-decoration: none; transition: color .2s; }
+    .sb-logout:hover { color: var(--danger); }
+
+    /* ── Layout ── */
+    .main { margin-left: var(--sw); min-height: 100vh; display: flex; flex-direction: column; }
+    .topbar { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 64px; background: rgba(8,19,31,.9); border-bottom: 1px solid var(--border); backdrop-filter: blur(16px); }
+    .topbar-left h1 { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; }
+    .topbar-left p  { font-size: 12px; color: var(--slate); margin-top: 1px; }
+    .content { padding: 28px 32px; }
+
+    /* ── Alerts ── */
+    .alert { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 13px 16px; border-radius: 10px; font-size: 13.5px; margin-bottom: 14px; line-height: 1.5; animation: slideDown .3s; }
+    @keyframes slideDown { from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);} }
+    .alert-success { background: rgba(61,184,122,.08); border: 1px solid rgba(61,184,122,.25); color: #90deb5; }
+    .alert-danger  { background: rgba(224,85,85,.08);  border: 1px solid rgba(224,85,85,.25);  color: #f0a0a0; }
+    .alert-warning { background: rgba(240,160,74,.08); border: 1px solid rgba(240,160,74,.25); color: #f8c87a; }
+    .alert-close   { background: none; border: none; color: inherit; cursor: pointer; font-size: 18px; opacity: .5; }
+
+    /* ── Buttons ── */
+    .btn-primary { background: linear-gradient(135deg, var(--gold), #a07828); border: none; border-radius: 9px; padding: 10px 22px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; color: var(--ink); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: transform .2s, box-shadow .2s; }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(201,168,76,.25); }
+    .btn-back { padding: 7px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 12.5px; color: var(--slate); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: background .15s, color .15s; }
+    .btn-back:hover { background: var(--surface-2); color: var(--white); }
+    .btn-secondary { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 10px 18px; font-family: 'Outfit', sans-serif; font-size: 13.5px; color: var(--white); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: background .15s; }
+    .btn-secondary:hover { background: var(--surface-2); }
+
+    /* ── Cards ── */
+    .layout { display: grid; grid-template-columns: 1fr 290px; gap: 22px; align-items: start; }
+    .card { background: var(--panel); border: 1px solid var(--border); border-radius: 13px; overflow: hidden; margin-bottom: 16px; }
+    .card-header { padding: 18px 24px; border-bottom: 1px solid var(--border); }
+    .card-title  { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; }
+    .card-sub    { font-size: 12.5px; color: var(--slate); margin-top: 3px; }
+    .card-body   { padding: 24px; }
+
+    /* ── Form ── */
+    label { font-size: 11px; font-weight: 600; color: var(--slate); text-transform: uppercase; letter-spacing: .08em; display: block; margin-bottom: 7px; }
+    input[type=text], input[type=date], select, textarea {
+      background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: 9px;
+      padding: 10px 14px; font-family: 'Outfit', sans-serif; font-size: 13.5px; color: var(--white);
+      outline: none; width: 100%; transition: border-color .2s, box-shadow .2s;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,.09); }
+    input::placeholder, textarea::placeholder { color: var(--slate-2); }
+    select option { background: var(--panel-2); }
+    textarea { resize: vertical; min-height: 80px; }
+    .field { margin-bottom: 16px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    #customTypeWrap { display: none; }
+
+    /* ── Tom Select theme ── */
+    .ts-wrapper .ts-control { background: rgba(255,255,255,.04) !important; border: 1px solid var(--border) !important; border-radius: 9px !important; padding: 8px 14px !important; font-family: 'Outfit', sans-serif !important; font-size: 13.5px !important; color: var(--white) !important; box-shadow: none !important; min-height: unset !important; }
+    .ts-wrapper.focus .ts-control { border-color: var(--gold) !important; box-shadow: 0 0 0 3px rgba(201,168,76,.09) !important; }
+    .ts-dropdown { background: #0F2040 !important; border: 1px solid var(--border-2) !important; border-radius: 10px !important; font-family: 'Outfit', sans-serif !important; font-size: 13.5px !important; }
+    .ts-dropdown .option { color: var(--white) !important; padding: 10px 14px !important; }
+    .ts-dropdown .option:hover, .ts-dropdown .option.active { background: rgba(201,168,76,.1) !important; color: var(--gold-2) !important; }
+    .ts-control input { color: var(--white) !important; background: transparent !important; }
+    .ts-control .item { color: var(--white) !important; }
+
+    /* ── Custom Time Picker ── */
+    .tp-wrap { background: rgba(255,255,255,.02); border: 1px solid var(--border); border-radius: 11px; padding: 20px; }
+    .tp-display { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 18px; }
+    .tp-seg { background: rgba(255,255,255,.05); border: 1px solid var(--border-2); border-radius: 10px; padding: 10px 16px; font-size: 30px; font-weight: 700; font-family: monospace; color: var(--gold-2); min-width: 70px; text-align: center; cursor: pointer; transition: border-color .2s, background .2s; user-select: none; }
+    .tp-seg.active { border-color: var(--gold); background: rgba(201,168,76,.1); }
+    .tp-colon { font-size: 26px; font-weight: 700; color: var(--slate); }
+    .tp-period { background: rgba(255,255,255,.04); border: 1px solid var(--border-2); border-radius: 10px; padding: 10px 12px; font-size: 16px; font-weight: 700; color: var(--slate); cursor: pointer; transition: all .2s; user-select: none; min-width: 52px; text-align: center; }
+    .tp-period.pm { border-color: var(--gold); background: rgba(201,168,76,.1); color: var(--gold-2); }
+    .tp-slider-row { margin-bottom: 14px; }
+    .tp-slider-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--slate-2); margin-bottom: 7px; }
+    input[type=range] { -webkit-appearance: none; width: 100%; height: 5px; border-radius: 3px; background: rgba(255,255,255,.1); outline: none; cursor: pointer; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), #a07828); cursor: pointer; box-shadow: 0 2px 8px rgba(201,168,76,.35); transition: transform .15s; }
+    input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+    .tp-quick-label { font-size: 10.5px; font-weight: 600; color: var(--slate-2); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+    .tp-quick { display: flex; flex-wrap: wrap; gap: 5px; }
+    .tp-qbtn { padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border); background: rgba(255,255,255,.02); font-size: 11.5px; color: var(--slate); cursor: pointer; transition: all .15s; font-family: 'Outfit', sans-serif; }
+    .tp-qbtn:hover:not(.booked) { border-color: var(--gold); color: var(--gold-2); background: rgba(201,168,76,.07); }
+    .tp-qbtn.booked { opacity: .3; text-decoration: line-through; cursor: not-allowed; }
+    .tp-conflict { display: none; margin-top: 10px; padding: 8px 12px; background: rgba(240,160,74,.08); border: 1px solid rgba(240,160,74,.25); border-radius: 8px; font-size: 12px; color: #f8c87a; }
+    .tp-conflict.show { display: block; }
+    .tp-result { margin-top: 12px; padding: 10px 14px; background: rgba(201,168,76,.07); border: 1px solid rgba(201,168,76,.2); border-radius: 9px; font-size: 13.5px; color: var(--gold-2); font-weight: 600; text-align: center; }
+
+    /* ── Summary card ── */
+    .summary-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-icon { width: 28px; text-align: center; font-size: 14px; flex-shrink: 0; }
+    .summary-val { color: var(--white); font-weight: 500; }
+    .summary-empty { color: var(--slate-2); font-style: italic; }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">⚕</div>
+    <div><div class="sb-name">VanaraUniCare</div><div class="sb-sub">NEU Health Center</div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-section">Main</div>
+    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    <div class="sb-section">Clinical</div>
+    <a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon">🩺</div>Patient Records</a>
+    <a href="{% url 'appointment_list' %}" class="sb-item active"><div class="sb-icon">📅</div>Appointments</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>
+    <a href="#" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>
+    <div class="sb-section">Pharmacy</div>
+    <a href="#" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>
+    <div class="sb-section">Administration</div>
+    <a href="#" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>
+    <a href="#" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>
+    <a href="#" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>
+    <div class="sb-section">System</div>
+    <a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>
+    <a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>
+    <a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>
+      <div><div class="sb-uname">{{ user.get_short_name }}</div><div class="sb-urole">{{ user.role|default:"Staff" }}</div></div>
+      <a href="{% url 'logout' %}" class="sb-logout">⏻</a>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Book Appointment</h1>
+      <p>Schedule a new patient appointment</p>
+    </div>
+    <div class="topbar-right">
+      <a href="{% url 'appointment_list' %}" class="btn-back">← Appointments</a>
+    </div>
+  </div>
+
+  <div class="content">
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }}">
+      <span>{{ msg|safe }}</span>
+      <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+    </div>
+    {% endfor %}
+
+    <form method="POST" id="bookingForm">
+      {% csrf_token %}
+      <div class="layout">
+
+        <!-- ── Left column ── -->
+        <div>
+
+          <!-- Details card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">📋 Appointment Details</div>
+              <div class="card-sub">Patient, type and reason for visit</div>
+            </div>
+            <div class="card-body">
+              <div class="field">
+                <label>Patient <span style="color:var(--danger)">*</span></label>
+                <select name="patient" id="patientSelect" required>
+                  <option value="">Type to search patient…</option>
+                  {% for p in patients %}
+                  <option value="{{ p.id }}" {% if post.patient == p.id|stringformat:"s" %}selected{% endif %}>
+                    {{ p.get_full_name }} — {{ p.matric_no }}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="grid-2">
+                <div class="field">
+                  <label>Appointment Type <span style="color:var(--danger)">*</span></label>
+                  <select name="appointment_type" id="typeSelect" required onchange="handleTypeChange(this.value)">
+                    {% for val, label in type_choices %}
+                    <option value="{{ val }}" {% if post.appointment_type == val %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="field" id="customTypeWrap">
+                  <label>Specify Type <span style="color:var(--danger)">*</span></label>
+                  <input type="text" name="custom_type" placeholder="Enter appointment type" value="{{ post.custom_type|default:'' }}"/>
+                </div>
+              </div>
+              <div class="field">
+                <label>Reason for Visit</label>
+                <textarea name="reason" placeholder="Brief description of why the patient is coming…">{{ post.reason|default:'' }}</textarea>
+              </div>
+              <div class="field">
+                <label>Staff Notes</label>
+                <textarea name="notes" placeholder="Internal notes (not visible to patient)…">{{ post.notes|default:'' }}</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Date & Time card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">📅 Date & Time</div>
+              <div class="card-sub">Pick a date, doctor and set the appointment time</div>
+            </div>
+            <div class="card-body">
+              <div class="grid-2" style="margin-bottom:20px;">
+                <div class="field">
+                  <label>Date <span style="color:var(--danger)">*</span></label>
+                  <input type="date" name="appointment_date" id="dateInput" min="{{ today }}" value="{{ post.appointment_date|default:today }}" required onchange="onDateOrDoctorChange()"/>
+                </div>
+                <div class="field">
+                  <label>Assigned Doctor / Nurse</label>
+                  <select name="assigned_to" id="doctorSelect" onchange="onDateOrDoctorChange()">
+                    <option value="">Unassigned</option>
+                    {% for d in doctors %}
+                    <option value="{{ d.id }}" {% if post.assigned_to == d.id|stringformat:"s" %}selected{% endif %}>
+                      {{ d.get_full_name }} ({{ d.role }})
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <!-- Custom time picker -->
+              <label>Appointment Time <span style="color:var(--danger)">*</span></label>
+              <input type="hidden" name="time_slot" id="timeSlotInput" value="{{ post.time_slot|default:'' }}"/>
+              <div class="tp-wrap">
+
+                <!-- Big display -->
+                <div class="tp-display">
+                  <div class="tp-seg active" id="hourSeg" onclick="setMode('hour')" title="Click to adjust hour">08</div>
+                  <div class="tp-colon">:</div>
+                  <div class="tp-seg" id="minSeg" onclick="setMode('min')" title="Click to adjust minutes">00</div>
+                  <div class="tp-period" id="periodBtn" onclick="togglePeriod()">AM</div>
+                </div>
+
+                <!-- Slider -->
+                <div class="tp-slider-row">
+                  <div class="tp-slider-meta">
+                    <span id="sliderLabel">Drag to change hour</span>
+                    <span id="sliderValDisp">8</span>
+                  </div>
+                  <input type="range" id="tpSlider" min="1" max="12" value="8" oninput="onSlider(+this.value)"/>
+                </div>
+
+                <!-- Quick picks -->
+                <div class="tp-quick-label">Quick Picks</div>
+                <div class="tp-quick" id="quickPicks"></div>
+
+                <!-- Conflict -->
+                <div class="tp-conflict" id="conflictBox">⚠️ This time is already booked for the selected doctor.</div>
+
+                <!-- Selected result -->
+                <div class="tp-result" id="tpResult">No time selected</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── Right sidebar ── -->
+        <div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">✅ Booking Summary</div></div>
+            <div class="card-body">
+              <div class="summary-row">
+                <div class="summary-icon">🧑</div>
+                <div id="sumPatient" class="summary-empty">No patient selected</div>
+              </div>
+              <div class="summary-row">
+                <div class="summary-icon">🏷</div>
+                <div id="sumType" class="summary-empty">No type selected</div>
+              </div>
+              <div class="summary-row">
+                <div class="summary-icon">📅</div>
+                <div id="sumDate" class="summary-empty">No date selected</div>
+              </div>
+              <div class="summary-row">
+                <div class="summary-icon">🕐</div>
+                <div id="sumTime" class="summary-empty">No time selected</div>
+              </div>
+              <div class="summary-row" style="border:none; padding-bottom:0;">
+                <div class="summary-icon">👨‍⚕️</div>
+                <div id="sumDoctor" class="summary-empty">Unassigned</div>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary" id="submitBtn" style="width:100%; justify-content:center; margin-bottom:8px;">📅 Book Appointment</button>
+          <a href="{% url 'appointment_list' %}" class="btn-secondary" style="width:100%; justify-content:center;">Cancel</a>
+
+          <div style="margin-top:14px; padding:13px 15px; background:rgba(201,168,76,.04); border:1px solid rgba(201,168,76,.12); border-radius:10px; font-size:12.5px; color:var(--slate); line-height:1.7;">
+            💡 <strong style="color:var(--gold-2);">Tip:</strong> Click the hour or minute display, then drag the slider to set the time precisely. Or use quick picks for common times.
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+var tp = { mode: 'hour', hour: 8, min: 0, period: 'AM' };
+var bookedSlots = [];
+
+var quickTimes = [
+  {l:'8:00 AM',v:'08:00'},{l:'9:00 AM',v:'09:00'},
+  {l:'10:00 AM',v:'10:00'},{l:'11:00 AM',v:'11:00'},
+  {l:'12:00 PM',v:'12:00'},{l:'2:00 PM',v:'14:00'},
+  {l:'3:00 PM',v:'15:00'},{l:'4:00 PM',v:'16:00'},
+  {l:'5:00 PM',v:'17:00'},
+];
+
+// ── Init Tom Select ─────────────────────────────────────────────────────────
+new TomSelect('#patientSelect', {
+  placeholder: 'Type to search patient…',
+  searchField: ['text'],
+  maxOptions: 100,
+});
+
+// ── Time picker ─────────────────────────────────────────────────────────────
+function setMode(mode) {
+  tp.mode = mode;
+  document.getElementById('hourSeg').classList.toggle('active', mode === 'hour');
+  document.getElementById('minSeg').classList.toggle('active', mode === 'min');
+  var sl = document.getElementById('tpSlider');
+  if (mode === 'hour') {
+    sl.min = 1; sl.max = 12; sl.step = 1; sl.value = tp.hour;
+    document.getElementById('sliderLabel').textContent = 'Drag to change hour';
+    document.getElementById('sliderValDisp').textContent = tp.hour;
+  } else {
+    sl.min = 0; sl.max = 59; sl.step = 1; sl.value = tp.min;
+    document.getElementById('sliderLabel').textContent = 'Drag to change minutes';
+    document.getElementById('sliderValDisp').textContent = tp.min;
+  }
+}
+
+function onSlider(val) {
+  if (tp.mode === 'hour') {
+    tp.hour = val;
+    document.getElementById('sliderValDisp').textContent = val;
+  } else {
+    tp.min = val;
+    document.getElementById('sliderValDisp').textContent = tp.min;
+  }
+  render();
+}
+
+function togglePeriod() {
+  tp.period = tp.period === 'AM' ? 'PM' : 'AM';
+  document.getElementById('periodBtn').textContent = tp.period;
+  document.getElementById('periodBtn').classList.toggle('pm', tp.period === 'PM');
+  render();
+}
+
+function render() {
+  var hStr = String(tp.hour).padStart(2,'0');
+  var mStr = String(tp.min).padStart(2,'0');
+  document.getElementById('hourSeg').textContent = hStr;
+  document.getElementById('minSeg').textContent  = mStr;
+
+  // 24h value for submission
+  var h24 = tp.hour % 12;
+  if (tp.period === 'PM') h24 += 12;
+  var val24 = String(h24).padStart(2,'0') + ':' + mStr;
+  document.getElementById('timeSlotInput').value = val24;
+
+  var label = tp.hour + ':' + mStr + ' ' + tp.period;
+  document.getElementById('tpResult').textContent = '🕐 ' + label;
+  document.getElementById('sumTime').innerHTML = '<span class="summary-val">' + label + '</span>';
+
+  // Conflict check
+  var conflict = bookedSlots.includes(val24);
+  document.getElementById('conflictBox').classList.toggle('show', conflict);
+}
+
+function applyQuick(v, l) {
+  var parts = v.split(':');
+  var h24 = parseInt(parts[0]);
+  var m   = parseInt(parts[1]);
+  tp.period = h24 >= 12 ? 'PM' : 'AM';
+  tp.hour   = h24 % 12 || 12;
+  tp.min    = m;
+  document.getElementById('periodBtn').textContent = tp.period;
+  document.getElementById('periodBtn').classList.toggle('pm', tp.period === 'PM');
+  // Sync slider
+  var sl = document.getElementById('tpSlider');
+  if (tp.mode === 'hour') { sl.value = tp.hour; document.getElementById('sliderValDisp').textContent = tp.hour; }
+  else { sl.value = tp.min; document.getElementById('sliderValDisp').textContent = tp.min; }
+  render();
+}
+
+function buildQuickPicks() {
+  var wrap = document.getElementById('quickPicks');
+  wrap.innerHTML = '';
+  quickTimes.forEach(function(t) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'tp-qbtn' + (bookedSlots.includes(t.v) ? ' booked' : '');
+    btn.textContent = t.l;
+    btn.onclick = function() { if (!btn.classList.contains('booked')) applyQuick(t.v, t.l); };
+    wrap.appendChild(btn);
+  });
+}
+
+// ── Booked slots fetch ──────────────────────────────────────────────────────
+function onDateOrDoctorChange() {
+  var date   = document.getElementById('dateInput').value;
+  var doctor = document.getElementById('doctorSelect').value;
+  updateSummary();
+  if (!date) return;
+  fetch('/ajax/appointments/booked-slots/?date=' + date + '&doctor=' + doctor)
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      bookedSlots = data.slots || [];
+      buildQuickPicks();
+      render();
+    });
+}
+
+// ── Summary ─────────────────────────────────────────────────────────────────
+function updateSummary() {
+  var patSel = document.getElementById('patientSelect');
+  var typSel = document.getElementById('typeSelect');
+  var dateIn = document.getElementById('dateInput');
+  var docSel = document.getElementById('doctorSelect');
+
+  var patText = patSel.options[patSel.selectedIndex] ? patSel.options[patSel.selectedIndex].text : '';
+  document.getElementById('sumPatient').innerHTML = patSel.value
+    ? '<span class="summary-val">' + patText + '</span>'
+    : '<span class="summary-empty">No patient selected</span>';
+
+  document.getElementById('sumType').innerHTML = typSel.value
+    ? '<span class="summary-val">' + typSel.options[typSel.selectedIndex].text + '</span>'
+    : '<span class="summary-empty">No type selected</span>';
+
+  document.getElementById('sumDate').innerHTML = dateIn.value
+    ? '<span class="summary-val">' + dateIn.value + '</span>'
+    : '<span class="summary-empty">No date selected</span>';
+
+  var docText = docSel.options[docSel.selectedIndex] ? docSel.options[docSel.selectedIndex].text : '';
+  document.getElementById('sumDoctor').innerHTML = docSel.value
+    ? '<span class="summary-val">' + docText + '</span>'
+    : '<span class="summary-empty">Unassigned</span>';
+}
+
+function handleTypeChange(val) {
+  document.getElementById('customTypeWrap').style.display = val === 'Other' ? 'block' : 'none';
+  updateSummary();
+}
+
+document.getElementById('patientSelect').addEventListener('change', updateSummary);
+document.getElementById('typeSelect').addEventListener('change', updateSummary);
+document.getElementById('dateInput').addEventListener('change', updateSummary);
+
+// ── Form submit guard ───────────────────────────────────────────────────────
+document.getElementById('bookingForm').addEventListener('submit', function(e) {
+  if (!document.getElementById('timeSlotInput').value) {
+    e.preventDefault();
+    alert('Please select an appointment time before booking.');
+    return;
+  }
+  var btn = document.getElementById('submitBtn');
+  btn.textContent = 'Booking…';
+  btn.disabled = true;
+  btn.style.opacity = '.7';
+});
+
+// ── Boot ────────────────────────────────────────────────────────────────────
+handleTypeChange(document.getElementById('typeSelect').value);
+buildQuickPicks();
+render();
+updateSummary();
+onDateOrDoctorChange();
+</script>
+</body>
+</html>

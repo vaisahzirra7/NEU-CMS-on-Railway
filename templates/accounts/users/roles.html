@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Roles & Permissions — VanaraUniCare</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:       #08131F;
+      --panel:     #0C1B2E;
+      --panel-2:   #0F2040;
+      --surface:   rgba(255,255,255,0.03);
+      --surface-2: rgba(255,255,255,0.055);
+      --border:    rgba(255,255,255,0.07);
+      --border-2:  rgba(255,255,255,0.12);
+      --gold:      #C9A84C;
+      --gold-2:    #E2C47A;
+      --slate:     #6B84A3;
+      --slate-2:   #4A6380;
+      --white:     #FFFFFF;
+      --success:   #3DB87A;
+      --warning:   #F0A04A;
+      --danger:    #E05555;
+      --info:      #4A9EE0;
+      --sw:        252px;
+    }
+
+    html, body { height: 100%; font-family: 'Outfit', sans-serif; background: var(--ink); color: var(--white); }
+
+    /* ── SIDEBAR ── */
+    .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: var(--sw); background: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 200; }
+    .sb-logo { padding: 22px 20px 18px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .sb-mark { width: 38px; height: 38px; background: linear-gradient(145deg, var(--gold), #a07828); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; box-shadow: 0 4px 16px rgba(201,168,76,.2); flex-shrink: 0; }
+    .sb-name { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; color: var(--white); line-height: 1.2; }
+    .sb-sub  { font-size: 9.5px; color: var(--slate); text-transform: uppercase; letter-spacing: .1em; margin-top: 1px; }
+    .sb-nav  { flex: 1; overflow-y: auto; padding: 12px 10px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.06) transparent; }
+    .sb-section { font-size: 9.5px; font-weight: 600; color: var(--slate-2); text-transform: uppercase; letter-spacing: .12em; padding: 14px 10px 6px; }
+    .sb-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 9px; color: var(--slate); font-size: 13.5px; text-decoration: none; transition: background .15s, color .15s; margin-bottom: 1px; }
+    .sb-item:hover { background: var(--surface-2); color: var(--white); }
+    .sb-item.active { background: rgba(201,168,76,.1); color: var(--gold-2); font-weight: 500; }
+    .sb-item.active .sb-icon { background: rgba(201,168,76,.18); }
+    .sb-icon { width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,.05); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+    .sb-footer { padding: 12px 10px; border-top: 1px solid var(--border); flex-shrink: 0; }
+    .sb-user { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 9px; background: var(--surface); }
+    .sb-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), #a07828); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: var(--ink); flex-shrink: 0; }
+    .sb-uname { font-size: 13px; font-weight: 500; color: var(--white); line-height: 1.2; }
+    .sb-urole { font-size: 10.5px; color: var(--slate); }
+    .sb-logout { margin-left: auto; background: none; border: none; color: var(--slate-2); cursor: pointer; font-size: 15px; padding: 4px; text-decoration: none; display: flex; align-items: center; transition: color .2s; }
+    .sb-logout:hover { color: var(--danger); }
+
+    /* ── MAIN ── */
+    .main { margin-left: var(--sw); min-height: 100vh; display: flex; flex-direction: column; }
+    .topbar { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 64px; background: rgba(8,19,31,.9); border-bottom: 1px solid var(--border); backdrop-filter: blur(16px); flex-shrink: 0; }
+    .topbar-left h1 { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--white); }
+    .topbar-left p  { font-size: 12px; color: var(--slate); margin-top: 1px; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .content { padding: 28px 32px; flex: 1; }
+
+    /* ── ALERTS ── */
+    .alert { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 13px 16px; border-radius: 10px; font-size: 13.5px; margin-bottom: 16px; line-height: 1.5; animation: slideDown .3s cubic-bezier(.16,1,.3,1); }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    .alert-success { background: rgba(61,184,122,.08); border: 1px solid rgba(61,184,122,.25); color: #90deb5; }
+    .alert-danger, .alert-error { background: rgba(224,85,85,.08); border: 1px solid rgba(224,85,85,.25); color: #f0a0a0; }
+    .alert-close { background: none; border: none; color: inherit; cursor: pointer; font-size: 18px; opacity: .5; padding: 0; line-height: 1; flex-shrink: 0; }
+    .alert-close:hover { opacity: 1; }
+
+    /* ── BUTTONS ── */
+    .btn-primary { background: linear-gradient(135deg, var(--gold), #a07828); border: none; border-radius: 9px; padding: 9px 20px; font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 600; color: var(--ink); cursor: pointer; text-decoration: none; transition: transform .2s, box-shadow .2s; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(201,168,76,.25); }
+    .btn-secondary { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 9px 18px; font-family: 'Outfit', sans-serif; font-size: 13.5px; color: var(--white); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: background .15s; }
+    .btn-secondary:hover { background: var(--surface-2); }
+    .btn-back { padding: 7px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 12.5px; color: var(--slate); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: background .15s, color .15s; }
+    .btn-back:hover { background: var(--surface-2); color: var(--white); }
+
+    /* ── ROLES GRID ── */
+    .roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+
+    /* ── ROLE CARD ── */
+    .role-card { background: var(--panel); border: 1px solid var(--border); border-radius: 13px; overflow: hidden; transition: border-color .2s, transform .2s; position: relative; }
+    .role-card:hover { border-color: var(--border-2); transform: translateY(-2px); }
+    .role-card.system { border-color: rgba(201,168,76,.2); }
+    .role-card-top { border-top: 3px solid; }
+
+    .role-header { padding: 20px 22px 16px; }
+    .role-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+    .role-icon-wrap { width: 42px; height: 42px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .role-name { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: var(--white); line-height: 1.2; margin-bottom: 4px; }
+    .role-desc { font-size: 12.5px; color: var(--slate); line-height: 1.5; }
+    .role-chips { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .chip { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+    .chip-system { background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.2); color: var(--gold-2); }
+    .chip-custom { background: rgba(74,158,224,.08); border: 1px solid rgba(74,158,224,.18); color: #a0d4f5; }
+    .chip-active { background: rgba(61,184,122,.08); color: #90deb5; }
+    .chip-inactive { background: rgba(224,85,85,.08); color: #f0a0a0; }
+
+    /* ── ROLE STATS ── */
+    .role-stats { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--border); }
+    .role-stat { padding: 12px 22px; display: flex; flex-direction: column; gap: 2px; }
+    .role-stat:first-child { border-right: 1px solid var(--border); }
+    .rs-val { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--white); }
+    .rs-lbl { font-size: 11px; color: var(--slate); text-transform: uppercase; letter-spacing: .06em; }
+
+    /* ── ROLE FOOTER ── */
+    .role-footer { padding: 12px 22px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 8px; background: rgba(255,255,255,.015); }
+    .role-created { font-size: 11.5px; color: var(--slate-2); }
+    .role-action { font-size: 13px; font-weight: 500; color: var(--gold-2); text-decoration: none; display: flex; align-items: center; gap: 5px; transition: color .15s; }
+    .role-action:hover { color: var(--white); }
+
+    /* ── PERMISSION PREVIEW ── */
+    .perm-preview { padding: 0 22px 16px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .perm-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+    /* ── EMPTY ── */
+    .empty-state { padding: 72px 32px; text-align: center; background: var(--panel); border: 1px solid var(--border); border-radius: 13px; }
+    .empty-icon  { font-size: 52px; opacity: .3; margin-bottom: 18px; }
+    .empty-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--white); margin-bottom: 8px; }
+    .empty-desc  { font-size: 13.5px; color: var(--slate); }
+
+    /* ── INFO BANNER ── */
+    .info-banner { background: rgba(74,158,224,.05); border: 1px solid rgba(74,158,224,.15); border-radius: 11px; padding: 14px 18px; margin-bottom: 22px; display: flex; align-items: flex-start; gap: 12px; font-size: 13px; color: var(--slate); line-height: 1.6; }
+    .info-banner strong { color: var(--white); }
+  </style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">⚕</div>
+    <div>
+      <div class="sb-name">VanaraUniCare</div>
+      <div class="sb-sub">NEU Health Center</div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-section">Main</div>
+    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    <div class="sb-section">Clinical</div>
+    <a href="#" class="sb-item"><div class="sb-icon">🩺</div>Patient Records</a>
+    <a href="#" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>
+    <a href="#" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>
+    <div class="sb-section">Pharmacy</div>
+    <a href="#" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>
+    <div class="sb-section">Administration</div>
+    <a href="#" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>
+    <a href="#" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>
+    <a href="#" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>
+    <div class="sb-section">System</div>
+    <a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>
+    <a href="{% url 'role_list' %}" class="sb-item active"><div class="sb-icon">🛡</div>Role Permissions</a>
+    <a href="#" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🕐</div>Audit Trail</a>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>
+      <div>
+        <div class="sb-uname">{{ user.get_short_name }}</div>
+        <div class="sb-urole">{{ user.role|default:"Super Admin" }}</div>
+      </div>
+      <a href="{% url 'logout' %}" class="sb-logout" title="Sign out">⏻</a>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Roles & Permissions</h1>
+      <p>Define what each role can see, access and do across the system</p>
+    </div>
+    <div class="topbar-right">
+      <a href="{% url 'user_list' %}" class="btn-back">← Users</a>
+    </div>
+  </div>
+
+  <div class="content">
+
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }}">
+      <span>{{ msg|safe }}</span>
+      <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+    </div>
+    {% endfor %}
+
+    <!-- Info Banner -->
+    <div class="info-banner">
+      <span style="font-size: 18px; flex-shrink: 0;">ℹ️</span>
+      <span>
+        Each role controls what modules staff members can <strong>view, create, edit, delete, and export</strong>.
+        Click <strong>Edit Permissions</strong> on any role to configure its access matrix.
+        <strong>System roles</strong> are built-in and cannot be deleted.
+      </span>
+    </div>
+
+    {% if roles %}
+    <div class="roles-grid">
+      {% for role in roles %}
+
+      {% with user_count=role.users.count perm_count=role.permissions.count %}
+      <div class="role-card {% if role.is_system_role %}system{% endif %}">
+
+        <!-- Coloured top border via inline style -->
+        <div style="height: 3px; background: linear-gradient(90deg,
+          {% cycle '#4A9EE0' '#3DB87A' '#C9A84C' '#F0A04A' '#9B72CF' '#E05555' '#3DBDB8' '#E06B9E' as colors %},
+          transparent);"></div>
+
+        <!-- Header -->
+        <div class="role-header">
+          <div class="role-title-row">
+            <div>
+              <div class="role-name">{{ role.name }}</div>
+              {% if role.description %}
+              <div class="role-desc">{{ role.description }}</div>
+              {% else %}
+              <div class="role-desc" style="color: var(--slate-2); font-style: italic;">No description provided</div>
+              {% endif %}
+            </div>
+            <div class="role-icon-wrap" style="background: rgba(255,255,255,.05); font-size: 22px;">
+              {% if 'doctor' in role.name|lower or 'physician' in role.name|lower %}🩺
+              {% elif 'nurse' in role.name|lower %}💉
+              {% elif 'pharm' in role.name|lower %}💊
+              {% elif 'lab' in role.name|lower %}🧪
+              {% elif 'admin' in role.name|lower %}⚙
+              {% elif 'ict' in role.name|lower or 'tech' in role.name|lower %}💻
+              {% elif 'record' in role.name|lower %}📋
+              {% elif 'manager' in role.name|lower or 'management' in role.name|lower %}📊
+              {% else %}🛡
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="role-chips">
+            {% if role.is_system_role %}
+              <span class="chip chip-system">⬡ System Role</span>
+            {% else %}
+              <span class="chip chip-custom">Custom Role</span>
+            {% endif %}
+            {% if role.is_active %}
+              <span class="chip chip-active">● Active</span>
+            {% else %}
+              <span class="chip chip-inactive">● Inactive</span>
+            {% endif %}
+            {% if user_count == 0 %}
+              <span class="chip" style="background: rgba(240,160,74,.08); color: #f5c87a; border: 1px solid rgba(240,160,74,.18);">⚠ Unassigned</span>
+            {% endif %}
+          </div>
+        </div>
+
+        
+        <!-- Stats -->
+        <div class="role-stats">
+          <div class="role-stat">
+            <div class="rs-val">{{ user_count }}</div>
+            <div class="rs-lbl">Staff Assigned</div>
+          </div>
+          <div class="role-stat">
+            <div class="rs-val">{{ perm_count }}</div>
+            <div class="rs-lbl">Modules Configured</div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="role-footer">
+          <div class="role-created">
+            Created {{ role.created_at|date:"d M Y" }}
+          </div>
+          <a href="{% url 'role_permissions' role.pk %}" class="role-action">
+            Edit Permissions →
+          </a>
+        </div>
+
+      </div>
+      {% endwith %}
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">🛡</div>
+      <div class="empty-title">No roles defined yet</div>
+      <div class="empty-desc">
+        Roles are seeded automatically when you run the initial data migration.
+        Check your <code>management/commands/seed_data.py</code> command.
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Appointments — VanaraUniCare</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ink: #08131F; --panel: #0C1B2E; --panel-2: #0F2040;
+      --surface: rgba(255,255,255,0.03); --surface-2: rgba(255,255,255,0.055);
+      --border: rgba(255,255,255,0.07); --border-2: rgba(255,255,255,0.12);
+      --gold: #C9A84C; --gold-2: #E2C47A; --slate: #6B84A3; --slate-2: #4A6380;
+      --white: #FFFFFF; --success: #3DB87A; --warning: #F0A04A; --danger: #E05555; --info: #4A9EE0;
+      --sw: 252px;
+    }
+    html, body { height: 100%; font-family: 'Outfit', sans-serif; background: var(--ink); color: var(--white); }
+    .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: var(--sw); background: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 200; }
+    .sb-logo { padding: 22px 20px 18px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .sb-mark { width: 38px; height: 38px; background: linear-gradient(145deg, var(--gold), #a07828); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+    .sb-name { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; }
+    .sb-sub  { font-size: 9.5px; color: var(--slate); text-transform: uppercase; letter-spacing: .1em; }
+    .sb-nav  { flex: 1; overflow-y: auto; padding: 12px 10px; scrollbar-width: thin; }
+    .sb-section { font-size: 9.5px; font-weight: 600; color: var(--slate-2); text-transform: uppercase; letter-spacing: .12em; padding: 14px 10px 6px; }
+    .sb-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 9px; color: var(--slate); font-size: 13.5px; text-decoration: none; transition: background .15s, color .15s; margin-bottom: 1px; }
+    .sb-item:hover { background: var(--surface-2); color: var(--white); }
+    .sb-item.active { background: rgba(201,168,76,.1); color: var(--gold-2); font-weight: 500; }
+    .sb-item.active .sb-icon { background: rgba(201,168,76,.18); }
+    .sb-icon { width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,.05); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+    .sb-footer { padding: 12px 10px; border-top: 1px solid var(--border); flex-shrink: 0; }
+    .sb-user { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 9px; background: var(--surface); }
+    .sb-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), #a07828); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: var(--ink); flex-shrink: 0; }
+    .sb-uname { font-size: 13px; font-weight: 500; }
+    .sb-urole { font-size: 10.5px; color: var(--slate); }
+    .sb-logout { margin-left: auto; background: none; border: none; color: var(--slate-2); cursor: pointer; font-size: 15px; padding: 4px; text-decoration: none; transition: color .2s; }
+    .sb-logout:hover { color: var(--danger); }
+    .main { margin-left: var(--sw); min-height: 100vh; display: flex; flex-direction: column; }
+    .topbar { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 64px; background: rgba(8,19,31,.9); border-bottom: 1px solid var(--border); backdrop-filter: blur(16px); }
+    .topbar-left h1 { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; }
+    .topbar-left p  { font-size: 12px; color: var(--slate); margin-top: 1px; }
+    .topbar-right { display: flex; gap: 10px; }
+    .content { padding: 28px 32px; flex: 1; }
+    .alert { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 13px 16px; border-radius: 10px; font-size: 13.5px; margin-bottom: 16px; line-height: 1.5; animation: slideDown .3s cubic-bezier(.16,1,.3,1); }
+    @keyframes slideDown { from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);} }
+    .alert-success { background: rgba(61,184,122,.08); border: 1px solid rgba(61,184,122,.25); color: #90deb5; }
+    .alert-danger  { background: rgba(224,85,85,.08);  border: 1px solid rgba(224,85,85,.25);  color: #f0a0a0; }
+    .alert-warning { background: rgba(240,160,74,.08); border: 1px solid rgba(240,160,74,.25); color: #f8c87a; }
+    .alert-close   { background: none; border: none; color: inherit; cursor: pointer; font-size: 18px; opacity: .5; }
+
+    .btn-primary { background: linear-gradient(135deg, var(--gold), #a07828); border: none; border-radius: 9px; padding: 9px 20px; font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 600; color: var(--ink); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: transform .2s, box-shadow .2s; }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(201,168,76,.25); }
+    .btn-secondary { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 9px 16px; font-family: 'Outfit', sans-serif; font-size: 13px; color: var(--white); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: background .15s; }
+    .btn-secondary:hover { background: var(--surface-2); }
+
+    /* Stats */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
+    .stat-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; position: relative; overflow: hidden; }
+    .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+    .stat-card.c-info::before    { background: linear-gradient(90deg, var(--info), transparent); }
+    .stat-card.c-warning::before { background: linear-gradient(90deg, var(--warning), transparent); }
+    .stat-card.c-success::before { background: linear-gradient(90deg, var(--success), transparent); }
+    .stat-card.c-gold::before    { background: linear-gradient(90deg, var(--gold), transparent); }
+    .stat-num   { font-family: 'Cormorant Garamond', serif; font-size: 34px; font-weight: 700; line-height: 1; }
+    .stat-label { font-size: 12px; color: var(--slate); margin-top: 4px; }
+
+    /* Filters */
+    .filters { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; margin-bottom: 18px; display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+    .filter-group { display: flex; flex-direction: column; gap: 5px; }
+    .filter-label { font-size: 10px; font-weight: 600; color: var(--slate-2); text-transform: uppercase; letter-spacing: .08em; }
+    .filter-input { background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-family: 'Outfit', sans-serif; font-size: 13px; color: var(--white); outline: none; min-width: 160px; }
+    .filter-input:focus { border-color: var(--gold); }
+    select.filter-input option { background: var(--panel-2); }
+    .filter-actions { display: flex; gap: 8px; margin-left: auto; }
+    .btn-filter { background: linear-gradient(135deg, var(--gold), #a07828); border: none; border-radius: 8px; padding: 8px 16px; font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 600; color: var(--ink); cursor: pointer; }
+    .btn-clear  { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; font-size: 13px; color: var(--slate); text-decoration: none; display: inline-flex; align-items: center; }
+    .btn-clear:hover { color: var(--white); background: var(--surface-2); }
+
+    /* Table */
+    .card { background: var(--panel); border: 1px solid var(--border); border-radius: 13px; overflow: hidden; }
+    .card-header { padding: 16px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .card-title  { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { border-bottom: 1px solid var(--border); background: rgba(255,255,255,.018); }
+    th { padding: 11px 16px; font-size: 11px; font-weight: 600; color: var(--slate); text-transform: uppercase; letter-spacing: .08em; text-align: left; }
+    td { padding: 13px 16px; font-size: 13.5px; border-bottom: 1px solid rgba(255,255,255,.04); vertical-align: middle; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,.02); }
+
+    .apt-id { font-family: monospace; font-size: 12px; color: var(--gold-2); }
+    .patient-name { font-weight: 500; }
+    .patient-matric { font-size: 11.5px; color: var(--slate); margin-top: 2px; }
+
+    .chip { display: inline-flex; padding: 3px 10px; border-radius: 100px; font-size: 11.5px; font-weight: 500; }
+    .chip-scheduled   { background: rgba(74,158,224,.1);  color: #90c8f0; }
+    .chip-in-progress { background: rgba(240,160,74,.1);  color: #f8c87a; }
+    .chip-completed   { background: rgba(61,184,122,.1);  color: #90deb5; }
+    .chip-cancelled   { background: rgba(224,85,85,.08);  color: #f0a0a0; }
+
+    .btn-view { padding: 5px 12px; border-radius: 7px; font-size: 12px; background: var(--surface); border: 1px solid var(--border); color: var(--white); text-decoration: none; transition: background .15s; }
+    .btn-view:hover { background: var(--surface-2); }
+
+    .empty-state { padding: 52px 32px; text-align: center; }
+    .empty-icon  { font-size: 44px; opacity: .3; margin-bottom: 14px; }
+    .empty-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+    .empty-desc  { font-size: 13.5px; color: var(--slate); }
+
+    /* Today badge */
+    .today-badge { display: inline-flex; padding: 2px 8px; border-radius: 100px; font-size: 10.5px; font-weight: 600; background: rgba(201,168,76,.12); color: var(--gold-2); margin-left: 6px; }
+  </style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">⚕</div>
+    <div><div class="sb-name">VanaraUniCare</div><div class="sb-sub">NEU Health Center</div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-section">Main</div>
+    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    <div class="sb-section">Clinical</div>
+    <a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon">🩺</div>Patient Records</a>
+    <a href="{% url 'appointment_list' %}" class="sb-item active"><div class="sb-icon">📅</div>Appointments</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>
+    <a href="#" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>
+    <div class="sb-section">Pharmacy</div>
+    <a href="#" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>
+    <div class="sb-section">Administration</div>
+    <a href="#" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>
+    <a href="#" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>
+    <a href="#" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>
+    <div class="sb-section">System</div>
+    <a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>
+    <a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>
+    <a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🕐</div>Audit Trail</a>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>
+      <div><div class="sb-uname">{{ user.get_short_name }}</div><div class="sb-urole">{{ user.role|default:"Staff" }}</div></div>
+      <a href="{% url 'logout' %}" class="sb-logout">⏻</a>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Appointments</h1>
+      <p>Manage and track all patient appointments</p>
+    </div>
+    <div class="topbar-right">
+      <a href="{% url 'appointment_create' %}" class="btn-primary">＋ Book Appointment</a>
+    </div>
+  </div>
+  <div class="content">
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }}">
+      <span>{{ msg|safe }}</span>
+      <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+    </div>
+    {% endfor %}
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat-card c-gold">
+        <div class="stat-num">{{ total_today }}</div>
+        <div class="stat-label">Today's Appointments</div>
+      </div>
+      <div class="stat-card c-info">
+        <div class="stat-num">{{ scheduled_today }}</div>
+        <div class="stat-label">Scheduled Today</div>
+      </div>
+      <div class="stat-card c-warning">
+        <div class="stat-num">{{ in_progress }}</div>
+        <div class="stat-label">In Progress</div>
+      </div>
+      <div class="stat-card c-success">
+        <div class="stat-num">{{ completed_today }}</div>
+        <div class="stat-label">Completed Today</div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <form method="GET" class="filters">
+      <div class="filter-group">
+        <div class="filter-label">Search</div>
+        <input type="text" name="q" class="filter-input" placeholder="Patient name or ID…" value="{{ search }}"/>
+      </div>
+      <div class="filter-group">
+        <div class="filter-label">Date</div>
+        <input type="date" name="date" class="filter-input" value="{{ filter_date }}"/>
+      </div>
+      <div class="filter-group">
+        <div class="filter-label">Status</div>
+        <select name="status" class="filter-input">
+          <option value="">All statuses</option>
+          {% for val, label in status_choices %}
+          <option value="{{ val }}" {% if filter_status == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="filter-group">
+        <div class="filter-label">Type</div>
+        <select name="type" class="filter-input">
+          <option value="">All types</option>
+          {% for val, label in type_choices %}
+          <option value="{{ val }}" {% if filter_type == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="filter-group">
+        <div class="filter-label">Doctor</div>
+        <select name="doctor" class="filter-input">
+          <option value="">All staff</option>
+          {% for d in doctors %}
+          <option value="{{ d.id }}" {% if filter_doctor == d.id|stringformat:"s" %}selected{% endif %}>{{ d.get_full_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="filter-actions">
+        <button type="submit" class="btn-filter">Filter</button>
+        <a href="{% url 'appointment_list' %}" class="btn-clear">Clear</a>
+      </div>
+    </form>
+
+    <!-- Table -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">All Appointments</div>
+        <span style="font-size:13px; color:var(--slate);">{{ appointments|length }} result{{ appointments|length|pluralize }}</span>
+      </div>
+      {% if appointments %}
+      <table>
+        <thead>
+          <tr>
+            <th>Ref</th>
+            <th>Patient</th>
+            <th>Type</th>
+            <th>Date & Time</th>
+            <th>Assigned To</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for apt in appointments %}
+        <tr>
+          <td><span class="apt-id">{{ apt.appointment_id }}</span></td>
+          <td>
+            <div class="patient-name">{{ apt.patient.get_full_name }}</div>
+            <div class="patient-matric">{{ apt.patient.matric_no }}</div>
+          </td>
+          <td style="font-size:13px;">
+            {{ apt.get_type_display_full }}
+          </td>
+          <td style="font-size:13px;">
+            {{ apt.appointment_date|date:"d M Y" }}
+            {% if apt.appointment_date|date:"Y-m-d" == today %}<span class="today-badge">Today</span>{% endif %}
+            <div style="font-size:12px; color:var(--slate); margin-top:2px;">{{ apt.time_display }}</div>
+          </td>
+          <td style="font-size:13px;">{{ apt.assigned_to.get_full_name|default:"Unassigned" }}</td>
+          <td>
+            {% if apt.status == 'Scheduled' %}<span class="chip chip-scheduled">● Scheduled</span>
+            {% elif apt.status == 'In Progress' %}<span class="chip chip-in-progress">● In Progress</span>
+            {% elif apt.status == 'Completed' %}<span class="chip chip-completed">● Completed</span>
+            {% elif apt.status == 'Cancelled' %}<span class="chip chip-cancelled">● Cancelled</span>
+            {% endif %}
+          </td>
+          <td><a href="{% url 'appointment_detail' apt.pk %}" class="btn-view">View →</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">📅</div>
+        <div class="empty-title">No appointments found</div>
+        <div class="empty-desc">{% if search or filter_status or filter_type or filter_date %}Try adjusting your filters.{% else %}Book the first appointment to get started.{% endif %}</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+</body>
+</html>

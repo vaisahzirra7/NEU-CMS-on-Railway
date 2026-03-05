@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit {{ u.get_full_name }} — VanaraUniCare</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:       #08131F;
+      --panel:     #0C1B2E;
+      --panel-2:   #0F2040;
+      --surface:   rgba(255,255,255,0.03);
+      --surface-2: rgba(255,255,255,0.055);
+      --border:    rgba(255,255,255,0.07);
+      --border-2:  rgba(255,255,255,0.12);
+      --gold:      #C9A84C;
+      --gold-2:    #E2C47A;
+      --slate:     #6B84A3;
+      --slate-2:   #4A6380;
+      --white:     #FFFFFF;
+      --success:   #3DB87A;
+      --warning:   #F0A04A;
+      --danger:    #E05555;
+      --sw:        252px;
+    }
+
+    html, body { height: 100%; font-family: 'Outfit', sans-serif; background: var(--ink); color: var(--white); }
+
+    /* ── SIDEBAR ── */
+    .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: var(--sw); background: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 200; }
+    .sb-logo { padding: 22px 20px 18px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .sb-mark { width: 38px; height: 38px; background: linear-gradient(145deg, var(--gold), #a07828); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; box-shadow: 0 4px 16px rgba(201,168,76,.2); flex-shrink: 0; }
+    .sb-name { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; color: var(--white); line-height: 1.2; }
+    .sb-sub  { font-size: 9.5px; color: var(--slate); text-transform: uppercase; letter-spacing: .1em; margin-top: 1px; }
+    .sb-nav  { flex: 1; overflow-y: auto; padding: 12px 10px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.06) transparent; }
+    .sb-section { font-size: 9.5px; font-weight: 600; color: var(--slate-2); text-transform: uppercase; letter-spacing: .12em; padding: 14px 10px 6px; }
+    .sb-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 9px; color: var(--slate); font-size: 13.5px; text-decoration: none; transition: background .15s, color .15s; margin-bottom: 1px; }
+    .sb-item:hover { background: var(--surface-2); color: var(--white); }
+    .sb-item.active { background: rgba(201,168,76,.1); color: var(--gold-2); font-weight: 500; }
+    .sb-item.active .sb-icon { background: rgba(201,168,76,.18); }
+    .sb-icon { width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,.05); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+    .sb-footer { padding: 12px 10px; border-top: 1px solid var(--border); flex-shrink: 0; }
+    .sb-user { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 9px; background: var(--surface); }
+    .sb-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), #a07828); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: var(--ink); flex-shrink: 0; }
+    .sb-uname { font-size: 13px; font-weight: 500; color: var(--white); line-height: 1.2; }
+    .sb-urole { font-size: 10.5px; color: var(--slate); }
+    .sb-logout { margin-left: auto; background: none; border: none; color: var(--slate-2); cursor: pointer; font-size: 15px; padding: 4px; text-decoration: none; display: flex; align-items: center; transition: color .2s; }
+    .sb-logout:hover { color: var(--danger); }
+
+    /* ── MAIN ── */
+    .main { margin-left: var(--sw); min-height: 100vh; display: flex; flex-direction: column; }
+    .topbar { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 64px; background: rgba(8,19,31,.9); border-bottom: 1px solid var(--border); backdrop-filter: blur(16px); flex-shrink: 0; }
+    .topbar-left h1 { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--white); }
+    .topbar-left p  { font-size: 12px; color: var(--slate); margin-top: 1px; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .content { padding: 28px 32px; flex: 1; }
+
+    /* ── ALERTS ── */
+    .alert { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 13px 16px; border-radius: 10px; font-size: 13.5px; margin-bottom: 16px; line-height: 1.5; animation: slideDown .3s cubic-bezier(.16,1,.3,1); }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    .alert-success { background: rgba(61,184,122,.08); border: 1px solid rgba(61,184,122,.25); color: #90deb5; }
+    .alert-danger, .alert-error { background: rgba(224,85,85,.08); border: 1px solid rgba(224,85,85,.25); color: #f0a0a0; }
+    .alert-warning { background: rgba(201,168,76,.08); border: 1px solid rgba(201,168,76,.25); color: var(--gold-2); }
+    .alert-close { background: none; border: none; color: inherit; cursor: pointer; font-size: 18px; opacity: .5; padding: 0; line-height: 1; flex-shrink: 0; transition: opacity .2s; }
+    .alert-close:hover { opacity: 1; }
+
+    /* ── BUTTONS ── */
+    .btn-primary { background: linear-gradient(135deg, var(--gold), #a07828); border: none; border-radius: 9px; padding: 10px 22px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; color: var(--ink); cursor: pointer; text-decoration: none; transition: transform .2s, box-shadow .2s; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(201,168,76,.25); }
+    .btn-secondary { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 10px 20px; font-family: 'Outfit', sans-serif; font-size: 14px; color: var(--slate); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: background .15s, color .15s; }
+    .btn-secondary:hover { background: var(--surface-2); color: var(--white); }
+    .btn-back { padding: 7px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 12.5px; color: var(--slate); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: background .15s, color .15s; }
+    .btn-back:hover { background: var(--surface-2); color: var(--white); }
+
+    /* ── LAYOUT ── */
+    .form-layout { display: grid; grid-template-columns: 1fr 310px; gap: 22px; align-items: start; }
+
+    /* ── FORM CARD ── */
+    .form-card { background: var(--panel); border: 1px solid var(--border); border-radius: 13px; overflow: hidden; }
+    .form-section { padding: 22px 26px; border-bottom: 1px solid var(--border); }
+    .form-section:last-child { border-bottom: none; }
+    .section-title { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 600; color: var(--white); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+    .form-grid { display: grid; gap: 16px; }
+    .form-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+    .form-grid.cols-1 { grid-template-columns: 1fr; }
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    label { font-size: 11px; font-weight: 600; color: var(--slate); letter-spacing: .08em; text-transform: uppercase; }
+    .req { color: var(--danger); margin-left: 2px; }
+    input[type=text], input[type=email], input[type=tel], input[type=date],
+    select, textarea {
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 14px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13.5px;
+      color: var(--white);
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      width: 100%;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201,168,76,.09);
+    }
+    input::placeholder, textarea::placeholder { color: var(--slate-2); }
+    select option { background: var(--panel-2); color: var(--white); }
+    .hint { font-size: 11.5px; color: var(--slate-2); line-height: 1.5; }
+
+    /* ── SIDE PANEL ── */
+    .side-panel { display: flex; flex-direction: column; gap: 16px; }
+    .side-card { background: var(--panel); border: 1px solid var(--border); border-radius: 13px; padding: 22px; }
+    .side-title { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 600; color: var(--white); margin-bottom: 18px; }
+
+    /* ── CURRENT USER BANNER ── */
+    .user-banner { display: flex; align-items: center; gap: 14px; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 11px; margin-bottom: 20px; }
+    .banner-avatar { width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), #a07828); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 600; color: var(--ink); flex-shrink: 0; }
+    .banner-name { font-size: 15px; font-weight: 600; color: var(--white); }
+    .banner-role { font-size: 12px; color: var(--slate); margin-top: 2px; }
+    .banner-status { margin-left: auto; flex-shrink: 0; }
+    .chip-active   { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 500; background: rgba(61,184,122,.1); color: #90deb5; }
+    .chip-inactive { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 500; background: rgba(224,85,85,.08); color: #f0a0a0; }
+
+    /* ── TOGGLE ── */
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--border); }
+    .toggle-row:last-of-type { border-bottom: none; }
+    .toggle-label { font-size: 13.5px; font-weight: 500; color: var(--white); }
+    .toggle-hint  { font-size: 11.5px; color: var(--slate); margin-top: 2px; }
+    .toggle { position: relative; width: 40px; height: 23px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-track { position: absolute; inset: 0; background: rgba(255,255,255,.1); border-radius: 100px; cursor: pointer; transition: background .2s; }
+    .toggle input:checked + .toggle-track { background: var(--gold); }
+    .toggle-thumb { position: absolute; width: 17px; height: 17px; background: white; border-radius: 50%; top: 3px; left: 3px; transition: transform .2s; pointer-events: none; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+    .toggle input:checked ~ .toggle-thumb { transform: translateX(17px); }
+
+    /* ── UNSAVED CHANGES INDICATOR ── */
+    .unsaved-badge { display: none; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(240,160,74,.1); border: 1px solid rgba(240,160,74,.25); border-radius: 100px; font-size: 12px; color: var(--warning); }
+    .unsaved-badge.show { display: flex; }
+
+    /* ── FORM ACTIONS ── */
+    .form-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .form-actions .btn-primary { flex: 1; justify-content: center; padding: 12px; }
+  </style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">⚕</div>
+    <div>
+      <div class="sb-name">VanaraUniCare</div>
+      <div class="sb-sub">NEU Health Center</div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-section">Main</div>
+    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    <div class="sb-section">Clinical</div>
+    <a href="#" class="sb-item"><div class="sb-icon">🩺</div>Patient Records</a>
+    <a href="#" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>
+    <a href="#" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>
+    <div class="sb-section">Pharmacy</div>
+    <a href="#" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>
+    <div class="sb-section">Administration</div>
+    <a href="#" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>
+    <a href="#" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>
+    <a href="#" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>
+    <div class="sb-section">System</div>
+    <a href="{% url 'user_list' %}" class="sb-item active"><div class="sb-icon">👥</div>User Management</a>
+    <a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>
+    <a href="#" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>
+    <a href="#" class="sb-item"><div class="sb-icon">🕐</div>Audit Trail</a>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>
+      <div>
+        <div class="sb-uname">{{ user.get_short_name }}</div>
+        <div class="sb-urole">{{ user.role|default:"Super Admin" }}</div>
+      </div>
+      <a href="{% url 'logout' %}" class="sb-logout" title="Sign out">⏻</a>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Edit Profile</h1>
+      <p>Updating {{ u.get_full_name }}</p>
+    </div>
+    <div class="topbar-right">
+      <div class="unsaved-badge" id="unsavedBadge">● Unsaved changes</div>
+      <a href="{% url 'user_detail' u.pk %}" class="btn-back">← Back to Profile</a>
+    </div>
+  </div>
+
+  <div class="content">
+
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }}">
+      <span>{{ msg|safe }}</span>
+      <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+    </div>
+    {% endfor %}
+
+    <form method="POST" id="editForm">
+      {% csrf_token %}
+
+      <div class="form-layout">
+
+        <!-- ── Left: Main Form ── -->
+        <div class="form-card">
+
+          <!-- Personal Information -->
+          <div class="form-section">
+            <div class="section-title">👤 Personal Information</div>
+            <div class="form-grid cols-2">
+              <div class="field">
+                <label>First Name <span class="req">*</span></label>
+                <input type="text" name="first_name" value="{{ u.first_name }}" required/>
+              </div>
+              <div class="field">
+                <label>Last Name <span class="req">*</span></label>
+                <input type="text" name="last_name" value="{{ u.last_name }}" required/>
+              </div>
+              <div class="field">
+                <label>Other Names</label>
+                <input type="text" name="other_names" value="{{ u.other_names }}"/>
+              </div>
+              <div class="field">
+                <label>Gender</label>
+                <select name="gender">
+                  <option value="">Select gender</option>
+                  <option value="Male"   {% if u.gender == 'Male'   %}selected{% endif %}>Male</option>
+                  <option value="Female" {% if u.gender == 'Female' %}selected{% endif %}>Female</option>
+                  <option value="Other"  {% if u.gender == 'Other'  %}selected{% endif %}>Other</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Date of Birth</label>
+                <input type="date" name="date_of_birth"
+                       value="{{ u.date_of_birth|date:'Y-m-d'|default:'' }}"/>
+              </div>
+              <div class="field">
+                <label>Phone Number</label>
+                <input type="tel" name="phone" value="{{ u.phone }}"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- Professional Details -->
+          <div class="form-section">
+            <div class="section-title">💼 Professional Details</div>
+            <div class="form-grid cols-2">
+              <div class="field">
+                <label>Staff ID</label>
+                <input type="text" name="staff_id" value="{{ u.staff_id|default:'' }}"/>
+              </div>
+              <div class="field">
+                <label>Role</label>
+                <select name="role">
+                  <option value="">No role assigned</option>
+                  {% for r in roles %}
+                  <option value="{{ r.id }}" {% if u.role and u.role.id == r.id %}selected{% endif %}>
+                    {{ r.name }}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="field">
+                <label>Job Title</label>
+                <input type="text" name="job_title" value="{{ u.job_title }}"/>
+              </div>
+              <div class="field">
+                <label>Department</label>
+                <input type="text" name="department" value="{{ u.department }}"/>
+              </div>
+              <div class="field">
+                <label>Qualification(s)</label>
+                <input type="text" name="qualification" value="{{ u.qualification }}"/>
+              </div>
+              <div class="field">
+                <label>Professional Reg./Licence Number</label>
+                <input type="text" name="reg_number" value="{{ u.reg_number }}"/>
+              </div>
+              <div class="field">
+                <label>Date Joined</label>
+                <input type="date" name="date_joined"
+                       value="{{ u.date_joined|date:'Y-m-d'|default:'' }}"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- Login Credentials -->
+          <div class="form-section">
+            <div class="section-title">📧 Login Credentials</div>
+            <div class="form-grid cols-1">
+              <div class="field">
+                <label>Email Address <span class="req">*</span></label>
+                <input type="email" name="email" value="{{ u.email }}" required/>
+                <span class="hint">
+                  Changing this email will update the login email for this staff member.
+                </span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+
+        
+        <!-- ── Right: Side Panel ── -->
+        <div class="side-panel">
+
+          <!-- Current User Summary -->
+          <div class="side-card">
+            <div class="side-title">👤 Editing</div>
+            <div class="user-banner">
+              <div class="banner-avatar">{{ u.first_name|first }}{{ u.last_name|first }}</div>
+              <div>
+                <div class="banner-name">{{ u.get_full_name }}</div>
+                <div class="banner-role">{{ u.role.name|default:"No role assigned" }}</div>
+              </div>
+              <div class="banner-status">
+                {% if u.is_active %}
+                  <span class="chip-active">● Active</span>
+                {% else %}
+                  <span class="chip-inactive">● Inactive</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <!-- Account Settings -->
+          <div class="side-card">
+            <div class="side-title">⚙ Account Settings</div>
+
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Active Account</div>
+                <div class="toggle-hint">Allow this staff member to log in</div>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" name="is_active" id="tog_active"
+                       {% if u.is_active %}checked{% endif %}/>
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+            </div>
+
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Admin Panel Access</div>
+                <div class="toggle-hint">Access to Django /admin/</div>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" name="is_staff" id="tog_staff"
+                       {% if u.is_staff %}checked{% endif %}/>
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary" id="saveBtn">
+                Save Changes
+              </button>
+              <a href="{% url 'user_detail' u.pk %}" class="btn-secondary">Cancel</a>
+            </div>
+          </div>
+
+          <!-- Quick Links -->
+          <div class="side-card" style="padding: 18px 22px;">
+            <div class="side-title" style="font-size: 13px; color: var(--slate); margin-bottom: 12px; font-family: 'Outfit', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: .08em;">Quick Actions</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <a href="{% url 'user_detail' u.pk %}" style="font-size: 13px; color: var(--slate); text-decoration: none; padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; transition: color .15s;">
+                <span>👁</span> View Full Profile
+              </a>
+              {% if u.role %}
+              <a href="{% url 'role_permissions' u.role.pk %}" style="font-size: 13px; color: var(--slate); text-decoration: none; padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; transition: color .15s;">
+                <span>🛡</span> Edit Role Permissions
+              </a>
+              {% endif %}
+              <a href="{% url 'user_list' %}" style="font-size: 13px; color: var(--slate); text-decoration: none; padding: 8px 0; display: flex; align-items: center; gap: 8px; transition: color .15s;">
+                <span>👥</span> All Users
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Track unsaved changes
+  var formChanged = false;
+  var form = document.getElementById('editForm');
+  var badge = document.getElementById('unsavedBadge');
+  var saveBtn = document.getElementById('saveBtn');
+
+  form.addEventListener('input', function() {
+    if (!formChanged) {
+      formChanged = true;
+      badge.classList.add('show');
+    }
+  });
+  form.addEventListener('change', function() {
+    if (!formChanged) {
+      formChanged = true;
+      badge.classList.add('show');
+    }
+  });
+
+  // Warn on leaving with unsaved changes
+  window.addEventListener('beforeunload', function(e) {
+    if (formChanged) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+
+  // Clear flag on submit
+  form.addEventListener('submit', function() {
+    formChanged = false;
+    saveBtn.textContent = 'Saving…';
+    saveBtn.disabled = true;
+    saveBtn.style.opacity = '.7';
+  });
+</script>
+
+</body>
+</html>
