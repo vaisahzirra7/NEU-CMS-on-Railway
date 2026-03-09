@@ -1,1 +1,1 @@
-web: gunicorn vanaraunicare.wsgi
+web: gunicorn core.wsgi
