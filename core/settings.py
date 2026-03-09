@@ -1,5 +1,7 @@
 from pathlib import Path
 from decouple import config
+import dj_database_url
+import os
 
 # =============================================================================
 # VanaraUniCare — NEU HMS
@@ -85,22 +87,26 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # =============================================================================
 # DATABASE — MySQL
 # =============================================================================
+# DATABASES = {
+#     'default': {
+#         'ENGINE':   'django.db.backends.mysql',
+#         'NAME':     config('DB_NAME'),
+#         'USER':     config('DB_USER'),
+#         'PASSWORD': config('DB_PASSWORD'),
+#         'HOST':     config('DB_HOST', default='localhost'),
+#         'PORT':     config('DB_PORT', default='3306'),
+#         'OPTIONS': {
+#             'charset': 'utf8mb4',
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#         },
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE':   'django.db.backends.mysql',
-        'NAME':     config('DB_NAME'),
-        'USER':     config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST':     config('DB_HOST', default='localhost'),
-        'PORT':     config('DB_PORT', default='3306'),
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
-    }
+    'default': dj_database_url.parse(
+        os.environ.get("DATABASE_URL")
+    )
 }
-
-
 # =============================================================================
 # CUSTOM AUTH — We use our own User model in accounts app
 # =============================================================================
