@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Drug Inventory — VanaraUniCare</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ink:#08131F; --panel:#0C1B2E; --panel-2:#0F2040;
+      --surface:rgba(255,255,255,0.03); --surface-2:rgba(255,255,255,0.055);
+      --border:rgba(255,255,255,0.07); --border-2:rgba(255,255,255,0.12);
+      --gold:#C9A84C; --gold-2:#E2C47A; --slate:#6B84A3; --slate-2:#4A6380;
+      --white:#FFFFFF; --success:#3DB87A; --warning:#F0A04A; --danger:#E05555; --info:#4A9EE0;
+      --sw:252px;
+    }
+    html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--ink);color:var(--white);}
+    .sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sw);background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;}
+    .sb-logo{padding:22px 20px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+    .sb-mark{width:38px;height:38px;background:linear-gradient(145deg,var(--gold),#a07828);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+    .sb-name{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;}
+    .sb-sub{font-size:9.5px;color:var(--slate);text-transform:uppercase;letter-spacing:.1em;}
+    .sb-nav{flex:1;overflow-y:auto;padding:12px 10px;scrollbar-width:thin;}
+    .sb-section{font-size:9.5px;font-weight:600;color:var(--slate-2);text-transform:uppercase;letter-spacing:.12em;padding:14px 10px 6px;}
+    .sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;color:var(--slate);font-size:13.5px;text-decoration:none;transition:background .15s,color .15s;margin-bottom:1px;}
+    .sb-item:hover{background:var(--surface-2);color:var(--white);}
+    .sb-item.active{background:rgba(201,168,76,.1);color:var(--gold-2);font-weight:500;}
+    .sb-icon{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+    .sb-footer{padding:12px 10px;border-top:1px solid var(--border);flex-shrink:0;}
+    .sb-user{display:flex;align-items:center;gap:10px;padding:10px;border-radius:9px;background:var(--surface);}
+    .sb-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#a07828);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--ink);flex-shrink:0;}
+    .sb-uname{font-size:13px;font-weight:500;} .sb-urole{font-size:10.5px;color:var(--slate);}
+    .sb-logout{margin-left:auto;background:none;border:none;color:var(--slate-2);cursor:pointer;font-size:15px;padding:4px;text-decoration:none;transition:color .2s;}
+    .sb-logout:hover{color:var(--danger);}
+    .main{margin-left:var(--sw);min-height:100vh;display:flex;flex-direction:column;}
+    .topbar{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;background:rgba(8,19,31,.9);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);}
+    .topbar-left h1{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;}
+    .topbar-left p{font-size:12px;color:var(--slate);margin-top:1px;}
+    .topbar-right{display:flex;gap:10px;}
+    .content{padding:28px 32px;flex:1;}
+    .alert{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:13px 16px;border-radius:10px;font-size:13.5px;margin-bottom:14px;line-height:1.5;}
+    .alert-success{background:rgba(61,184,122,.08);border:1px solid rgba(61,184,122,.25);color:#90deb5;}
+    .alert-danger{background:rgba(224,85,85,.08);border:1px solid rgba(224,85,85,.25);color:#f0a0a0;}
+    .alert-warning{background:rgba(240,160,74,.08);border:1px solid rgba(240,160,74,.25);color:#f8c87a;}
+    .alert-close{background:none;border:none;color:inherit;cursor:pointer;font-size:18px;opacity:.5;}
+    .btn-primary{background:linear-gradient(135deg,var(--gold),#a07828);border:none;border-radius:9px;padding:9px 20px;font-family:'Outfit',sans-serif;font-size:13.5px;font-weight:600;color:var(--ink);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:transform .2s,box-shadow .2s;}
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(201,168,76,.25);}
+    .btn-sm{padding:6px 12px;border-radius:7px;font-size:12px;background:var(--surface);border:1px solid var(--border);color:var(--white);text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:background .15s;}
+    .btn-sm:hover{background:var(--surface-2);}
+
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+    .stat-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden;}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+    .stat-card.c-gold::before{background:linear-gradient(90deg,var(--gold),transparent);}
+    .stat-card.c-warning::before{background:linear-gradient(90deg,var(--warning),transparent);}
+    .stat-card.c-danger::before{background:linear-gradient(90deg,var(--danger),transparent);}
+    .stat-card.c-info::before{background:linear-gradient(90deg,var(--info),transparent);}
+    .stat-num{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:700;line-height:1;}
+    .stat-label{font-size:12px;color:var(--slate);margin-top:4px;}
+
+    .filters{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:18px;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;}
+    .filter-group{display:flex;flex-direction:column;gap:5px;}
+    .filter-label{font-size:10px;font-weight:600;color:var(--slate-2);text-transform:uppercase;letter-spacing:.08em;}
+    .filter-input{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'Outfit',sans-serif;font-size:13px;color:var(--white);outline:none;min-width:160px;}
+    .filter-input:focus{border-color:var(--gold);}
+    select.filter-input option{background:var(--panel-2);}
+    .filter-actions{display:flex;gap:8px;margin-left:auto;}
+    .btn-filter{background:linear-gradient(135deg,var(--gold),#a07828);border:none;border-radius:8px;padding:8px 16px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;}
+    .btn-clear{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:13px;color:var(--slate);text-decoration:none;display:inline-flex;align-items:center;}
+    .btn-clear:hover{color:var(--white);background:var(--surface-2);}
+
+    /* Stock filter pills */
+    .pill-filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+    .pill{padding:5px 14px;border-radius:100px;font-size:12.5px;border:1px solid var(--border);color:var(--slate);text-decoration:none;transition:all .15s;}
+    .pill:hover{border-color:var(--gold-2);color:var(--gold-2);}
+    .pill.active{background:rgba(201,168,76,.1);border-color:var(--gold);color:var(--gold-2);}
+    .pill.pill-warning.active{background:rgba(240,160,74,.1);border-color:var(--warning);color:#f8c87a;}
+    .pill.pill-danger.active{background:rgba(224,85,85,.1);border-color:var(--danger);color:#f0a0a0;}
+
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:13px;overflow:hidden;}
+    .card-header{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .card-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;}
+    table{width:100%;border-collapse:collapse;}
+    thead tr{border-bottom:1px solid var(--border);background:rgba(255,255,255,.018);}
+    th{padding:11px 16px;font-size:11px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:.08em;text-align:left;}
+    td{padding:13px 16px;font-size:13.5px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;}
+    tbody tr:last-child td{border-bottom:none;}
+    tbody tr:hover{background:rgba(255,255,255,.02);}
+
+    .drug-code{font-family:monospace;font-size:11.5px;color:var(--gold-2);}
+    .drug-name{font-weight:500;}
+    .drug-generic{font-size:12px;color:var(--slate);margin-top:1px;}
+
+    .stock-bar-wrap{display:flex;align-items:center;gap:8px;}
+    .stock-bar{flex:1;height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;min-width:60px;}
+    .stock-fill{height:100%;border-radius:3px;}
+    .stock-fill.ok{background:var(--success);}
+    .stock-fill.low{background:var(--warning);}
+    .stock-fill.out{background:var(--danger);}
+    .stock-num{font-size:13px;font-weight:600;white-space:nowrap;}
+    .stock-num.ok{color:#90deb5;}
+    .stock-num.low{color:#f8c87a;}
+    .stock-num.out{color:#f0a0a0;}
+
+    .chip{display:inline-flex;padding:3px 9px;border-radius:100px;font-size:11px;font-weight:500;}
+    .chip-expired{background:rgba(224,85,85,.1);color:#f0a0a0;border:1px solid rgba(224,85,85,.2);}
+    .chip-low{background:rgba(240,160,74,.1);color:#f8c87a;border:1px solid rgba(240,160,74,.2);}
+    .chip-ok{background:rgba(61,184,122,.1);color:#90deb5;border:1px solid rgba(61,184,122,.2);}
+    .chip-out{background:rgba(224,85,85,.08);color:#f0a0a0;border:1px solid rgba(224,85,85,.15);}
+
+    .empty-state{padding:52px 32px;text-align:center;}
+    .empty-icon{font-size:44px;opacity:.3;margin-bottom:14px;}
+    .empty-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;margin-bottom:8px;}
+    .empty-desc{font-size:13.5px;color:var(--slate);}
+  </style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">⚕</div>
+    <div><div class="sb-name">VanaraUniCare</div><div class="sb-sub">NEU Health Center</div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-section">Main</div>
+    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    {% if perms_map.patients.can_view or perms_map.appointments.can_view or perms_map.consultations.can_view or perms_map.prescriptions.can_view or perms_map.laboratory.can_view or perms_map.wards.can_view %}
+    <div class="sb-section">Clinical</div>
+    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon">🩺</div>Patient Records</a>{% endif %}
+    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>{% endif %}
+    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>{% endif %}
+    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>{% endif %}
+    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>{% endif %}
+    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>{% endif %}
+    {% endif %}
+    {% if perms_map.inventory.can_view or perms_map.dispensing.can_view %}
+    <div class="sb-section">Pharmacy</div>
+    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item active"><div class="sb-icon">💊</div>Drug Inventory</a>{% endif %}
+    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>{% endif %}
+    {% endif %}
+    {% if perms_map.clearance.can_view or perms_map.documents.can_view or perms_map.reports.can_view %}
+    <div class="sb-section">Administration</div>
+    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>{% endif %}
+    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>{% endif %}
+    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>{% endif %}
+    {% endif %}
+    {% if perms_map.users.can_view or perms_map.roles.can_view or perms_map.settings.can_view or user.is_superuser %}
+    <div class="sb-section">System</div>
+    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>{% endif %}
+    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>{% endif %}
+    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>{% endif %}
+    {% endif %}
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>
+      <div><div class="sb-uname">{{ user.get_short_name }}</div><div class="sb-urole">{{ user.role|default:"Staff" }}</div></div>
+      <a href="{% url 'logout' %}" class="sb-logout">⏻</a>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Drug Inventory</h1>
+      <p>Manage drugs, stock levels and batches</p>
+    </div>
+    <div class="topbar-right">
+      {% if perms_map.inventory.can_edit %}<a href="{% url 'drug_categories' %}" class="btn-sm">🗂 Categories</a>{% endif %}
+      {% if perms_map.inventory.can_create %}<a href="{% url 'drug_create' %}" class="btn-primary">＋ Add Drug</a>{% endif %}
+    </div>
+  </div>
+
+  <div class="content">
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }}">
+      <span>{{ msg|safe }}</span>
+      <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+    </div>
+    {% endfor %}
+
+    <div class="stats">
+      <div class="stat-card c-gold"><div class="stat-num">{{ total_drugs }}</div><div class="stat-label">Total Drugs</div></div>
+      <div class="stat-card c-warning"><div class="stat-num">{{ low_stock_ct }}</div><div class="stat-label">Low Stock</div></div>
+      <div class="stat-card c-danger"><div class="stat-num">{{ out_of_stock }}</div><div class="stat-label">Out of Stock</div></div>
+      <div class="stat-card c-info"><div class="stat-num">{{ expiring_soon }}</div><div class="stat-label">Expiring in 90 days</div></div>
+    </div>
+
+    <form method="GET" class="filters">
+      <div class="filter-group">
+        <div class="filter-label">Search</div>
+        <input type="text" name="q" class="filter-input" placeholder="Drug name, code, supplier…" value="{{ search }}"/>
+      </div>
+      <div class="filter-group">
+        <div class="filter-label">Category</div>
+        <select name="category" class="filter-input">
+          <option value="">All categories</option>
+          {% for cat in categories %}
+          <option value="{{ cat.pk }}" {% if filter_cat == cat.pk|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="filter-actions">
+        <button type="submit" class="btn-filter">Filter</button>
+        <a href="{% url 'drug_list' %}" class="btn-clear">Clear</a>
+      </div>
+    </form>
+
+    <div class="pill-filters">
+      <a href="{% url 'drug_list' %}" class="pill {% if not filter_stock %}active{% endif %}">All</a>
+      <a href="?stock=low{% if search %}&q={{ search }}{% endif %}" class="pill pill-warning {% if filter_stock == 'low' %}active{% endif %}">⚠ Low Stock</a>
+      <a href="?stock=out{% if search %}&q={{ search }}{% endif %}" class="pill pill-danger {% if filter_stock == 'out' %}active{% endif %}">✗ Out of Stock</a>
+      <a href="?stock=expired{% if search %}&q={{ search }}{% endif %}" class="pill pill-danger {% if filter_stock == 'expired' %}active{% endif %}">⌛ Has Expired Batches</a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">All Drugs</div>
+        <span style="font-size:13px;color:var(--slate);">{{ drugs|length }} result{{ drugs|length|pluralize }}</span>
+      </div>
+      {% if drugs %}
+      <table>
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Drug</th>
+            <th>Category</th>
+            <th>Form / Strength</th>
+            <th>Stock</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for drug in drugs %}
+        <tr>
+          <td><span class="drug-code">{{ drug.drug_code }}</span></td>
+          <td>
+            <div class="drug-name">{{ drug.name }}</div>
+            {% if drug.generic_name %}<div class="drug-generic">{{ drug.generic_name }}</div>{% endif %}
+          </td>
+          <td style="font-size:13px;">{{ drug.category.name|default:"—" }}</td>
+          <td style="font-size:13px;">{{ drug.dosage_form }}{% if drug.strength %} · {{ drug.strength }}{% endif %}</td>
+          <td>
+            <div class="stock-bar-wrap">
+              <div class="stock-bar">
+                {% if drug.total_stock > 0 %}
+                <div class="stock-fill {{ drug.stock_status }}" style="width:{% if drug.total_stock > drug.reorder_level %}{% widthratio drug.total_stock drug.reorder_level 50 %}{% else %}20{% endif %}%;max-width:100%;"></div>
+                {% endif %}
+              </div>
+              <span class="stock-num {{ drug.stock_status }}">{{ drug.total_stock }} {{ drug.unit }}</span>
+            </div>
+          </td>
+          <td>
+            {% if drug.stock_status == 'out' %}<span class="chip chip-out">Out of Stock</span>
+            {% elif drug.stock_status == 'low' %}<span class="chip chip-low">⚠ Low Stock</span>
+            {% else %}<span class="chip chip-ok">✓ In Stock</span>{% endif %}
+            {% if drug.has_expired_batches %}<span class="chip chip-expired" style="margin-left:4px;">Expired Batch</span>{% endif %}
+          </td>
+          <td><a href="{% url 'drug_detail' drug.pk %}" class="btn-sm">View →</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">💊</div>
+        <div class="empty-title">No drugs found</div>
+        <div class="empty-desc">{% if search or filter_stock %}Try adjusting your filters.{% else %}Add the first drug to get started.{% endif %}</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+</body>
+</html>

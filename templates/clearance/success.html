@@ -1,0 +1,40 @@
+{% comment %}SUCCESS{% endcomment %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Submitted — VanaraUniCare</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    :root{--ink:#08131F;--panel:#0C1B2E;--gold:#C9A84C;--gold-2:#E2C47A;--slate:#6B84A3;--border:rgba(255,255,255,.08);--white:#FFF;--success:#3DB87A;}
+    body{font-family:'Outfit',sans-serif;background:var(--ink);color:var(--white);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+    .box{background:var(--panel);border:1px solid var(--border);border-radius:16px;width:100%;max-width:460px;padding:40px 36px;text-align:center;}
+    .check{width:64px;height:64px;background:rgba(61,184,122,.1);border:2px solid rgba(61,184,122,.3);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:20px;}
+    .title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;margin-bottom:8px;}
+    .sub{font-size:14px;color:var(--slate);line-height:1.6;margin-bottom:24px;}
+    .ref-box{background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:16px 20px;margin-bottom:24px;}
+    .ref-label{font-size:11px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+    .ref-id{font-family:monospace;font-size:22px;font-weight:700;color:var(--gold-2);letter-spacing:.05em;}
+    .ref-hint{font-size:12px;color:var(--slate);margin-top:6px;}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:11px 22px;border-radius:9px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;text-decoration:none;cursor:pointer;border:none;}
+    .btn-gold{background:linear-gradient(135deg,var(--gold),#a07828);color:var(--ink);}
+    .btn-sec{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--white);margin-left:8px;}
+  </style>
+</head>
+<body>
+<div class="box">
+  <div class="check">✓</div>
+  <div class="title">Clearance Submitted!</div>
+  <div class="sub">Your medical clearance form has been submitted and approved. Keep your reference ID safe — you'll need it to check your status or print your certificate.</div>
+  <div class="ref-box">
+    <div class="ref-label">Your Reference ID</div>
+    <div class="ref-id">{{ sub.submission_id }}</div>
+    <div class="ref-hint">{{ sub.session.display_title }} · Submitted {{ sub.submitted_at|date:"d M Y, H:i" }}</div>
+  </div>
+  <a href="{% url 'clearance_certificate' sub.pk %}" class="btn btn-gold" target="_blank">🖨 Print Certificate</a>
+  <a href="{% url 'clearance_status_check' %}" class="btn btn-sec">Check Status</a>
+</div>
+</body>
+</html>

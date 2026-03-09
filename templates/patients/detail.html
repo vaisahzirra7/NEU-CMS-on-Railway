@@ -170,25 +170,32 @@
   <nav class="sb-nav">
     <div class="sb-section">Main</div>
     <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    {% if perms_map.patients.can_view or perms_map.appointments.can_view or perms_map.consultations.can_view or perms_map.prescriptions.can_view or perms_map.laboratory.can_view or perms_map.wards.can_view %}
     <div class="sb-section">Clinical</div>
-    <a href="{% url 'patient_list' %}" class="sb-item active"><div class="sb-icon">🩺</div>Patient Records</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>
+    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item active"><div class="sb-icon">🩺</div>Patient Records</a>{% endif %}
+    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>{% endif %}
+    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>{% endif %}
+    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>{% endif %}
+    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>{% endif %}
+    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>{% endif %}
+    {% endif %}
+    {% if perms_map.inventory.can_view or perms_map.dispensing.can_view %}
     <div class="sb-section">Pharmacy</div>
-    <a href="#" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>
+    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>{% endif %}
+    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>{% endif %}
+    {% endif %}
+    {% if perms_map.clearance.can_view or perms_map.documents.can_view or perms_map.reports.can_view %}
     <div class="sb-section">Administration</div>
-    <a href="#" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>
+    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>{% endif %}
+    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>{% endif %}
+    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>{% endif %}
+    {% endif %}
+    {% if perms_map.users.can_view or perms_map.roles.can_view or perms_map.settings.can_view or user.is_superuser %}
     <div class="sb-section">System</div>
-    <a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>
-    <a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>
-    <a href="#" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🕐</div>Audit Trail</a>
+    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>{% endif %}
+    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>{% endif %}
+    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>{% endif %}
+    {% endif %}
   </nav>
   <div class="sb-footer">
     <div class="sb-user">
@@ -212,7 +219,7 @@
     </div>
     <div class="topbar-right">
       <a href="{% url 'patient_list' %}" class="btn-back">← All Patients</a>
-      <a href="{% url 'patient_edit' patient.matric_no %}" class="btn-primary">✏ Edit Record</a>
+      {% if perms_map.patients.can_edit %}<a href="{% url 'patient_edit' patient.matric_no %}" class="btn-primary">✏ Edit Record</a>{% endif %}
     </div>
   </div>
 
@@ -226,8 +233,6 @@
     {% endfor %}
 
     <div class="detail-layout">
-
-
 
       <!-- ── LEFT COLUMN ── -->
       <div>
@@ -269,7 +274,6 @@
             </div>
           </div>
 
-          
           <!-- Tabs -->
           <div class="tabs">
             <button class="tab-btn active" onclick="openTab('personal', this)">👤 Personal</button>
@@ -394,47 +398,90 @@
 
           <!-- TAB: MEDICAL -->
           <div class="tab-pane" id="tab-medical">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
-              <div style="padding: 16px 18px; background: rgba(224,85,85,.06); border: 1px solid rgba(224,85,85,.15); border-radius: 11px;">
-                <div style="font-size: 10.5px; font-weight: 600; color: rgba(224,85,85,.7); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px;">Blood Group</div>
-                <div style="font-size: 28px; font-family: 'Cormorant Garamond', serif; font-weight: 700; color: var(--white);">
-                  {{ patient.blood_group|default:"Unknown" }}
-                </div>
-              </div>
-              <div style="padding: 16px 18px; background: rgba(74,158,224,.06); border: 1px solid rgba(74,158,224,.15); border-radius: 11px;">
-                <div style="font-size: 10.5px; font-weight: 600; color: rgba(74,158,224,.7); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px;">Genotype</div>
-                <div style="font-size: 28px; font-family: 'Cormorant Garamond', serif; font-weight: 700; color: var(--white);">
-                  {{ patient.genotype|default:"Unknown" }}
+
+            {% with latest_clearance=patient.clearance_submissions.first %}
+
+            {% if not latest_clearance %}
+            <!-- ── NOT YET CLEARED ───────────────────────────────────────────── -->
+            <div style="background:rgba(240,160,74,.05);border:1px solid rgba(240,160,74,.2);border-radius:12px;padding:20px 22px;margin-bottom:20px;display:flex;align-items:flex-start;gap:16px;">
+              <div style="font-size:28px;flex-shrink:0;">📋</div>
+              <div>
+                <div style="font-size:15px;font-weight:600;color:#f8c87a;margin-bottom:5px;">Medical Clearance Not Yet Submitted</div>
+                <div style="font-size:13.5px;color:var(--slate);line-height:1.7;">
+                  This student has not completed medical clearance. Medical information such as blood group, genotype, allergies, and conditions will appear here once they submit their clearance form.
                 </div>
               </div>
             </div>
 
-            <!-- Allergies -->
-            <div style="margin-bottom: 20px;">
-              <div style="font-size: 11px; font-weight: 600; color: var(--slate-2); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px;">⚠️ Allergies</div>
+            {% elif latest_clearance.status == 'Rejected' %}
+            <!-- ── REJECTED ──────────────────────────────────────────────────── -->
+            <div style="background:rgba(224,85,85,.05);border:1px solid rgba(224,85,85,.2);border-radius:12px;padding:20px 22px;margin-bottom:20px;display:flex;align-items:flex-start;gap:16px;">
+              <div style="font-size:28px;flex-shrink:0;">⚠️</div>
+              <div>
+                <div style="font-size:15px;font-weight:600;color:#f0a0a0;margin-bottom:5px;">Clearance Rejected</div>
+                <div style="font-size:13.5px;color:var(--slate);line-height:1.7;">
+                  This student's clearance submission was rejected{% if latest_clearance.remarks %}: <em>{{ latest_clearance.remarks }}</em>{% endif %}.
+                  Medical information shown below may be from a previous submission.
+                </div>
+              </div>
+            </div>
+
+            {% else %}
+            <!-- ── CLEARED ───────────────────────────────────────────────────── -->
+            <div style="background:rgba(61,184,122,.04);border:1px solid rgba(61,184,122,.2);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:18px;">✅</span>
+                <div>
+                  <div style="font-size:13.5px;font-weight:600;color:#90deb5;">Medically Cleared — {{ latest_clearance.session.display_title }}</div>
+                  <div style="font-size:12px;color:var(--slate);margin-top:2px;">Ref: <span style="font-family:monospace;">{{ latest_clearance.submission_id }}</span> · Submitted {{ latest_clearance.submitted_at|date:"d M Y" }}</div>
+                </div>
+              </div>
+              <a href="{% url 'clearance_certificate' latest_clearance.pk %}" target="_blank" style="padding:7px 14px;background:rgba(61,184,122,.1);border:1px solid rgba(61,184,122,.25);border-radius:8px;font-size:12.5px;font-weight:600;color:#90deb5;text-decoration:none;flex-shrink:0;">🖨 Certificate</a>
+            </div>
+            {% endif %}
+
+            <!-- ── BLOOD GROUP + GENOTYPE ─────────────────────────────────────── -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+              <div style="padding:16px 18px;background:rgba(224,85,85,.06);border:1px solid rgba(224,85,85,.15);border-radius:11px;">
+                <div style="font-size:10.5px;font-weight:600;color:rgba(224,85,85,.7);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Blood Group</div>
+                <div style="font-size:28px;font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--white);">
+                  {% if patient.blood_group and patient.blood_group != 'Unknown' %}{{ patient.blood_group }}{% else %}<span style="font-size:16px;color:var(--slate-2);">—</span>{% endif %}
+                </div>
+              </div>
+              <div style="padding:16px 18px;background:rgba(74,158,224,.06);border:1px solid rgba(74,158,224,.15);border-radius:11px;">
+                <div style="font-size:10.5px;font-weight:600;color:rgba(74,158,224,.7);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Genotype</div>
+                <div style="font-size:28px;font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--white);">
+                  {% if patient.genotype and patient.genotype != 'Unknown' %}{{ patient.genotype }}{% else %}<span style="font-size:16px;color:var(--slate-2);">—</span>{% endif %}
+                </div>
+              </div>
+            </div>
+
+            <!-- ── ALLERGIES ──────────────────────────────────────────────────── -->
+            <div style="margin-bottom:20px;">
+              <div style="font-size:11px;font-weight:600;color:var(--slate-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">⚠️ Allergies</div>
               <div class="tag-list">
                 {% for allergy in patient.allergies_list %}
                   <span class="tag tag-allergy">{{ allergy }}</span>
                 {% empty %}
-                  <span class="tag-none">No known allergies</span>
+                  <span class="tag-none">{% if latest_clearance %}No known allergies{% else %}Not yet submitted{% endif %}</span>
                 {% endfor %}
               </div>
             </div>
 
-            <!-- Chronic Conditions -->
-            <div style="margin-bottom: 20px;">
-              <div style="font-size: 11px; font-weight: 600; color: var(--slate-2); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px;">🔄 Chronic Conditions</div>
+            <!-- ── CHRONIC CONDITIONS ─────────────────────────────────────────── -->
+            <div style="margin-bottom:20px;">
+              <div style="font-size:11px;font-weight:600;color:var(--slate-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">🔄 Chronic Conditions</div>
               <div class="tag-list">
                 {% for condition in patient.conditions_list %}
                   <span class="tag tag-condition">{{ condition }}</span>
                 {% empty %}
-                  <span class="tag-none">No chronic conditions recorded</span>
+                  <span class="tag-none">{% if latest_clearance %}No chronic conditions recorded{% else %}Not yet submitted{% endif %}</span>
                 {% endfor %}
               </div>
             </div>
 
-            <!-- Other Medical Info -->
-            <div class="info-grid" style="border: 1px solid var(--border); border-radius: 11px; overflow: hidden;">
+            <!-- ── OTHER FIELDS ───────────────────────────────────────────────── -->
+            <div class="info-grid" style="border:1px solid var(--border);border-radius:11px;overflow:hidden;">
               <div class="info-item">
                 <div class="info-label">Disabilities</div>
                 <div class="info-value {% if not patient.disabilities %}muted{% endif %}">
@@ -442,9 +489,9 @@
                 </div>
               </div>
               <div class="info-item">
-                <div class="info-label">Current Medications</div>
-                <div class="info-value {% if not patient.current_medications %}muted{% endif %}">
-                  {{ patient.current_medications|default:"None"|linebreaksbr }}
+                <div class="info-label">Blood Pressure</div>
+                <div class="info-value {% if not patient.blood_pressure %}muted{% endif %}">
+                  {{ patient.blood_pressure|default:"Not recorded" }}
                 </div>
               </div>
               <div class="info-item">
@@ -460,6 +507,32 @@
                 </div>
               </div>
             </div>
+
+            <!-- ── CLEARANCE HISTORY ──────────────────────────────────────────── -->
+            {% if patient.clearance_submissions.exists %}
+            <div style="margin-top:20px;">
+              <div style="font-size:11px;font-weight:600;color:var(--slate-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">📋 Clearance History</div>
+              {% for sub in patient.clearance_submissions.all %}
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:9px;margin-bottom:6px;font-size:13px;">
+                <div>
+                  <span style="font-family:monospace;color:var(--gold-2);">{{ sub.submission_id }}</span>
+                  <span style="color:var(--slate);margin-left:10px;">{{ sub.session.display_title }}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span style="font-size:12px;color:var(--slate);">{{ sub.submitted_at|date:"d M Y" }}</span>
+                  {% if sub.status == 'Approved' %}
+                  <span style="padding:2px 9px;border-radius:100px;font-size:11px;font-weight:600;background:rgba(61,184,122,.1);color:#90deb5;border:1px solid rgba(61,184,122,.2);">✓ Approved</span>
+                  {% else %}
+                  <span style="padding:2px 9px;border-radius:100px;font-size:11px;font-weight:600;background:rgba(224,85,85,.1);color:#f0a0a0;border:1px solid rgba(224,85,85,.2);">✕ Rejected</span>
+                  {% endif %}
+                  <a href="{% url 'submission_detail' sub.pk %}" style="color:var(--slate);font-size:12px;text-decoration:none;">View →</a>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            {% endwith %}
           </div>
 
           <!-- TAB: CONTACTS -->
@@ -528,6 +601,7 @@
           </div>
           <div class="card-body">
             <div class="action-list">
+              {% if perms_map.patients.can_edit %}
               <a href="{% url 'patient_edit' patient.matric_no %}" class="btn-outline">
                 ✏ Edit Record
               </a>
@@ -541,6 +615,7 @@
                   ✅ Activate Record
                 </button>
               {% endif %}
+              {% endif %}
             </div>
           </div>
         </div>
@@ -551,28 +626,50 @@
             <div class="card-title">🩺 Medical Summary</div>
           </div>
           <div class="card-body">
+            {% with latest_clearance=patient.clearance_submissions.first %}
+            {% if not latest_clearance %}
+            <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:rgba(240,160,74,.05);border:1px solid rgba(240,160,74,.18);border-radius:8px;margin-bottom:12px;">
+              <span style="font-size:14px;">📋</span>
+              <span style="font-size:12px;color:#f8c87a;font-weight:500;">Not yet cleared</span>
+            </div>
+            {% elif latest_clearance.status == 'Approved' %}
+            <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:rgba(61,184,122,.05);border:1px solid rgba(61,184,122,.18);border-radius:8px;margin-bottom:12px;">
+              <span style="font-size:14px;">✅</span>
+              <span style="font-size:12px;color:#90deb5;font-weight:500;">Cleared — {{ latest_clearance.session.academic_session }}</span>
+            </div>
+            {% else %}
+            <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:rgba(224,85,85,.05);border:1px solid rgba(224,85,85,.18);border-radius:8px;margin-bottom:12px;">
+              <span style="font-size:14px;">⚠️</span>
+              <span style="font-size:12px;color:#f0a0a0;font-weight:500;">Clearance rejected</span>
+            </div>
+            {% endif %}
             <div style="display: flex; flex-direction: column; gap: 12px;">
               <div style="display: flex; align-items: center; justify-content: space-between;">
                 <span style="font-size: 13px; color: var(--slate);">Blood Group</span>
-                <span style="font-size: 14px; font-weight: 600; color: var(--white); font-family: monospace;">{{ patient.blood_group|default:"Unknown" }}</span>
+                <span style="font-size: 14px; font-weight: 600; color: var(--white); font-family: monospace;">
+                  {% if patient.blood_group and patient.blood_group != 'Unknown' %}{{ patient.blood_group }}{% else %}<span style="color:var(--slate-2);">—</span>{% endif %}
+                </span>
               </div>
               <div style="display: flex; align-items: center; justify-content: space-between;">
                 <span style="font-size: 13px; color: var(--slate);">Genotype</span>
-                <span style="font-size: 14px; font-weight: 600; color: var(--white); font-family: monospace;">{{ patient.genotype|default:"Unknown" }}</span>
+                <span style="font-size: 14px; font-weight: 600; color: var(--white); font-family: monospace;">
+                  {% if patient.genotype and patient.genotype != 'Unknown' %}{{ patient.genotype }}{% else %}<span style="color:var(--slate-2);">—</span>{% endif %}
+                </span>
               </div>
               <div style="display: flex; align-items: center; justify-content: space-between;">
                 <span style="font-size: 13px; color: var(--slate);">Allergies</span>
                 <span style="font-size: 13px; color: {% if patient.allergies_list %}#f0a0a0{% else %}var(--slate-2){% endif %};">
-                  {% if patient.allergies_list %}{{ patient.allergies_list|length }} known{% else %}None{% endif %}
+                  {% if patient.allergies_list %}{{ patient.allergies_list|length }} known{% elif latest_clearance %}None{% else %}—{% endif %}
                 </span>
               </div>
               <div style="display: flex; align-items: center; justify-content: space-between;">
                 <span style="font-size: 13px; color: var(--slate);">Conditions</span>
                 <span style="font-size: 13px; color: {% if patient.conditions_list %}#f5c87a{% else %}var(--slate-2){% endif %};">
-                  {% if patient.conditions_list %}{{ patient.conditions_list|length }} recorded{% else %}None{% endif %}
+                  {% if patient.conditions_list %}{{ patient.conditions_list|length }} recorded{% elif latest_clearance %}None{% else %}—{% endif %}
                 </span>
               </div>
             </div>
+            {% endwith %}
           </div>
         </div>
 

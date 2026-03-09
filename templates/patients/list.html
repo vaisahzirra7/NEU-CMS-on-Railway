@@ -163,25 +163,32 @@
   <nav class="sb-nav">
     <div class="sb-section">Main</div>
     <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    {% if perms_map.patients.can_view or perms_map.appointments.can_view or perms_map.consultations.can_view or perms_map.prescriptions.can_view or perms_map.laboratory.can_view or perms_map.wards.can_view %}
     <div class="sb-section">Clinical</div>
-    <a href="{% url 'patient_list' %}" class="sb-item active"><div class="sb-icon">🩺</div>Patient Records</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>
+    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item active"><div class="sb-icon">🩺</div>Patient Records</a>{% endif %}
+    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>{% endif %}
+    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>{% endif %}
+    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>{% endif %}
+    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>{% endif %}
+    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>{% endif %}
+    {% endif %}
+    {% if perms_map.inventory.can_view or perms_map.dispensing.can_view %}
     <div class="sb-section">Pharmacy</div>
-    <a href="#" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>
+    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>{% endif %}
+    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>{% endif %}
+    {% endif %}
+    {% if perms_map.clearance.can_view or perms_map.documents.can_view or perms_map.reports.can_view %}
     <div class="sb-section">Administration</div>
-    <a href="#" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>
+    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>{% endif %}
+    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>{% endif %}
+    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>{% endif %}
+    {% endif %}
+    {% if perms_map.users.can_view or perms_map.roles.can_view or perms_map.settings.can_view or user.is_superuser %}
     <div class="sb-section">System</div>
-    <a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>
-    <a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>
-    <a href="#" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🕐</div>Audit Trail</a>
+    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>{% endif %}
+    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>{% endif %}
+    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>{% endif %}
+    {% endif %}
   </nav>
   <div class="sb-footer">
     <div class="sb-user">
@@ -204,8 +211,8 @@
       <p>Registered patients on NEU Clinic Management System</p>
     </div>
     <div class="topbar-right">
-      <a href="{% url 'patient_import' %}" class="btn-secondary">📥 Import CSV</a>
-      <a href="{% url 'patient_create' %}" class="btn-primary">＋ Register Patient</a>
+      {% if perms_map.patients.can_create %}<a href="{% url 'patient_import' %}" class="btn-secondary">📥 Import CSV</a>{% endif %}
+      {% if perms_map.patients.can_create %}<a href="{% url 'patient_create' %}" class="btn-primary">＋ Register Patient</a>{% endif %}
     </div>
   </div>
 
@@ -391,8 +398,8 @@
         </div>
         {% if not q %}
         <div style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
-          <a href="{% url 'patient_create' %}" class="btn-primary">＋ Register Patient</a>
-          <a href="{% url 'patient_import' %}" class="btn-secondary">📥 Import CSV</a>
+          {% if perms_map.patients.can_create %}<a href="{% url 'patient_create' %}" class="btn-primary">＋ Register Patient</a>{% endif %}
+          {% if perms_map.patients.can_create %}<a href="{% url 'patient_import' %}" class="btn-secondary">📥 Import CSV</a>{% endif %}
         </div>
         {% endif %}
       </div>

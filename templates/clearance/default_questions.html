@@ -1,0 +1,311 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Default Questions — VanaraUniCare</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{--ink:#08131F;--panel:#0C1B2E;--panel-2:#0F2040;--surface:rgba(255,255,255,.03);--surface-2:rgba(255,255,255,.055);--border:rgba(255,255,255,.07);--border-2:rgba(255,255,255,.12);--gold:#C9A84C;--gold-2:#E2C47A;--slate:#6B84A3;--slate-2:#4A6380;--white:#FFF;--success:#3DB87A;--warning:#F0A04A;--danger:#E05555;--info:#4A9EE0;--sw:252px;}
+    html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--ink);color:var(--white);}
+    .sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sw);background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;}
+    .sb-logo{padding:22px 20px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);}
+    .sb-mark{width:38px;height:38px;background:linear-gradient(145deg,var(--gold),#a07828);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+    .sb-name{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;}.sb-sub{font-size:9.5px;color:var(--slate);text-transform:uppercase;letter-spacing:.1em;}
+    .sb-nav{flex:1;overflow-y:auto;padding:12px 10px;scrollbar-width:thin;}
+    .sb-section{font-size:9.5px;font-weight:600;color:var(--slate-2);text-transform:uppercase;letter-spacing:.12em;padding:14px 10px 6px;}
+    .sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;color:var(--slate);font-size:13.5px;text-decoration:none;transition:background .15s,color .15s;margin-bottom:1px;}
+    .sb-item:hover{background:var(--surface-2);color:var(--white);}.sb-item.active{background:rgba(201,168,76,.1);color:var(--gold-2);font-weight:500;}
+    .sb-icon{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+    .sb-footer{padding:12px 10px;border-top:1px solid var(--border);}
+    .sb-user{display:flex;align-items:center;gap:10px;padding:10px;border-radius:9px;background:var(--surface);}
+    .sb-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#a07828);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--ink);flex-shrink:0;}
+    .sb-uname{font-size:13px;font-weight:500;}.sb-urole{font-size:10.5px;color:var(--slate);}
+    .sb-logout{margin-left:auto;background:none;border:none;color:var(--slate-2);cursor:pointer;font-size:15px;text-decoration:none;}.sb-logout:hover{color:var(--danger);}
+    .main{margin-left:var(--sw);min-height:100vh;display:flex;flex-direction:column;}
+    .topbar{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;background:rgba(8,19,31,.9);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);}
+    .topbar-left h1{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;}.topbar-left p{font-size:12px;color:var(--slate);margin-top:1px;}
+    .topbar-right{display:flex;gap:10px;}
+    .content{padding:28px 32px;flex:1;}
+    .alert{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:13px 16px;border-radius:10px;font-size:13.5px;margin-bottom:14px;line-height:1.5;}
+    .alert-success{background:rgba(61,184,122,.08);border:1px solid rgba(61,184,122,.25);color:#90deb5;}
+    .alert-danger{background:rgba(224,85,85,.08);border:1px solid rgba(224,85,85,.25);color:#f0a0a0;}
+    .alert-close{background:none;border:none;color:inherit;cursor:pointer;font-size:18px;opacity:.6;}
+    .btn-primary{background:linear-gradient(135deg,var(--gold),#a07828);border:none;border-radius:9px;padding:9px 20px;font-family:'Outfit',sans-serif;font-size:13.5px;font-weight:600;color:var(--ink);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+    .btn-secondary{padding:9px 18px;background:var(--surface);border:1px solid var(--border);border-radius:9px;font-size:13.5px;color:var(--white);text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+    .btn-secondary:hover{background:var(--surface-2);}
+    .info-banner{background:rgba(74,158,224,.05);border:1px solid rgba(74,158,224,.15);border-radius:10px;padding:13px 18px;margin-bottom:22px;font-size:13.5px;color:#a0ccf0;line-height:1.6;}
+    .layout{display:grid;grid-template-columns:1fr 340px;gap:22px;align-items:start;}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin-bottom:16px;}
+    .card:last-child{margin-bottom:0;}
+    .card-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .card-title{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;}
+    .card-body{padding:20px;}
+    .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+    .field:last-child{margin-bottom:0;}
+    label{font-size:11px;font-weight:600;color:var(--slate-2);text-transform:uppercase;letter-spacing:.08em;}
+    input[type=text],select,textarea{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:9px;padding:10px 13px;font-family:'Outfit',sans-serif;font-size:13.5px;color:var(--white);outline:none;width:100%;}
+    input:focus,select:focus,textarea:focus{border-color:var(--gold);}
+    select option{background:var(--panel-2);}
+    textarea{resize:vertical;min-height:64px;}
+    .btn-submit{width:100%;padding:11px;background:linear-gradient(135deg,var(--gold),#a07828);border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;margin-top:6px;}
+    .hint{font-size:11.5px;color:var(--slate-2);margin-top:3px;}
+    .toggle-wrap{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+    .toggle-wrap input[type=checkbox]{width:16px;height:16px;accent-color:var(--gold);cursor:pointer;}
+    .toggle-label{font-size:13.5px;color:var(--white);text-transform:none!important;letter-spacing:0!important;}
+    /* Question list */
+    .q-list{display:flex;flex-direction:column;gap:10px;}
+    .q-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;gap:14px;align-items:flex-start;}
+    .q-order{width:28px;height:28px;border-radius:7px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gold-2);flex-shrink:0;margin-top:2px;}
+    .q-body{flex:1;}
+    .q-text{font-size:14px;font-weight:500;line-height:1.5;}
+    .q-meta{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;}
+    .q-tag{display:inline-flex;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:500;}
+    .q-tag-type{background:rgba(74,158,224,.1);color:#a0ccf0;}
+    .q-tag-required{background:rgba(224,85,85,.1);color:#f0a0a0;}
+    .q-tag-optional{background:rgba(107,132,163,.1);color:var(--slate);}
+    .q-tag-key{background:rgba(61,184,122,.1);color:#90deb5;}
+    .q-choices{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;}
+    .q-choice{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;padding:3px 9px;font-size:12px;color:var(--slate);}
+    .q-actions{display:flex;gap:6px;flex-shrink:0;}
+    .btn-edit{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:7px;padding:6px 10px;font-size:12px;color:var(--gold-2);cursor:pointer;font-family:'Outfit',sans-serif;}
+    .btn-edit:hover{background:rgba(201,168,76,.14);}
+    .btn-del{background:rgba(224,85,85,.06);border:1px solid rgba(224,85,85,.15);border-radius:7px;padding:6px 10px;font-size:12px;color:#f0a0a0;cursor:pointer;font-family:'Outfit',sans-serif;}
+    .btn-del:hover{background:rgba(224,85,85,.12);}
+    .empty-q{padding:30px;text-align:center;color:var(--slate);font-size:13.5px;}
+    .choices-hidden{display:none;}
+    .choices-visible{display:block;}
+    /* Edit modal */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;align-items:center;justify-content:center;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:var(--panel-2);border:1px solid var(--border-2);border-radius:14px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;padding:24px 26px;}
+    .modal-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;}
+    .modal-close{background:none;border:none;color:var(--slate);font-size:20px;cursor:pointer;}
+    .modal-close:hover{color:var(--white);}
+    .modal .field{margin-bottom:12px;}
+    .modal input[type=text],.modal select,.modal textarea{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-family:'Outfit',sans-serif;font-size:13.5px;color:var(--white);outline:none;width:100%;}
+    .modal input:focus,.modal select:focus,.modal textarea:focus{border-color:var(--gold);}
+    .modal select option{background:var(--panel-2);}
+    .modal textarea{resize:vertical;min-height:64px;}
+    .modal-footer{display:flex;gap:10px;margin-top:18px;}
+    .btn-modal-save{flex:1;padding:11px;background:linear-gradient(135deg,var(--gold),#a07828);border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;}
+    .btn-modal-cancel{padding:11px 18px;background:var(--surface);border:1px solid var(--border);border-radius:9px;font-size:13.5px;color:var(--white);cursor:pointer;font-family:'Outfit',sans-serif;}
+    .modal-choices-wrap{display:none;}
+    .modal-choices-wrap.visible{display:block;}
+    .modal-toggle{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+    .modal-toggle input[type=checkbox]{width:16px;height:16px;accent-color:var(--gold);cursor:pointer;}
+  </style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="sb-logo"><div class="sb-mark">⚕</div><div><div class="sb-name">VanaraUniCare</div><div class="sb-sub">NEU Health Center</div></div></div>
+  <nav class="sb-nav">
+    <div class="sb-section">Main</div>
+    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    {% if perms_map.patients.can_view or perms_map.appointments.can_view or perms_map.consultations.can_view or perms_map.prescriptions.can_view or perms_map.laboratory.can_view or perms_map.wards.can_view %}
+    
+    <div class="sb-section">Clinical</div>
+    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon">🩺</div>Patient Records</a>{% endif %}
+    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>{% endif %}
+    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>{% endif %}
+    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>{% endif %}
+    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>{% endif %}
+    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>{% endif %}
+    {% endif %}
+    {% if perms_map.inventory.can_view or perms_map.dispensing.can_view %}
+    
+    <div class="sb-section">Pharmacy</div>
+    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>{% endif %}
+    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>{% endif %}
+    {% endif %}
+    {% if perms_map.clearance.can_view or perms_map.documents.can_view or perms_map.reports.can_view %}
+    
+    <div class="sb-section">Administration</div>
+    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item active"><div class="sb-icon">🎓</div>Medical Clearance</a>{% endif %}
+    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>{% endif %}
+    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>{% endif %}
+    {% endif %}
+    {% if perms_map.users.can_view or perms_map.roles.can_view or perms_map.settings.can_view or user.is_superuser %}
+    
+    <div class="sb-section">System</div>
+    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>{% endif %}
+    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>{% endif %}
+    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>{% endif %}
+    {% endif %}
+  </nav>
+
+  <div class="sb-footer"><div class="sb-user"><div class="sb-avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div><div><div class="sb-uname">{{ user.get_short_name }}</div><div class="sb-urole">{{ user.role|default:"Staff" }}</div></div><a href="{% url 'logout' %}" class="sb-logout">⏻</a></div></div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left"><h1>Default Questions</h1><p>Master template — preloaded into every new clearance session</p></div>
+    <div class="topbar-right"><a href="{% url 'clearance_dashboard' %}" class="btn-secondary">← Clearance</a></div>
+  </div>
+  <div class="content">
+    {% for msg in messages %}<div class="alert alert-{{ msg.tags }}"><span>{{ msg|safe }}</span><button class="alert-close" onclick="this.parentElement.remove()">×</button></div>{% endfor %}
+
+    <div class="info-banner">
+      ℹ These are the questions that get copied into a session when you click <strong>⚡ Preload Default Medical Questions</strong>. Edit them here once and all future sessions will use the updated version.
+    </div>
+
+    <div class="layout">
+      <!-- Question list -->
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📝 Default Questions</div>
+            <span style="font-size:13px;color:var(--slate);">{{ questions|length }} question{{ questions|length|pluralize }}</span>
+          </div>
+          <div class="card-body">
+            {% if questions %}
+            <div class="q-list">
+              {% for q in questions %}
+              <div class="q-item">
+                <div class="q-order">{{ forloop.counter }}</div>
+                <div class="q-body">
+                  <div class="q-text">{{ q.question_text }}</div>
+                  <div class="q-meta">
+                    <span class="q-tag q-tag-type">{{ q.get_question_type_display }}</span>
+                    {% if q.is_required %}<span class="q-tag q-tag-required">Required</span>
+                    {% else %}<span class="q-tag q-tag-optional">Optional</span>{% endif %}
+                    {% if q.field_key %}<span class="q-tag q-tag-key">→ {{ q.get_field_key_display }}</span>{% endif %}
+                  </div>
+                  {% if q.choices %}
+                  <div class="q-choices">{% for c in q.choices %}<span class="q-choice">{{ c }}</span>{% endfor %}</div>
+                  {% endif %}
+                </div>
+                <div class="q-actions">
+                  <button type="button" class="btn-edit"
+                    data-pk="{{ q.pk }}"
+                    data-text="{{ q.question_text|escapejs }}"
+                    data-type="{{ q.question_type }}"
+                    data-required="{{ q.is_required|yesno:'true,false' }}"
+                    data-key="{{ q.field_key }}"
+                    data-choices="{{ q.choices_json|escapejs }}"
+                    onclick="openEdit(this)">✏ Edit</button>
+                  <form method="POST" onsubmit="return confirm('Remove this default question?')" style="margin:0;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete"/>
+                    <input type="hidden" name="question_id" value="{{ q.pk }}"/>
+                    <button type="submit" class="btn-del">🗑</button>
+                  </form>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-q">No default questions yet. Add one on the right.</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Add question -->
+      <div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">➕ Add Default Question</div></div>
+          <div class="card-body">
+            <form method="POST">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="add"/>
+              <div class="field">
+                <label>Question Text *</label>
+                <textarea name="question_text" placeholder="e.g. What is your blood group?" required></textarea>
+              </div>
+              <div class="field">
+                <label>Question Type</label>
+                <select name="question_type" id="qType" onchange="toggleChoices()">
+                  {% for val, label in type_choices %}<option value="{{ val }}">{{ label }}</option>{% endfor %}
+                </select>
+              </div>
+              <div class="field choices-hidden" id="choicesField">
+                <label>Options <span style="font-weight:400;color:var(--slate-2);">(one per line)</span></label>
+                <textarea name="choices" placeholder="A+&#10;A-&#10;B+&#10;B-" style="min-height:100px;"></textarea>
+              </div>
+              <div class="field">
+                <label>Syncs To Patient Field</label>
+                <select name="field_key">
+                  {% for val, label in field_key_choices %}<option value="{{ val }}">{{ label }}</option>{% endfor %}
+                </select>
+              </div>
+              <div class="toggle-wrap">
+                <input type="checkbox" name="is_required" id="isReq"/>
+                <label for="isReq" class="toggle-label">Required question</label>
+              </div>
+              <button type="submit" class="btn-submit">Add to Defaults</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-title">✏ Edit Default Question <button class="modal-close" onclick="closeEdit()">×</button></div>
+    <form method="POST">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="edit"/>
+      <input type="hidden" name="question_id" id="editQId"/>
+      <div class="field">
+        <label>Question Text *</label>
+        <textarea name="question_text" id="editQText" required></textarea>
+      </div>
+      <div class="field">
+        <label>Question Type</label>
+        <select name="question_type" id="editQType" onchange="toggleEditChoices()">
+          {% for val, label in type_choices %}<option value="{{ val }}">{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="field modal-choices-wrap" id="editChoicesWrap">
+        <label>Options <span style="font-weight:400;color:var(--slate-2);">(one per line)</span></label>
+        <textarea name="choices" id="editChoices" style="min-height:100px;"></textarea>
+      </div>
+      <div class="field">
+        <label>Syncs To Patient Field</label>
+        <select name="field_key" id="editFieldKey">
+          {% for val, label in field_key_choices %}<option value="{{ val }}">{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="modal-toggle">
+        <input type="checkbox" name="is_required" id="editRequired"/>
+        <label for="editRequired" style="font-size:13.5px;color:var(--white);">Required question</label>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-modal-cancel" onclick="closeEdit()">Cancel</button>
+        <button type="submit" class="btn-modal-save">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function toggleChoices() {
+    const t = document.getElementById('qType').value;
+    document.getElementById('choicesField').className = (t==='single'||t==='multiple') ? 'field choices-visible' : 'field choices-hidden';
+  }
+  function openEdit(btn) {
+    document.getElementById('editQId').value      = btn.dataset.pk;
+    document.getElementById('editQText').value    = btn.dataset.text;
+    document.getElementById('editQType').value    = btn.dataset.type;
+    document.getElementById('editRequired').checked = btn.dataset.required === 'true';
+    document.getElementById('editFieldKey').value = btn.dataset.key;
+    let choices = [];
+    try { choices = JSON.parse(btn.dataset.choices); } catch(e) {}
+    document.getElementById('editChoices').value  = choices.join('\n');
+    toggleEditChoices();
+    document.getElementById('editModal').classList.add('open');
+  }
+  function closeEdit() { document.getElementById('editModal').classList.remove('open'); }
+  function toggleEditChoices() {
+    const t = document.getElementById('editQType').value;
+    document.getElementById('editChoicesWrap').className = (t==='single'||t==='multiple') ? 'field modal-choices-wrap visible' : 'field modal-choices-wrap';
+  }
+  document.getElementById('editModal').addEventListener('click', function(e) { if(e.target===this) closeEdit(); });
+</script>
+</body>
+</html>

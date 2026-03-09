@@ -27,6 +27,15 @@ urlpatterns = [
     path('', include('accounts.urls_settings')),
     path('', include('appointments.urls_appointments')),
     path('', include('consultations.urls_consultations')),
+    path('', include('inventory.urls_inventory')),
+    path('', include('prescriptions.urls_prescriptions')),
+    path('', include('dispensing.urls_dispensing')),
+    path('', include('wards.urls_wards')),
+    path('', include('laboratory.urls_lab')),
+    path('', include('clearance.urls_clearance')),
+    path('', include('documents.urls_documents')),
+    path('', include('reports.urls_reports')),
+
 ]
 
 if settings.DEBUG:

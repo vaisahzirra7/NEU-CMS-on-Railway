@@ -19,9 +19,13 @@ def get_user_model():
 
 
 def get_doctors():
+    # Doctors, Medical Officers, Admins and Super Admins can be attending doctors
     return get_user_model().objects.filter(
         is_active=True,
-        role__name__in=['Doctor', 'Medical Officer', 'doctor', 'medical officer']
+        role__name__in=[
+            'Doctor', 'Medical Officer', 'doctor', 'medical officer',
+            'Admin', 'Super Admin', 'admin', 'super admin',
+        ]
     ).order_by('first_name')
 
 

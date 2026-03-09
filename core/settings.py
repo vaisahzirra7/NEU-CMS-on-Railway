@@ -35,9 +35,12 @@ LOCAL_APPS = [
     'laboratory',
     'documents',
     'consultations',
+    'clearance',
+    'reports',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
+
 
 
 # =============================================================================
@@ -70,6 +73,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'accounts.context_processors.user_permissions',  # Custom context processor for permissions
             ],
         },
     },
@@ -169,7 +173,10 @@ MESSAGE_TAGS = {
 # =============================================================================
 # EMAIL (configure properly when ready to send emails)
 # =============================================================================
-EMAIL_BACKEND       = 'django.core.mail.backends.console.EmailBackend'  # Prints to console in dev
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # Use SMTP backend for production
+#EMAIL_BACKEND       = 'django.core.mail.backends.console.EmailBackend'  # Prints to console in dev
+
 EMAIL_HOST          = config('SMTP_HOST',     default='')
 EMAIL_PORT          = config('SMTP_PORT',     default=587,   cast=int)
 EMAIL_USE_TLS       = True

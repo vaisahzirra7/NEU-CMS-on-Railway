@@ -2,10 +2,13 @@ import secrets
 import string
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from accounts.permissions import permission_required
+
 from django.contrib import messages
 from django.db.models import Q
 from django.views.decorators.http import require_POST
 from django.utils import timezone
+from django.utils.text import slugify
 
 from accounts.models import User, Role, SystemModule, RolePermission, AuditTrail
 
@@ -33,22 +36,18 @@ def log_action(user, action, module, record_id='', description='',
     )
 
 
+# Roles that can NEVER be deleted or have their permissions modified
+PROTECTED_ROLES = {'super admin', 'superadmin', 'admin'}
+
+def is_protected_role(role):
+    return role.name.lower().strip() in PROTECTED_ROLES
+
 
 # Temporary password generation
+TEMP_PASSWORD = 'Neu@12345'
 
-def generate_temp_password(length=12):
-    """Generate a secure random temporary password."""
-    alphabet = string.ascii_letters + string.digits + '!@#$%'
-    # Ensure at least one of each character class
-    pw = [
-        secrets.choice(string.ascii_uppercase),
-        secrets.choice(string.ascii_lowercase),
-        secrets.choice(string.digits),
-        secrets.choice('!@#$%'),
-    ]
-    pw += [secrets.choice(alphabet) for _ in range(length - 4)]
-    secrets.SystemRandom().shuffle(pw)
-    return ''.join(pw)
+def generate_temp_password():
+    return TEMP_PASSWORD
 
 
 
@@ -57,6 +56,7 @@ def generate_temp_password(length=12):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @login_required
+@permission_required('users', 'view')
 def user_list(request):
     qs = User.objects.select_related('role').all().order_by('last_name', 'first_name')
 
@@ -103,6 +103,7 @@ def user_list(request):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @login_required
+@permission_required('users', 'create')
 def user_create(request):
     roles = Role.objects.filter(is_active=True).order_by('name')
 
@@ -110,13 +111,12 @@ def user_create(request):
         p      = request.POST
         errors = []
 
-        # Validation
         if not p.get('first_name', '').strip():
-            errors.append('First name is required!.')
+            errors.append('First name is required.')
         if not p.get('last_name', '').strip():
-            errors.append('Last name is required!.')
+            errors.append('Last name is required.')
         if not p.get('email', '').strip():
-            errors.append('Email address is required!.')
+            errors.append('Email address is required.')
         elif User.objects.filter(email__iexact=p['email'].strip()).exists():
             errors.append('A user with this email address already exists.')
         if p.get('staff_id', '').strip():
@@ -130,7 +130,6 @@ def user_create(request):
                 'roles': roles, 'form': p,
             })
 
-        # Create
         temp_pw = generate_temp_password()
         role    = Role.objects.filter(id=p.get('role')).first() if p.get('role') else None
 
@@ -185,6 +184,7 @@ def user_create(request):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @login_required
+@permission_required('users', 'view')
 def user_detail(request, pk):
     u          = get_object_or_404(
                     User.objects.select_related('role', 'created_by'),
@@ -199,12 +199,12 @@ def user_detail(request, pk):
 
 
 
-
 # ══════════════════════════════════════════════════════════════════════════════
 # EDIT USER
 # ══════════════════════════════════════════════════════════════════════════════
 
 @login_required
+@permission_required('users', 'edit')
 def user_edit(request, pk):
     u     = get_object_or_404(User, pk=pk)
     roles = Role.objects.filter(is_active=True).order_by('name')
@@ -212,7 +212,6 @@ def user_edit(request, pk):
     if request.method == 'POST':
         p = request.POST
 
-        # Snapshot old values for audit
         old_vals = {
             'first_name': u.first_name,
             'last_name':  u.last_name,
@@ -270,6 +269,7 @@ def user_edit(request, pk):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @login_required
+@permission_required('users', 'edit')
 @require_POST
 def user_toggle_status(request, pk):
     u = get_object_or_404(User, pk=pk)
@@ -299,6 +299,7 @@ def user_toggle_status(request, pk):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @login_required
+@permission_required('users', 'edit')
 @require_POST
 def user_reset_password(request, pk):
     u       = get_object_or_404(User, pk=pk)
@@ -329,9 +330,100 @@ def user_reset_password(request, pk):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @login_required
+@permission_required('roles', 'view')
 def role_list(request):
     roles = Role.objects.prefetch_related('users', 'permissions').all().order_by('name')
     return render(request, 'accounts/users/roles.html', {'roles': roles})
+
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CREATE ROLE
+# ══════════════════════════════════════════════════════════════════════════════
+
+@login_required
+@permission_required('roles', 'create')
+@require_POST
+def role_create(request):
+    name        = request.POST.get('name', '').strip()
+    description = request.POST.get('description', '').strip()
+
+    if not name:
+        messages.error(request, 'Role name is required.')
+        return redirect('role_list')
+
+    if Role.objects.filter(name__iexact=name).exists():
+        messages.error(request, f'A role named "<strong>{name}</strong>" already exists.')
+        return redirect('role_list')
+
+    # Generate a unique slug
+    base_slug = slugify(name)
+    slug      = base_slug
+    counter   = 1
+    while Role.objects.filter(slug=slug).exists():
+        slug = f'{base_slug}-{counter}'
+        counter += 1
+
+    role = Role.objects.create(
+        name           = name,
+        slug           = slug,
+        description    = description,
+        is_system_role = False,
+        is_active      = True,
+        created_by     = request.user,
+    )
+
+    log_action(
+        request.user, 'CREATE', 'role-management',
+        record_id   = role.id,
+        description = f'Created role: {role.name}',
+        request     = request,
+    )
+
+    messages.success(request, f'✅ Role "<strong>{role.name}</strong>" created. You can now configure its permissions.')
+    return redirect('role_permissions', pk=role.pk)
+
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# DELETE ROLE
+# ══════════════════════════════════════════════════════════════════════════════
+
+@login_required
+@permission_required('roles', 'delete')
+@require_POST
+def role_delete(request, pk):
+    role = get_object_or_404(Role, pk=pk)
+
+    if is_protected_role(role):
+        messages.error(request, f'⛔ The <strong>{role.name}</strong> role is protected and cannot be deleted.')
+        return redirect('role_list')
+
+    if role.is_system_role:
+        messages.error(request, f'⛔ System roles cannot be deleted.')
+        return redirect('role_list')
+
+    if role.users.exists():
+        count = role.users.count()
+        messages.error(
+            request,
+            f'⛔ Cannot delete "<strong>{role.name}</strong>" — '
+            f'{count} staff member{"s are" if count > 1 else " is"} assigned to this role. '
+            f'Reassign them first.'
+        )
+        return redirect('role_list')
+
+    role_name = role.name
+    log_action(
+        request.user, 'DELETE', 'role-management',
+        record_id   = role.id,
+        description = f'Deleted role: {role_name}',
+        request     = request,
+    )
+    role.delete()
+
+    messages.success(request, f'✅ Role "<strong>{role_name}</strong>" has been deleted.')
+    return redirect('role_list')
 
 
 
@@ -340,14 +432,34 @@ def role_list(request):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @login_required
+@permission_required('roles', 'view')
 def role_permissions(request, pk):
     role    = get_object_or_404(Role, pk=pk)
     modules = SystemModule.objects.filter(is_active=True).order_by('sort_order', 'name')
 
     # Build lookup: module_id → RolePermission object
-    perms = {p.module_id: p for p in role.permissions.all()}
+    perms_qs = {p.module_id: p for p in role.permissions.all()}
+
+    # Build a flat list of (module, perm_or_None) so template needs no custom filter
+    module_perms = []
+    for module in modules:
+        p = perms_qs.get(module.id)
+        module_perms.append({
+            'module':     module,
+            'can_view':   p.can_view   if p else False,
+            'can_create': p.can_create if p else False,
+            'can_edit':   p.can_edit   if p else False,
+            'can_delete': p.can_delete if p else False,
+            'can_export': p.can_export if p else False,
+        })
+
+    protected = is_protected_role(role)
 
     if request.method == 'POST':
+        if protected:
+            messages.error(request, f'⛔ Permissions for <strong>{role.name}</strong> are protected and cannot be modified.')
+            return redirect('role_permissions', pk=pk)
+
         for module in modules:
             prefix  = f'mod_{module.id}_'
             perm, _ = RolePermission.objects.get_or_create(role=role, module=module)
@@ -369,7 +481,7 @@ def role_permissions(request, pk):
         return redirect('role_permissions', pk=pk)
 
     return render(request, 'accounts/users/role_permissions.html', {
-        'role':    role,
-        'modules': modules,
-        'perms':   perms,
+        'role':         role,
+        'module_perms': module_perms,
+        'protected':    protected,
     })

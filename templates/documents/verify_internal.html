@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Document Verification — {{ doc.doc_id }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{--ink:#08131F;--panel:#0C1B2E;--gold:#C9A84C;--gold-2:#E2C47A;--slate:#6B84A3;--border:rgba(255,255,255,.07);--white:#FFF;--success:#3DB87A;--danger:#E05555;--warning:#F0A04A;}
+    body{font-family:'Outfit',sans-serif;background:var(--ink);color:var(--white);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+    .box{background:var(--panel);border:1px solid var(--border);border-radius:18px;width:100%;max-width:520px;overflow:hidden;}
+    .box-top{padding:28px 32px 22px;border-bottom:1px solid var(--border);text-align:center;}
+    .verify-icon{font-size:44px;margin-bottom:12px;}
+    .verify-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;margin-bottom:4px;}
+    .verify-sub{font-size:13px;color:var(--slate);}
+    .status-banner{padding:16px 32px;display:flex;align-items:center;gap:14px;}
+    .sb-valid{background:rgba(61,184,122,.07);border-bottom:1px solid rgba(61,184,122,.15);}
+    .sb-revoked{background:rgba(224,85,85,.07);border-bottom:1px solid rgba(224,85,85,.15);}
+    .sb-draft{background:rgba(240,160,74,.07);border-bottom:1px solid rgba(240,160,74,.15);}
+    .status-icon{font-size:28px;}
+    .status-text{font-size:15px;font-weight:700;}
+    .sb-valid .status-text{color:#90deb5;}
+    .sb-revoked .status-text{color:#f0a0a0;}
+    .sb-draft .status-text{color:#f8c87a;}
+    .status-sub{font-size:12.5px;margin-top:2px;}
+    .sb-valid .status-sub{color:#5ab890;}
+    .sb-revoked .status-sub{color:#c08080;}
+    .sb-draft .status-sub{color:#c8a050;}
+    .box-body{padding:24px 32px;}
+    .row{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);gap:16px;}
+    .row:last-child{border-bottom:none;}
+    .row-lbl{font-size:11px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:.08em;}
+    .row-val{font-size:13.5px;font-weight:600;color:var(--white);text-align:right;}
+    .row-val.mono{font-family:monospace;}
+    .box-foot{padding:18px 32px;border-top:1px solid var(--border);text-align:center;}
+    .btn-view{display:inline-flex;align-items:center;gap:7px;padding:10px 24px;background:linear-gradient(135deg,var(--gold),#a07828);border-radius:9px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;color:var(--ink);text-decoration:none;}
+  </style>
+</head>
+<body>
+<div class="box">
+  <div class="box-top">
+    <div class="verify-icon">🔍</div>
+    <div class="verify-title">Document Verification</div>
+    <div class="verify-sub">North-Eastern University Health Center</div>
+  </div>
+
+  <div class="status-banner {% if doc.is_issued %}sb-valid{% elif doc.status == 'revoked' %}sb-revoked{% else %}sb-draft{% endif %}">
+    <div class="status-icon">{% if doc.is_issued %}✅{% elif doc.status == 'revoked' %}🚫{% else %}⚠️{% endif %}</div>
+    <div>
+      <div class="status-text">
+        {% if doc.is_issued %}Document Valid &amp; Officially Issued
+        {% elif doc.status == 'revoked' %}Document Revoked — No Longer Valid
+        {% else %}Draft — Not Yet Officially Issued{% endif %}
+      </div>
+      <div class="status-sub">
+        {% if doc.is_issued %}This document is authentic and was issued by NEU Health Center.
+        {% elif doc.status == 'revoked' %}This document has been recalled. Do not accept.
+        {% else %}This document has not been officially issued yet.{% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="box-body">
+    <div class="row"><span class="row-lbl">Document ID</span><span class="row-val mono">{{ doc.doc_id }}</span></div>
+    <div class="row"><span class="row-lbl">Type</span><span class="row-val">{{ doc.type_icon }} {{ doc.get_doc_type_display }}</span></div>
+    <div class="row"><span class="row-lbl">Patient Name</span><span class="row-val">{{ doc.patient.get_full_name }}</span></div>
+    <div class="row"><span class="row-lbl">Matric Number</span><span class="row-val mono">{{ doc.patient.matric_no }}</span></div>
+    {% if doc.patient.department %}<div class="row"><span class="row-lbl">Department</span><span class="row-val">{{ doc.patient.department }}</span></div>{% endif %}
+    <div class="row"><span class="row-lbl">Date Issued</span><span class="row-val">{{ doc.date_issued|date:"d F Y" }}</span></div>
+    <div class="row"><span class="row-lbl">Issued By</span><span class="row-val">{{ doc.issued_by.get_full_name }}</span></div>
+    <div class="row"><span class="row-lbl">Verify Code</span><span class="row-val mono">{{ doc.verification_code }}</span></div>
+  </div>
+
+  <div class="box-foot">
+    <a href="{% url 'document_detail' doc.pk %}" class="btn-view">View Full Record →</a>
+  </div>
+</div>
+</body>
+</html>

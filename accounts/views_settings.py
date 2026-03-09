@@ -1,31 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from accounts.permissions import permission_required
+
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 
 from patients.models import Faculty, Department, Programme
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# ACCESS CONTROL
-# ══════════════════════════════════════════════════════════════════════════════
-
-def admin_required(view_func):
-    """Allow only Super Admin and Admin roles."""
-    def wrapper(request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return redirect('login')
-        # role is a ForeignKey to Role model — get the name string from it
-        role_obj  = getattr(request.user, 'role', None)
-        role_name = ''
-        if role_obj is not None:
-            role_name = str(getattr(role_obj, 'name', role_obj)).lower()
-        if role_name not in ('super admin', 'admin', 'superadmin'):
-            messages.error(request, '⛔ You do not have permission to access System Settings.')
-            return redirect('dashboard')
-        return view_func(request, *args, **kwargs)
-    wrapper.__name__ = view_func.__name__
-    return wrapper
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -33,7 +15,7 @@ def admin_required(view_func):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @login_required
-@admin_required
+@permission_required('settings', 'view')
 def settings_dashboard(request):
     context = {
         'faculty_ct':    Faculty.objects.count(),
@@ -51,14 +33,14 @@ def settings_dashboard(request):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @login_required
-@admin_required
+@permission_required('settings', 'view')
 def faculty_list(request):
     faculties = Faculty.objects.all().order_by('name')
     return render(request, 'settings/faculties.html', {'faculties': faculties})
 
 
 @login_required
-@admin_required
+@permission_required('settings', 'edit')
 def faculty_create(request):
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
@@ -80,7 +62,7 @@ def faculty_create(request):
 
 
 @login_required
-@admin_required
+@permission_required('settings', 'edit')
 def faculty_edit(request, pk):
     faculty = get_object_or_404(Faculty, pk=pk)
 
@@ -106,7 +88,7 @@ def faculty_edit(request, pk):
 
 
 @login_required
-@admin_required
+@permission_required('settings', 'edit')
 @require_POST
 def faculty_toggle(request, pk):
     faculty = get_object_or_404(Faculty, pk=pk)
@@ -122,7 +104,7 @@ def faculty_toggle(request, pk):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @login_required
-@admin_required
+@permission_required('settings', 'view')
 def department_list(request):
     departments = Department.objects.select_related('faculty').order_by('faculty__name', 'name')
     faculties   = Faculty.objects.filter(is_active=True).order_by('name')
@@ -133,7 +115,7 @@ def department_list(request):
 
 
 @login_required
-@admin_required
+@permission_required('settings', 'edit')
 def department_create(request):
     if request.method == 'POST':
         name       = request.POST.get('name', '').strip()
@@ -158,7 +140,7 @@ def department_create(request):
 
 
 @login_required
-@admin_required
+@permission_required('settings', 'edit')
 def department_edit(request, pk):
     dept = get_object_or_404(Department, pk=pk)
 
@@ -188,7 +170,7 @@ def department_edit(request, pk):
 
 
 @login_required
-@admin_required
+@permission_required('settings', 'edit')
 @require_POST
 def department_toggle(request, pk):
     dept = get_object_or_404(Department, pk=pk)
@@ -204,7 +186,7 @@ def department_toggle(request, pk):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @login_required
-@admin_required
+@permission_required('settings', 'view')
 def programme_list(request):
     programmes = Programme.objects.select_related(
                      'faculty', 'department'
@@ -219,7 +201,7 @@ def programme_list(request):
 
 
 @login_required
-@admin_required
+@permission_required('settings', 'edit')
 def programme_create(request):
     if request.method == 'POST':
         name       = request.POST.get('name', '').strip()
@@ -254,7 +236,7 @@ def programme_create(request):
 
 
 @login_required
-@admin_required
+@permission_required('settings', 'edit')
 def programme_edit(request, pk):
     prog = get_object_or_404(Programme, pk=pk)
 
@@ -289,7 +271,7 @@ def programme_edit(request, pk):
 
 
 @login_required
-@admin_required
+@permission_required('settings', 'edit')
 @require_POST
 def programme_toggle(request, pk):
     prog = get_object_or_404(Programme, pk=pk)

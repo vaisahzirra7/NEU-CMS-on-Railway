@@ -8,6 +8,8 @@ from django.views.decorators.http import require_POST
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 
+from accounts.permissions import permission_required
+
 from .models import (
     Patient, Faculty, Department, Programme,
     GENDER_CHOICES, MARITAL_CHOICES, LEVEL_CHOICES,
@@ -61,6 +63,7 @@ def form_choices():
 # ══════════════════════════════════════════════════════════════════════════════
 
 @login_required
+@permission_required('patients', 'view')
 def patient_list(request):
     qs = Patient.objects.select_related(
              'faculty', 'department', 'programme'
@@ -123,6 +126,7 @@ def patient_list(request):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @login_required
+@permission_required('patients', 'create')
 def patient_create(request):
     ctx = form_choices()
 
@@ -219,6 +223,7 @@ def patient_create(request):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @login_required
+@permission_required('patients', 'view')
 def patient_detail(request, matric_no):
     patient = get_object_or_404(
                   Patient.objects.select_related(
@@ -234,6 +239,7 @@ def patient_detail(request, matric_no):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @login_required
+@permission_required('patients', 'edit')
 def patient_edit(request, matric_no):
     patient = get_object_or_404(Patient, matric_no=matric_no)
     ctx     = form_choices()
@@ -305,6 +311,7 @@ def patient_edit(request, matric_no):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @login_required
+@permission_required('patients', 'edit')
 @require_POST
 def patient_toggle_status(request, matric_no):
     patient           = get_object_or_404(Patient, matric_no=matric_no)
@@ -312,6 +319,7 @@ def patient_toggle_status(request, matric_no):
     patient.save(update_fields=['is_active'])
 
     action = 'activated' if patient.is_active else 'deactivated'
+
     log_patient_action(
         request.user, 'UPDATE', patient,
         description = f'Patient record {action}: {patient.get_full_name()}',
@@ -347,6 +355,7 @@ def faculty_programmes(request, faculty_id):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @login_required
+@permission_required('patients', 'create')
 def patient_import(request):
     if request.method == 'POST':
         csv_file = request.FILES.get('csv_file')
@@ -393,7 +402,6 @@ def patient_import(request):
                 skipped += 1
                 continue
 
-            # Resolve Faculty
             faculty = None
             fac_name = row.get('faculty', '').strip()
             if fac_name:
@@ -401,7 +409,6 @@ def patient_import(request):
                     name=fac_name, defaults={'is_active': True}
                 )
 
-            # Resolve Department
             department = None
             dep_name = row.get('department', '').strip()
             if dep_name and faculty:
@@ -410,7 +417,6 @@ def patient_import(request):
                     defaults={'is_active': True}
                 )
 
-            # Resolve Programme
             programme = None
             prog_name = row.get('programme', '').strip()
             if prog_name and faculty:
@@ -475,6 +481,7 @@ def patient_import(request):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @login_required
+@permission_required('patients', 'export')
 def download_csv_template(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="patient_import_template.csv"'

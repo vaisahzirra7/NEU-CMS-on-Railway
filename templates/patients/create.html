@@ -150,25 +150,32 @@
   <nav class="sb-nav">
     <div class="sb-section">Main</div>
     <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    {% if perms_map.patients.can_view or perms_map.appointments.can_view or perms_map.consultations.can_view or perms_map.prescriptions.can_view or perms_map.laboratory.can_view or perms_map.wards.can_view %}
     <div class="sb-section">Clinical</div>
-    <a href="{% url 'patient_list' %}" class="sb-item active"><div class="sb-icon">🩺</div>Patient Records</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>
+    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item active"><div class="sb-icon">🩺</div>Patient Records</a>{% endif %}
+    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>{% endif %}
+    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>{% endif %}
+    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>{% endif %}
+    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>{% endif %}
+    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>{% endif %}
+    {% endif %}
+    {% if perms_map.inventory.can_view or perms_map.dispensing.can_view %}
     <div class="sb-section">Pharmacy</div>
-    <a href="#" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>
+    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>{% endif %}
+    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>{% endif %}
+    {% endif %}
+    {% if perms_map.clearance.can_view or perms_map.documents.can_view or perms_map.reports.can_view %}
     <div class="sb-section">Administration</div>
-    <a href="#" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>
+    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>{% endif %}
+    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>{% endif %}
+    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>{% endif %}
+    {% endif %}
+    {% if perms_map.users.can_view or perms_map.roles.can_view or perms_map.settings.can_view or user.is_superuser %}
     <div class="sb-section">System</div>
-    <a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>
-    <a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>
-    <a href="#" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🕐</div>Audit Trail</a>
+    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>{% endif %}
+    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>{% endif %}
+    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>{% endif %}
+    {% endif %}
   </nav>
   <div class="sb-footer">
     <div class="sb-user">
@@ -218,13 +225,10 @@
         <span class="step-num">2</span> Academic
       </button>
       <button type="button" class="step-btn" onclick="goTo(2)" id="step2">
-        <span class="step-num">3</span> Medical
+        <span class="step-num">3</span> Emergency & NOK
       </button>
       <button type="button" class="step-btn" onclick="goTo(3)" id="step3">
-        <span class="step-num">4</span> Emergency & NOK
-      </button>
-      <button type="button" class="step-btn" onclick="goTo(4)" id="step4">
-        <span class="step-num">5</span> Review & Submit
+        <span class="step-num">4</span> Review & Submit
       </button>
     </div>
 
@@ -331,12 +335,12 @@
               <div class="field">
                 <label>State of Origin</label>
                 <input type="text" name="state_of_origin" value="{{ form.state_of_origin|default:'' }}"
-                       placeholder="e.g. Adamawa"/>
+                       placeholder="e.g. Kano"/>
               </div>
               <div class="field">
                 <label>LGA of Origin</label>
                 <input type="text" name="lga" value="{{ form.lga|default:'' }}"
-                       placeholder="e.g. Madagali"/>
+                       placeholder="e.g. Nassarawa"/>
               </div>
               <div class="field">
                 <label>Phone Number</label>
@@ -346,7 +350,7 @@
               <div class="field">
                 <label>Email Address</label>
                 <input type="email" name="email" value="{{ form.email|default:'' }}"
-                       placeholder="you@student.neu.edu.ng"/>
+                       placeholder="student@neu.edu.ng"/>
               </div>
               <div class="field span-3">
                 <label>Home Address</label>
@@ -369,7 +373,7 @@
           <div class="form-card-header">
             <div>
               <div class="form-card-title">🎓 Academic Information</div>
-              <div class="form-card-sub">Faculty, Programme and level of study</div>
+              <div class="form-card-sub">Faculty, programme and level of study</div>
             </div>
           </div>
           <div class="form-card-body">
@@ -436,76 +440,13 @@
         <div class="section-nav">
           <button type="button" class="btn-secondary" onclick="goTo(0)">← Personal Info</button>
           <div class="section-nav-right">
-            <button type="button" class="btn-primary" onclick="goTo(2)">Next: Medical →</button>
+            <button type="button" class="btn-primary" onclick="goTo(2)">Next: Emergency & NOK →</button>
           </div>
         </div>
       </div>
 
-      <!-- ══ STEP 3: MEDICAL ══ -->
+      <!-- ══ STEP 3: EMERGENCY & NOK ══ -->
       <div class="form-section" id="section2">
-        <div class="form-card">
-          <div class="form-card-header">
-            <div>
-              <div class="form-card-title">🩺 Medical Information</div>
-              <div class="form-card-sub">Blood group, genotype, allergies and medical history</div>
-            </div>
-          </div>
-          <div class="form-card-body">
-            <div class="form-grid cols-2">
-              <div class="field">
-                <label>Blood Group</label>
-                <select name="blood_group">
-                  {% for val, label in blood_choices %}
-                  <option value="{{ val }}" {% if form.blood_group == val %}selected{% endif %}>{{ label }}</option>
-                  {% endfor %}
-                </select>
-              </div>
-              <div class="field">
-                <label>Genotype</label>
-                <select name="genotype">
-                  {% for val, label in genotype_choices %}
-                  <option value="{{ val }}" {% if form.genotype == val %}selected{% endif %}>{{ label }}</option>
-                  {% endfor %}
-                </select>
-              </div>
-              <div class="field span-2">
-                <label>Known Allergies</label>
-                <textarea name="allergies" placeholder="List allergies one per line e.g.&#10;Penicillin&#10;Peanuts&#10;Latex">{{ form.allergies|default:'' }}</textarea>
-                <span class="hint">One allergy per line. Leave blank if none known.</span>
-              </div>
-              <div class="field span-2">
-                <label>Chronic Conditions</label>
-                <textarea name="chronic_conditions" placeholder="e.g.&#10;Asthma&#10;Diabetes Type 2&#10;Hypertension">{{ form.chronic_conditions|default:'' }}</textarea>
-              </div>
-              <div class="field span-2">
-                <label>Disabilities</label>
-                <textarea name="disabilities" placeholder="Any physical or mental disabilities">{{ form.disabilities|default:'' }}</textarea>
-              </div>
-              <div class="field span-2">
-                <label>Current Medications</label>
-                <textarea name="current_medications" placeholder="Ongoing medications at time of registration">{{ form.current_medications|default:'' }}</textarea>
-              </div>
-              <div class="field">
-                <label>Surgical History</label>
-                <textarea name="surgical_history" placeholder="Previous surgeries if any">{{ form.surgical_history|default:'' }}</textarea>
-              </div>
-              <div class="field">
-                <label>Family Medical History</label>
-                <textarea name="family_history" placeholder="Relevant hereditary conditions">{{ form.family_history|default:'' }}</textarea>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="section-nav">
-          <button type="button" class="btn-secondary" onclick="goTo(1)">← Academic</button>
-          <div class="section-nav-right">
-            <button type="button" class="btn-primary" onclick="goTo(3)">Next: Emergency & NOK →</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ══ STEP 4: EMERGENCY & NOK ══ -->
-      <div class="form-section" id="section3">
 
         <!-- Emergency Contact -->
         <div class="form-card">
@@ -520,7 +461,7 @@
               <div class="field">
                 <label>Full Name</label>
                 <input type="text" name="emergency_name" value="{{ form.emergency_name|default:'' }}"
-                       placeholder="e.g. Vaisah Zirra"/>
+                       placeholder="e.g. Ibrahim Babangida"/>
               </div>
               <div class="field">
                 <label>Relationship</label>
@@ -555,7 +496,7 @@
               <div class="field">
                 <label>Full Name</label>
                 <input type="text" name="nok_name" value="{{ form.nok_name|default:'' }}"
-                       placeholder="e.g. Zirra Vaisah"/>
+                       placeholder="e.g. Fatima Babangida"/>
               </div>
               <div class="field">
                 <label>Relationship</label>
@@ -595,15 +536,15 @@
         </div>
 
         <div class="section-nav">
-          <button type="button" class="btn-secondary" onclick="goTo(2)">← Medical</button>
+          <button type="button" class="btn-secondary" onclick="goTo(1)">← Academic</button>
           <div class="section-nav-right">
-            <button type="button" class="btn-primary" onclick="goTo(4)">Review & Submit →</button>
+            <button type="button" class="btn-primary" onclick="goTo(3)">Review & Submit →</button>
           </div>
         </div>
       </div>
 
       <!-- ══ STEP 5: REVIEW ══ -->
-      <div class="form-section" id="section4">
+      <div class="form-section" id="section3">
         <div class="form-card">
           <div class="form-card-header">
             <div>
@@ -622,7 +563,7 @@
           </div>
         </div>
         <div class="section-nav">
-          <button type="button" class="btn-secondary" onclick="goTo(3)">← Emergency & NOK</button>
+          <button type="button" class="btn-secondary" onclick="goTo(2)">← Emergency & NOK</button>
           <div class="section-nav-right">
             <button type="submit" class="btn-primary" id="submitBtn">
               ✅ Register Patient
@@ -638,8 +579,8 @@
 <script>
   // ── STEP NAVIGATION ────────────────────────────────────────────────────────
   var current  = 0;
-  var total    = 5;
-  var progress = [20, 40, 60, 80, 100];
+  var total    = 4;
+  var progress = [25, 50, 75, 100];
 
   function goTo(idx) {
     document.getElementById('section' + current).classList.remove('active');
@@ -653,7 +594,7 @@
     document.getElementById('step'    + current).classList.add('active');
     document.getElementById('progressBar').style.width = progress[current] + '%';
 
-    if (current === 4) buildReview();
+    if (current === 3) buildReview();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -733,8 +674,6 @@
       ['Email',           'email'],
       ['Level',           'level'],
       ['Entry Session',   'academic_session'],
-      ['Blood Group',     'blood_group'],
-      ['Genotype',        'genotype'],
       ['Emergency Name',  'emergency_name'],
       ['Emergency Phone', 'emergency_phone'],
     ];

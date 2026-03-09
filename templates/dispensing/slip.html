@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dispensing Slip — {{ rx.prescription_id }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ink:#08131F; --panel:#0C1B2E;
+      --border:rgba(255,255,255,0.07);
+      --gold:#C9A84C; --gold-2:#E2C47A; --slate:#6B84A3;
+      --white:#FFFFFF; --success:#3DB87A;
+    }
+
+    /* Screen wrapper */
+    body { font-family:'Outfit',sans-serif; background:var(--ink); color:var(--white); min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:32px 20px; }
+
+    .screen-actions { display:flex; gap:10px; margin-bottom:24px; width:100%; max-width:680px; }
+    .btn-print { background:linear-gradient(135deg,var(--gold),#a07828); border:none; border-radius:9px; padding:10px 22px; font-family:'Outfit',sans-serif; font-size:14px; font-weight:600; color:var(--ink); cursor:pointer; display:inline-flex; align-items:center; gap:7px; }
+    .btn-back  { padding:10px 18px; background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:9px; font-size:13.5px; color:var(--white); text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+    .btn-back:hover { background:rgba(255,255,255,.07); }
+
+    /* Slip card */
+    .slip { background:#ffffff; color:#0a1628; width:100%; max-width:680px; border-radius:14px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.5); }
+
+    /* Header */
+    .slip-header { background:linear-gradient(135deg,#0C1B2E,#0F2040); color:#fff; padding:28px 32px; display:flex; align-items:center; justify-content:space-between; }
+    .slip-logo { display:flex; align-items:center; gap:14px; }
+    .slip-mark { width:46px; height:46px; background:linear-gradient(145deg,#C9A84C,#a07828); border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+    .slip-clinic-name { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:700; }
+    .slip-clinic-sub  { font-size:11px; color:#8fa8c8; text-transform:uppercase; letter-spacing:.1em; margin-top:2px; }
+    .slip-rx-id { text-align:right; }
+    .slip-rx-id .rx-num { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:700; color:#E2C47A; }
+    .slip-rx-id .rx-label { font-size:10.5px; color:#8fa8c8; text-transform:uppercase; letter-spacing:.1em; margin-top:2px; }
+
+    /* Title bar */
+    .slip-title-bar { background:#1a3a6e; color:#fff; text-align:center; padding:10px; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.14em; }
+
+    /* Body */
+    .slip-body { padding:24px 32px; }
+
+    /* Patient / info section */
+    .slip-info-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:22px; padding-bottom:18px; border-bottom:1.5px solid #e8edf5; }
+    .slip-info-block .label { font-size:10px; font-weight:600; color:#8fa8c8; text-transform:uppercase; letter-spacing:.08em; margin-bottom:3px; }
+    .slip-info-block .value { font-size:14px; font-weight:600; color:#0a1628; }
+    .slip-info-block .value-sm { font-size:12.5px; color:#3a5070; margin-top:1px; }
+
+    /* Drugs table */
+    .drugs-title { font-family:'Cormorant Garamond',serif; font-size:17px; font-weight:700; color:#0a1628; margin-bottom:14px; }
+    .drug-entry { border:1.5px solid #e8edf5; border-radius:10px; padding:14px 16px; margin-bottom:10px; }
+    .drug-entry:last-child { margin-bottom:0; }
+    .drug-entry-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+    .drug-entry-name { font-size:15px; font-weight:700; color:#0a1628; }
+    .drug-entry-qty { background:#e8f5ee; color:#1a7a48; border-radius:20px; padding:3px 12px; font-size:12px; font-weight:700; }
+    .drug-entry-details { display:flex; gap:20px; flex-wrap:wrap; }
+    .ded-item .ded-label { font-size:9.5px; font-weight:600; color:#8fa8c8; text-transform:uppercase; letter-spacing:.07em; }
+    .ded-item .ded-val   { font-size:12.5px; color:#0a1628; font-weight:500; margin-top:1px; }
+    .drug-instructions { margin-top:8px; font-size:12px; color:#3a5070; background:#f5f7fa; padding:7px 10px; border-radius:6px; border-left:3px solid #C9A84C; }
+
+    /* Footer */
+    .slip-footer { border-top:1.5px solid #e8edf5; padding:18px 32px; display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:6px; }
+    .sig-block { display:flex; flex-direction:column; }
+    .sig-block .sig-line { border-bottom:1.5px solid #b0bec8; margin-bottom:5px; height:32px; }
+    .sig-block .sig-label { font-size:10.5px; color:#8fa8c8; text-transform:uppercase; letter-spacing:.08em; }
+    .sig-block .sig-name  { font-size:12px; font-weight:600; color:#0a1628; margin-top:2px; }
+
+    .slip-bottom { background:#f5f7fa; padding:12px 32px; text-align:center; font-size:11px; color:#8fa8c8; line-height:1.7; }
+
+    /* Print styles */
+    @media print {
+      body { background:#fff; padding:0; }
+      .screen-actions { display:none; }
+      .slip { box-shadow:none; border-radius:0; max-width:100%; }
+      .slip-header { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+      .slip-title-bar { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+      .drug-entry-qty { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="screen-actions">
+    <button class="btn-print" onclick="window.print()">🖨 Print Slip</button>
+    <a href="{% url 'dispensing_queue' %}" class="btn-back">← Back to Queue</a>
+    <a href="{% url 'prescription_detail' rx.pk %}" class="btn-back">View Prescription →</a>
+  </div>
+
+  <div class="slip">
+
+    <!-- Header -->
+    <div class="slip-header">
+      <div class="slip-logo">
+        <div class="slip-mark">⚕</div>
+        <div>
+          <div class="slip-clinic-name">VanaraUniCare</div>
+          <div class="slip-clinic-sub">NEU Health Center · North-Eastern University</div>
+        </div>
+      </div>
+      <div class="slip-rx-id">
+        <div class="rx-num">{{ rx.prescription_id }}</div>
+        <div class="rx-label">Dispensing Slip</div>
+      </div>
+    </div>
+
+    <!-- Title bar -->
+    <div class="slip-title-bar">Official Dispensing Receipt</div>
+
+    <!-- Body -->
+    <div class="slip-body">
+
+      <!-- Patient & Dispensing Info -->
+      <div class="slip-info-grid">
+        <div class="slip-info-block">
+          <div class="label">Patient Name</div>
+          <div class="value">{{ rx.patient.get_full_name }}</div>
+          <div class="value-sm">{{ rx.patient.matric_no }}</div>
+        </div>
+        <div class="slip-info-block">
+          <div class="label">Date Dispensed</div>
+          <div class="value">{{ rx.dispensed_at|date:"d M Y" }}</div>
+          <div class="value-sm">{{ rx.dispensed_at|date:"H:i" }}</div>
+        </div>
+        <div class="slip-info-block">
+          <div class="label">Prescribed By</div>
+          <div class="value">{{ rx.prescribed_by.get_full_name|default:"—" }}</div>
+          <div class="value-sm">{{ rx.prescribed_by.role|default:"Doctor" }}</div>
+        </div>
+        <div class="slip-info-block">
+          <div class="label">Dispensed By</div>
+          <div class="value">{{ rx.dispensed_by.get_full_name|default:"—" }}</div>
+          <div class="value-sm">{{ rx.dispensed_by.role|default:"Pharmacist" }}</div>
+        </div>
+        {% if rx.consultation %}
+        <div class="slip-info-block" style="grid-column:1/-1;">
+          <div class="label">Linked Consultation</div>
+          <div class="value">{{ rx.consultation.consultation_id }}</div>
+          <div class="value-sm">{{ rx.consultation.chief_complaint|truncatechars:60 }}</div>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Drugs -->
+      <div class="drugs-title">--Dispensed Medications--</div>
+      {% for item in items %}
+      <div class="drug-entry">
+        <div class="drug-entry-top">
+          <div class="drug-entry-name">{{ item.drug_name }}</div>
+          <div class="drug-entry-qty">Qty: {{ item.dispensed_qty }}</div>
+        </div>
+        <div class="drug-entry-details">
+          {% if item.dosage %}<div class="ded-item"><div class="ded-label">Dosage</div><div class="ded-val">{{ item.dosage }}</div></div>{% endif %}
+          {% if item.frequency %}<div class="ded-item"><div class="ded-label">Frequency</div><div class="ded-val">{{ item.frequency }}</div></div>{% endif %}
+          {% if item.duration %}<div class="ded-item"><div class="ded-label">Duration</div><div class="ded-val">{{ item.duration }}</div></div>{% endif %}
+          <div class="ded-item"><div class="ded-label">Route</div><div class="ded-val">{{ item.route }}</div></div>
+        </div>
+        {% if item.instructions %}
+        <div class="drug-instructions">📌 {{ item.instructions }}</div>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+    </div>
+
+    <!-- Signatures -->
+    <div class="slip-footer">
+      <div class="sig-block">
+        <div class="sig-line"></div>
+        <div class="sig-label">Dispensed By</div>
+        <div class="sig-name">{{ rx.dispensed_by.get_full_name|default:"" }}</div>
+      </div>
+      <div class="sig-block">
+        <div class="sig-line"></div>
+        <div class="sig-label">Patient / Receiver Signature</div>
+      </div>
+    </div>
+
+    <!-- Bottom note -->
+    <div class="slip-bottom">
+      This slip is proof of dispensing from the NEU Health Center Pharmacy.<br/>
+      Keep this slip for reference. For queries, contact the pharmacy desk.
+      <br>><br>
+      Copyright &copy; {{ current_year }} Developed by VanaraUniCare · All rights reserved.
+    </div>
+
+  </div>
+
+</body>
+</html>

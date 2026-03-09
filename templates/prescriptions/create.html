@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>New Prescription — VanaraUniCare</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ink:#08131F; --panel:#0C1B2E; --panel-2:#0F2040;
+      --surface:rgba(255,255,255,0.03); --surface-2:rgba(255,255,255,0.055);
+      --border:rgba(255,255,255,0.07); --border-2:rgba(255,255,255,0.12);
+      --gold:#C9A84C; --gold-2:#E2C47A; --slate:#6B84A3; --slate-2:#4A6380;
+      --white:#FFFFFF; --success:#3DB87A; --warning:#F0A04A; --danger:#E05555; --sw:252px;
+    }
+    html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--ink);color:var(--white);}
+    .sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sw);background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;}
+    .sb-logo{padding:22px 20px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);}
+    .sb-mark{width:38px;height:38px;background:linear-gradient(145deg,var(--gold),#a07828);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+    .sb-name{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;}
+    .sb-sub{font-size:9.5px;color:var(--slate);text-transform:uppercase;letter-spacing:.1em;}
+    .sb-nav{flex:1;overflow-y:auto;padding:12px 10px;scrollbar-width:thin;}
+    .sb-section{font-size:9.5px;font-weight:600;color:var(--slate-2);text-transform:uppercase;letter-spacing:.12em;padding:14px 10px 6px;}
+    .sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;color:var(--slate);font-size:13.5px;text-decoration:none;transition:background .15s,color .15s;margin-bottom:1px;}
+    .sb-item:hover{background:var(--surface-2);color:var(--white);}
+    .sb-item.active{background:rgba(201,168,76,.1);color:var(--gold-2);font-weight:500;}
+    .sb-icon{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:13px;}
+    .sb-footer{padding:12px 10px;border-top:1px solid var(--border);}
+    .sb-user{display:flex;align-items:center;gap:10px;padding:10px;border-radius:9px;background:var(--surface);}
+    .sb-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#a07828);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--ink);}
+    .sb-uname{font-size:13px;font-weight:500;} .sb-urole{font-size:10.5px;color:var(--slate);}
+    .sb-logout{margin-left:auto;background:none;border:none;color:var(--slate-2);cursor:pointer;font-size:15px;text-decoration:none;}
+    .sb-logout:hover{color:var(--danger);}
+    .main{margin-left:var(--sw);min-height:100vh;display:flex;flex-direction:column;}
+    .topbar{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;background:rgba(8,19,31,.9);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);}
+    .topbar-left h1{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;}
+    .topbar-left p{font-size:12px;color:var(--slate);margin-top:1px;}
+    .topbar-right{display:flex;gap:10px;}
+    .content{padding:28px 32px;}
+    .alert{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:13px 16px;border-radius:10px;font-size:13.5px;margin-bottom:14px;}
+    .alert-danger{background:rgba(224,85,85,.08);border:1px solid rgba(224,85,85,.25);color:#f0a0a0;}
+    .alert-close{background:none;border:none;color:inherit;cursor:pointer;font-size:18px;opacity:.5;}
+    .btn-primary{background:linear-gradient(135deg,var(--gold),#a07828);border:none;border-radius:9px;padding:10px 22px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+    .btn-back{padding:7px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:12.5px;color:var(--slate);text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+    .btn-back:hover{background:var(--surface-2);color:var(--white);}
+    .btn-sec{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:10px 18px;font-family:'Outfit',sans-serif;font-size:13.5px;color:var(--white);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+    .layout{display:grid;grid-template-columns:1fr 280px;gap:22px;align-items:start;}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin-bottom:16px;}
+    .card-header{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .card-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;}
+    .card-body{padding:22px 24px;}
+    label{font-size:11px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:7px;}
+    input[type=text],input[type=number],select,textarea{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:9px;padding:10px 14px;font-family:'Outfit',sans-serif;font-size:13.5px;color:var(--white);outline:none;width:100%;transition:border-color .2s;}
+    input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.09);}
+    input::placeholder,textarea::placeholder{color:var(--slate-2);}
+    select option{background:var(--panel-2);}
+    textarea{resize:vertical;min-height:70px;}
+    .field{margin-bottom:16px;}
+    .required{color:var(--danger);}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+
+    /* Tom Select dark theme */
+    .ts-wrapper .ts-control{background:rgba(255,255,255,.04)!important;border:1px solid var(--border)!important;border-radius:9px!important;color:var(--white)!important;padding:8px 14px!important;box-shadow:none!important;}
+    .ts-wrapper.focus .ts-control{border-color:var(--gold)!important;box-shadow:0 0 0 3px rgba(201,168,76,.09)!important;}
+    .ts-dropdown{background:var(--panel-2)!important;border:1px solid var(--border-2)!important;border-radius:10px!important;margin-top:4px!important;}
+    .ts-dropdown .option{padding:10px 14px!important;color:var(--white)!important;font-size:13.5px!important;}
+    .ts-dropdown .option:hover,.ts-dropdown .option.active{background:rgba(201,168,76,.1)!important;color:var(--gold-2)!important;}
+    .ts-wrapper .ts-control input{color:var(--white)!important;}
+    .ts-wrapper .ts-control .item{color:var(--white)!important;background:rgba(201,168,76,.1)!important;border-radius:6px!important;padding:2px 8px!important;}
+
+    /* Drug rows */
+    .drug-rows{display:flex;flex-direction:column;gap:12px;}
+    .drug-row{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:11px;padding:16px 18px;position:relative;}
+    .drug-row-num{font-size:10.5px;font-weight:600;color:var(--slate-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;}
+    .btn-remove-drug{position:absolute;top:12px;right:14px;background:rgba(224,85,85,.08);border:1px solid rgba(224,85,85,.2);border-radius:7px;color:#f0a0a0;cursor:pointer;font-size:12px;padding:4px 10px;font-family:'Outfit',sans-serif;}
+    .btn-remove-drug:hover{background:rgba(224,85,85,.15);}
+    .btn-add-drug{display:flex;align-items:center;gap:8px;padding:11px 18px;background:rgba(201,168,76,.04);border:1px dashed rgba(201,168,76,.25);border-radius:10px;color:var(--gold-2);font-size:13.5px;cursor:pointer;font-family:'Outfit',sans-serif;width:100%;justify-content:center;transition:background .2s;}
+    .btn-add-drug:hover{background:rgba(201,168,76,.08);}
+    .stock-hint{font-size:11.5px;color:var(--slate-2);margin-top:5px;}
+    .stock-hint.ok{color:#90deb5;}
+    .stock-hint.low{color:#f8c87a;}
+    .stock-hint.out{color:#f0a0a0;}
+
+    /* Summary sidebar */
+    .sum-item{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px;}
+    .sum-item:last-child{border-bottom:none;}
+    .sum-label{color:var(--slate);}
+    .sum-val{font-weight:500;}
+  </style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">⚕</div>
+    <div><div class="sb-name">VanaraUniCare</div><div class="sb-sub">NEU Health Center</div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-section">Main</div>
+    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    {% if perms_map.patients.can_view or perms_map.appointments.can_view or perms_map.consultations.can_view or perms_map.prescriptions.can_view or perms_map.laboratory.can_view or perms_map.wards.can_view %}
+    <div class="sb-section">Clinical</div>
+    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon">🩺</div>Patient Records</a>{% endif %}
+    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>{% endif %}
+    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>{% endif %}
+    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item active"><div class="sb-icon">📋</div>Prescriptions</a>{% endif %}
+    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>{% endif %}
+    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>{% endif %}
+    {% endif %}
+    {% if perms_map.inventory.can_view or perms_map.dispensing.can_view %}
+    <div class="sb-section">Pharmacy</div>
+    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>{% endif %}
+    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>{% endif %}
+    {% endif %}
+    {% if perms_map.clearance.can_view or perms_map.documents.can_view or perms_map.reports.can_view %}
+    <div class="sb-section">Administration</div>
+    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>{% endif %}
+    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>{% endif %}
+    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>{% endif %}
+    {% endif %}
+    {% if perms_map.users.can_view or perms_map.roles.can_view or perms_map.settings.can_view or user.is_superuser %}
+    <div class="sb-section">System</div>
+    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>{% endif %}
+    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>{% endif %}
+    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>{% endif %}
+    {% endif %}
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>
+      <div><div class="sb-uname">{{ user.get_short_name }}</div><div class="sb-urole">{{ user.role|default:"Staff" }}</div></div>
+      <a href="{% url 'logout' %}" class="sb-logout">⏻</a>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>New Prescription</h1>
+      <p>Create a drug prescription for a patient</p>
+    </div>
+    <div class="topbar-right">
+      <a href="{% url 'prescription_list' %}" class="btn-back">← Prescriptions</a>
+    </div>
+  </div>
+  <div class="content">
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }}"><span>{{ msg|safe }}</span><button class="alert-close" onclick="this.parentElement.remove()">×</button></div>
+    {% endfor %}
+
+    <form method="POST" id="rxForm"
+      data-pre-con="{% if pre_con %}{{ pre_con.id }}{% endif %}"
+      data-pre-patient="{% if pre_con %}{{ pre_con.patient.id }}{% endif %}">
+      {% csrf_token %}
+      <div class="layout">
+        <div>
+          <!-- Patient & Consultation -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">🧑 Patient</div>
+            </div>
+            <div class="card-body">
+              <div class="grid-2">
+                <div class="field">
+                  <label>Patient <span class="required">*</span></label>
+                  {% if pre_con %}
+                    {# Locked — came from consultation #}
+                    <input type="hidden" name="patient" value="{{ pre_con.patient.id }}"/>
+                    <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:9px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
+                      <div>
+                        <div style="font-size:14px;font-weight:500;" data-summary-patient>{{ pre_con.patient.get_full_name }}</div>
+                        <div style="font-size:11.5px;color:var(--slate);margin-top:2px;">{{ pre_con.patient.matric_no }}</div>
+                      </div>
+                      <span style="font-size:11px;background:rgba(201,168,76,.1);color:var(--gold-2);border:1px solid rgba(201,168,76,.2);padding:2px 8px;border-radius:6px;">From Consultation</span>
+                    </div>
+                  {% else %}
+                    <select id="patientSelect" name="patient" required>
+                      <option value="">Type to search patient…</option>
+                      {% for p in patients %}
+                      <option value="{{ p.id }}">{{ p.get_full_name }} — {{ p.matric_no }}</option>
+                      {% endfor %}
+                    </select>
+                  {% endif %}
+                </div>
+                <div class="field">
+                  <label>Linked Consultation <span style="color:var(--slate-2);font-weight:400;text-transform:none;font-size:10px;">(optional)</span></label>
+                  {% if pre_con %}
+                    {# Locked — came from consultation #}
+                    <input type="hidden" name="consultation" value="{{ pre_con.id }}"/>
+                    <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:9px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
+                      <div>
+                        <div style="font-size:14px;font-weight:500;">{{ pre_con.consultation_id }}</div>
+                        <div style="font-size:11.5px;color:var(--slate);margin-top:2px;">{{ pre_con.chief_complaint|truncatechars:50 }}</div>
+                      </div>
+                      <span style="font-size:11px;background:rgba(61,184,122,.08);color:#90deb5;border:1px solid rgba(61,184,122,.2);padding:2px 8px;border-radius:6px;">Linked</span>
+                    </div>
+                  {% else %}
+                    <select id="consultationSelect" name="consultation">
+                      <option value="">Walk-in / No consultation</option>
+                    </select>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Drugs -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">💊 Prescribed Drugs</div>
+              <span style="font-size:12px;color:var(--slate);">Search inventory or type manually</span>
+            </div>
+            <div class="card-body">
+              <div class="drug-rows" id="drugRows"></div>
+              <button type="button" class="btn-add-drug" onclick="addDrugRow()" style="margin-top:12px;">＋ Add Drug</button>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="card">
+            <div class="card-header"><div class="card-title">📝 General Notes</div></div>
+            <div class="card-body">
+              <textarea name="notes" placeholder="Any general notes about this prescription…">{{ post.notes|default:'' }}</textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div>
+          <div class="card">
+            <div class="card-header"><div class="card-title" style="font-size:15px;">✅ Summary</div></div>
+            <div class="card-body">
+              <div class="sum-item"><span class="sum-label">Patient</span><span class="sum-val" id="sumPatient" style="color:var(--slate-2);">Not selected</span></div>
+              <div class="sum-item"><span class="sum-label">Consultation</span><span class="sum-val" id="sumCon" style="color:var(--slate-2);">Walk-in</span></div>
+              <div class="sum-item"><span class="sum-label">Prescribed by</span><span class="sum-val">{{ user.get_full_name }}</span></div>
+              <div class="sum-item"><span class="sum-label">Drugs</span><span class="sum-val" id="sumDrugs">0</span></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <button type="submit" class="btn-primary" style="justify-content:center;width:100%;">📋 Issue Prescription</button>
+            <a href="{% url 'prescription_list' %}" class="btn-sec" style="justify-content:center;">Cancel</a>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+<script>
+var rowUid = 0; // ever-increasing unique ID — never reused, avoids DOM collisions
+
+var ROUTES = [{% for val, label in routes %}{"val":"{{ val|escapejs }}","label":"{{ label|escapejs }}"}{% if not forloop.last %},{% endif %}{% endfor %}];
+var FREQS  = [{% for val, label in frequencies %}{"val":"{{ val|escapejs }}","label":"{{ label|escapejs }}"}{% if not forloop.last %},{% endif %}{% endfor %}];
+
+function routeOptions(selected) {
+  return ROUTES.map(function(r) {
+    return '<option value="' + r.val + '"' + (r.val === selected ? ' selected' : '') + '>' + r.label + '</option>';
+  }).join('');
+}
+
+function freqOptions(selected) {
+  return FREQS.map(function(f) {
+    return '<option value="' + f.val + '"' + (f.val === selected ? ' selected' : '') + '>' + f.label + '</option>';
+  }).join('');
+}
+
+function renumberRows() {
+  // Re-label every row "Drug 1", "Drug 2" etc. based on current DOM order
+  document.querySelectorAll('.drug-row').forEach(function(row, i) {
+    var numEl = row.querySelector('.drug-row-num');
+    if (numEl) numEl.textContent = 'Drug ' + (i + 1);
+  });
+}
+
+function addDrugRow(name, drugId, dosage, freq, duration, route, qty, instructions) {
+  rowUid++;
+  var uid = rowUid; // stable unique ID for this row's element IDs
+  var wrap = document.getElementById('drugRows');
+  var div = document.createElement('div');
+  div.className = 'drug-row';
+  div.id = 'drugRow_' + uid;
+  div.style.position = 'relative';
+  div.innerHTML =
+    '<div class="drug-row-num"></div>' + // label set by renumberRows()
+    '<button type="button" class="btn-remove-drug" onclick="removeDrugRow(' + uid + ')">✕ Remove</button>' +
+    '<input type="hidden" name="drug_id" id="drugId_' + uid + '" value="' + (drugId || '') + '"/>' +
+    '<div class="field" style="position:relative;">' +
+      '<label>Drug Name <span class="required">*</span></label>' +
+      '<input type="text" name="drug_name" id="drugName_' + uid + '" placeholder="Click to browse or type to search…" value="' + (name || '').replace(/"/g, '&quot;') + '" autocomplete="off" onfocus="openDrugDropdown(this, ' + uid + ')" oninput="searchDrug(this, ' + uid + ')"/>' +
+      '<div class="stock-hint" id="stockHint_' + uid + '"></div>' +
+      '<div id="drugDropdown_' + uid + '" style="display:none;position:absolute;z-index:999;background:var(--panel-2);border:1px solid var(--border-2);border-radius:10px;left:0;right:0;margin-top:4px;overflow:hidden;"></div>' +
+    '</div>' +
+    '<div class="grid-3">' +
+      '<div class="field"><label>Dosage</label><input type="text" name="dosage" placeholder="e.g. 500mg" value="' + (dosage || '') + '"/></div>' +
+      '<div class="field"><label>Frequency</label><div id="freqWrap_' + uid + '"><select name="frequency" onchange="handleFreqChange(this,' + uid + ')">' + freqOptions(freq || 'Twice daily') + '</select></div></div>' +
+      '<div class="field"><label>Duration</label><input type="text" name="duration" placeholder="e.g. 7 days" value="' + (duration || '') + '"/></div>' +
+    '</div>' +
+    '<div class="grid-2">' +
+      '<div class="field"><label>Route</label><select name="route">' + routeOptions(route || 'Oral') + '</select></div>' +
+      '<div class="field"><label>Qty to Dispense</label><input type="number" name="quantity" value="' + (qty || 1) + '" min="1"/></div>' +
+    '</div>' +
+    '<div class="field"><label>Special Instructions</label><input type="text" name="instructions" placeholder="e.g. Take after meals, avoid sunlight…" value="' + (instructions || '').replace(/"/g, '&quot;') + '"/></div>';
+
+  wrap.appendChild(div);
+  renumberRows();
+  updateSummary();
+}
+
+function removeDrugRow(uid) {
+  var row = document.getElementById('drugRow_' + uid);
+  if (row) row.remove();
+  renumberRows();
+  updateSummary();
+}
+
+var searchTimeout = null;
+
+function renderDropdown(uid, drugs, typedName) {
+  var dd = document.getElementById('drugDropdown_' + uid);
+  var rows = drugs.map(function(d) {
+    var stockColor = d.stock === 0 ? '#f0a0a0' : (d.stock <= 10 ? '#f8c87a' : '#90deb5');
+    return '<div style="padding:10px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04);font-size:13.5px;" ' +
+      'onmousedown="selectDrug(' + uid + ',' + d.id + ',\'' + d.name.replace(/'/g, "\\'") + '\',' + d.stock + ',\'' + d.unit + '\')">' +
+      '<strong>' + d.name + '</strong>' +
+      (d.strength ? ' <span style="color:var(--slate-2);font-size:12px;">' + d.strength + '</span>' : '') +
+      (d.dosage_form ? ' <span style="color:var(--slate-2);font-size:12px;">· ' + d.dosage_form + '</span>' : '') +
+      '<span style="float:right;font-size:12px;color:' + stockColor + '">' + d.stock + ' ' + d.unit + '</span>' +
+    '</div>';
+  });
+
+  // If there's a typed name and no exact match — show "Use typed name" option
+  if (typedName) {
+    var exactMatch = drugs.some(function(d) {
+      return d.name.toLowerCase() === typedName.toLowerCase();
+    });
+    if (!exactMatch) {
+      rows.push(
+        '<div style="padding:10px 14px;cursor:pointer;font-size:13.5px;background:rgba(201,168,76,.04);border-top:1px solid rgba(201,168,76,.1);" ' +
+        'onmousedown="selectManual(' + uid + ',\'' + typedName.replace(/'/g, "\\'") + '\')">' +
+        '<span style="color:var(--gold-2);">✎ Use</span> <strong style="color:var(--white);">"' + typedName + '"</strong>' +
+        '<span style="float:right;font-size:11.5px;color:var(--slate-2);">Not in inventory</span>' +
+        '</div>'
+      );
+    }
+  }
+
+  if (!rows.length) {
+    dd.style.display = 'none';
+    return;
+  }
+  dd.innerHTML = rows.join('');
+  dd.style.display = 'block';
+}
+
+// Show all drugs on focus/click (empty query = browse all)
+function openDrugDropdown(input, uid) {
+  var q = input.value.trim();
+  document.getElementById('drugId_' + uid).value = '';
+
+  fetch('/ajax/inventory/search/?q=' + encodeURIComponent(q || ' '))
+    .then(function(r) { return r.json(); })
+    .then(function(data) { renderDropdown(uid, data.drugs, q || null); });
+}
+
+// Filter on type
+function searchDrug(input, uid) {
+  var q = input.value.trim();
+  // Clear inventory link when user edits the field
+  document.getElementById('drugId_' + uid).value = '';
+  document.getElementById('stockHint_' + uid).textContent = '';
+
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(function() {
+    fetch('/ajax/inventory/search/?q=' + encodeURIComponent(q || ' '))
+      .then(function(r) { return r.json(); })
+      .then(function(data) { renderDropdown(uid, data.drugs, q || null); });
+  }, 220);
+}
+
+function selectDrug(uid, id, name, stock, unit) {
+  document.getElementById('drugId_' + uid).value = id;
+  document.getElementById('drugName_' + uid).value = name;
+  document.getElementById('drugDropdown_' + uid).style.display = 'none';
+  var hint = document.getElementById('stockHint_' + uid);
+  if (stock === 0) {
+    hint.className = 'stock-hint out';
+    hint.textContent = '⚠ Out of stock — will be prescribed but cannot be dispensed from inventory';
+  } else if (stock <= 10) {
+    hint.className = 'stock-hint low';
+    hint.textContent = '⚠ Low stock — ' + stock + ' ' + unit + ' remaining';
+  } else {
+    hint.className = 'stock-hint ok';
+    hint.textContent = '✓ ' + stock + ' ' + unit + ' in stock';
+  }
+}
+
+function selectManual(uid, name) {
+  // User chose to use their typed name — no inventory link
+  document.getElementById('drugId_' + uid).value = '';
+  document.getElementById('drugName_' + uid).value = name;
+  document.getElementById('drugDropdown_' + uid).style.display = 'none';
+  var hint = document.getElementById('stockHint_' + uid);
+  hint.className = 'stock-hint';
+  hint.textContent = '✎ Manual entry — not linked to inventory';
+  hint.style.color = 'var(--slate-2)';
+}
+
+// Tom Select — only init if NOT coming from a consultation
+var prePatient = document.getElementById('rxForm').dataset.prePatient;
+var preCon     = document.getElementById('rxForm').dataset.preCon;
+var patientTS  = null;
+var conSelect  = null;
+
+if (!prePatient) {
+  // Walk-in mode: init both Tom Selects
+  patientTS = new TomSelect('#patientSelect', {
+    placeholder: 'Type to search patient…',
+    searchField: ['text'],
+    maxOptions: 100,
+    onChange: function(val) {
+      loadConsultations(val);
+      updateSummary();
+    }
+  });
+
+  conSelect = new TomSelect('#consultationSelect', {
+    placeholder: 'Walk-in / No consultation',
+    searchField: ['text'],
+    maxOptions: 20,
+    onChange: function() { updateSummary(); }
+  });
+}
+
+function loadConsultations(patientId, callback) {
+  if (!conSelect) { if (typeof callback === 'function') callback(); return; }
+  conSelect.clear();
+  conSelect.clearOptions();
+  conSelect.addOption({value: '', text: 'Walk-in / No consultation'});
+  if (!patientId) { if (typeof callback === 'function') callback(); return; }
+
+  fetch('/ajax/prescriptions/patient-consultations/?patient=' + patientId)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      data.consultations.forEach(function(c) {
+        conSelect.addOption({value: String(c.id), text: c.label});
+      });
+      conSelect.refreshOptions(false);
+      if (typeof callback === 'function') callback();
+    });
+}
+
+function updateSummary() {
+  // Patient
+  if (prePatient) {
+    // Locked mode — read from the rendered display div
+    var nameEl = document.querySelector('[data-summary-patient]');
+    document.getElementById('sumPatient').textContent = nameEl ? nameEl.textContent.trim() : '{{ pre_con.patient.get_full_name|default:"" }}';
+    document.getElementById('sumPatient').style.color = 'var(--white)';
+  } else if (patientTS) {
+    var patVal  = patientTS.getValue();
+    var patItem = patientTS.options[patVal];
+    document.getElementById('sumPatient').textContent = patItem ? patItem.text.split(' — ')[0] : 'Not selected';
+    document.getElementById('sumPatient').style.color = patVal ? 'var(--white)' : 'var(--slate-2)';
+  }
+
+  // Consultation
+  if (preCon) {
+    document.getElementById('sumCon').textContent = '{{ pre_con.consultation_id|default:"" }}';
+    document.getElementById('sumCon').style.color = 'var(--gold-2)';
+  } else if (conSelect) {
+    var conVal  = conSelect.getValue();
+    var conItem = conSelect.options[conVal];
+    document.getElementById('sumCon').textContent = conVal ? (conItem ? conItem.text.split(' — ')[0] : '') : 'Walk-in';
+    document.getElementById('sumCon').style.color = conVal ? 'var(--gold-2)' : 'var(--slate-2)';
+  } else {
+    document.getElementById('sumCon').textContent = 'Walk-in';
+    document.getElementById('sumCon').style.color = 'var(--slate-2)';
+  }
+
+  document.getElementById('sumDrugs').textContent = document.querySelectorAll('.drug-row').length;
+}
+
+// Start with one empty drug row
+addDrugRow();
+updateSummary();
+
+function handleFreqChange(select, uid) {
+  var wrap = document.getElementById('freqWrap_' + uid);
+  if (select.value === 'Other') {
+    // Swap select for a text input, keep the name="frequency"
+    wrap.innerHTML =
+      '<div style="display:flex;gap:6px;align-items:center;">' +
+        '<input type="text" name="frequency" placeholder="e.g. Every 12 hours…" autofocus ' +
+          'style="background:rgba(255,255,255,.04);border:1px solid var(--gold);border-radius:9px;padding:10px 14px;font-family:\'Outfit\',sans-serif;font-size:13.5px;color:var(--white);outline:none;width:100%;"/>' +
+        '<button type="button" onclick="resetFreq(' + uid + ')" ' +
+          'style="flex-shrink:0;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--slate);cursor:pointer;font-size:13px;" ' +
+          'title="Back to list">↩</button>' +
+      '</div>';
+    wrap.querySelector('input').focus();
+  }
+}
+
+function resetFreq(uid) {
+  var wrap = document.getElementById('freqWrap_' + uid);
+  wrap.innerHTML = '<select name="frequency" onchange="handleFreqChange(this,' + uid + ')">' + freqOptions('Twice daily') + '</select>';
+}
+
+// Close dropdowns on outside click
+document.addEventListener('click', function(e) {
+  document.querySelectorAll('[id^="drugDropdown_"]').forEach(function(dd) {
+    if (!dd.contains(e.target)) dd.style.display = 'none';
+  });
+});
+</script>
+</body>
+</html>

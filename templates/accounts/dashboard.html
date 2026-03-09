@@ -311,27 +311,27 @@
     </a>
 
     <div class="sb-section">Clinical</div>
-    <a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon">🩺</div> Patient Records</a>
-    <a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon">📅</div> Appointments</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🔬</div> Consultations</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📋</div> Prescriptions</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🧪</div> Laboratory</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🛏</div> Ward Management</a>
+    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon">🩺</div> Patient Records</a>{% endif %}
+    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon">📅</div> Appointments</a>{% endif %}
+    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon">🔬</div> Consultations</a>{% endif %}
+    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon">📋</div> Prescriptions</a>{% endif %}
+    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon">🧪</div> Laboratory</a>{% endif %}
+    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon">🛏</div> Ward Management</a>{% endif %}
 
     <div class="sb-section">Pharmacy</div>
-    <a href="#" class="sb-item"><div class="sb-icon">💊</div> Drug Inventory</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🏥</div> Dispensing</a>
+    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon">💊</div> Drug Inventory</a>{% endif %}
+    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon">🏥</div> Dispensing</a>{% endif %}
 
     <div class="sb-section">Administration</div>
-    <a href="#" class="sb-item"><div class="sb-icon">🎓</div> Medical Clearance</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📄</div> Official Documents</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📊</div> Reports & Analytics</a>
+    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon">🎓</div> Medical Clearance</a>{% endif %}
+    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon">📄</div> Official Documents</a>{% endif %}
+    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon">📊</div> Reports & Analytics</a>{% endif %}
 
     <div class="sb-section">System</div>
-    <a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div> User Management</a>
-    <a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div> Role Permissions</a>
-    <a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon">⚙</div> System Settings</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🕐</div> Audit Trail</a>
+    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div> User Management</a>{% endif %}
+    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div> Role Permissions</a>{% endif %}
+    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon">⚙</div> System Settings</a>{% endif %}
+
   </nav>
 
   <div class="sb-footer">
@@ -363,6 +363,17 @@
 
   <!-- Content -->
   <div class="content">
+
+    {% for msg in messages %}
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+                padding:13px 16px;border-radius:10px;font-size:13.5px;margin-bottom:16px;line-height:1.5;
+                {% if msg.tags == 'success' %}background:rgba(61,184,122,.08);border:1px solid rgba(61,184,122,.25);color:#90deb5;
+                {% elif msg.tags == 'warning' %}background:rgba(240,160,74,.08);border:1px solid rgba(240,160,74,.25);color:#f5c87a;
+                {% else %}background:rgba(224,85,85,.08);border:1px solid rgba(224,85,85,.25);color:#f0a0a0;{% endif %}">
+      <span>{{ msg|safe }}</span>
+      <button onclick="this.parentElement.remove()" style="background:none;border:none;color:inherit;cursor:pointer;font-size:18px;opacity:.5;padding:0;line-height:1;flex-shrink:0;">×</button>
+    </div>
+    {% endfor %}
 
     <!-- Welcome -->
     <div class="welcome">
@@ -421,18 +432,18 @@
     </div>
 
     <div class="mod-grid">
-      <a href="#" class="mod-card"><div class="mod-icon mi-teal">🩺</div><div class="mod-name">Patient Records</div><div class="mod-desc">EMR, vitals, history</div><div class="mod-arrow">→</div></a>
-      <a href="#" class="mod-card"><div class="mod-icon mi-blue">📅</div><div class="mod-name">Appointments</div><div class="mod-desc">Schedule & queue</div><div class="mod-arrow">→</div></a>
-      <a href="#" class="mod-card"><div class="mod-icon mi-green">🔬</div><div class="mod-name">Consultations</div><div class="mod-desc">Visit notes & diagnosis</div><div class="mod-arrow">→</div></a>
-      <a href="#" class="mod-card"><div class="mod-icon mi-gold">📋</div><div class="mod-name">Prescriptions</div><div class="mod-desc">Digital prescriptions</div><div class="mod-arrow">→</div></a>
-      <a href="#" class="mod-card"><div class="mod-icon mi-purple">🧪</div><div class="mod-name">Laboratory</div><div class="mod-desc">Test requests & results</div><div class="mod-arrow">→</div></a>
-      <a href="#" class="mod-card"><div class="mod-icon mi-blue">🛏</div><div class="mod-name">Ward Management</div><div class="mod-desc">Beds & admissions</div><div class="mod-arrow">→</div></a>
-      <a href="#" class="mod-card"><div class="mod-icon mi-orange">💊</div><div class="mod-name">Drug Inventory</div><div class="mod-desc">Stock, batches, expiry</div><div class="mod-arrow">→</div></a>
-      <a href="#" class="mod-card"><div class="mod-icon mi-green">🏥</div><div class="mod-name">Dispensing</div><div class="mod-desc">Dispense & track</div><div class="mod-arrow">→</div></a>
-      <a href="#" class="mod-card"><div class="mod-icon mi-teal">🎓</div><div class="mod-name">Medical Clearance</div><div class="mod-desc">100L registration</div><div class="mod-arrow">→</div></a>
-      <a href="#" class="mod-card"><div class="mod-icon mi-slate">📄</div><div class="mod-name">Official Documents</div><div class="mod-desc">Sick leave, referrals</div><div class="mod-arrow">→</div></a>
-      <a href="#" class="mod-card"><div class="mod-icon mi-gold">📊</div><div class="mod-name">Reports & Analytics</div><div class="mod-desc">Insights & exports</div><div class="mod-arrow">→</div></a>
-      <a href="#" class="mod-card"><div class="mod-icon mi-purple">👥</div><div class="mod-name">User Management</div><div class="mod-desc">Staff accounts & roles</div><div class="mod-arrow">→</div></a>
+      {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="mod-card"><div class="mod-icon mi-teal">🩺</div><div class="mod-name">Patient Records</div><div class="mod-desc">EMR, vitals, history</div><div class="mod-arrow">→</div></a>{% endif %}
+      {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="mod-card"><div class="mod-icon mi-blue">📅</div><div class="mod-name">Appointments</div><div class="mod-desc">Schedule & queue</div><div class="mod-arrow">→</div></a>{% endif %}
+      {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="mod-card"><div class="mod-icon mi-green">🔬</div><div class="mod-name">Consultations</div><div class="mod-desc">Visit notes & diagnosis</div><div class="mod-arrow">→</div></a>{% endif %}
+      {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="mod-card"><div class="mod-icon mi-gold">📋</div><div class="mod-name">Prescriptions</div><div class="mod-desc">Digital prescriptions</div><div class="mod-arrow">→</div></a>{% endif %}
+      {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="mod-card"><div class="mod-icon mi-purple">🧪</div><div class="mod-name">Laboratory</div><div class="mod-desc">Test requests & results</div><div class="mod-arrow">→</div></a>{% endif %}
+      {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="mod-card"><div class="mod-icon mi-blue">🛏</div><div class="mod-name">Ward Management</div><div class="mod-desc">Beds & admissions</div><div class="mod-arrow">→</div></a>{% endif %}
+      {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="mod-card"><div class="mod-icon mi-orange">💊</div><div class="mod-name">Drug Inventory</div><div class="mod-desc">Stock, batches, expiry</div><div class="mod-arrow">→</div></a>{% endif %}
+      {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="mod-card"><div class="mod-icon mi-green">🏥</div><div class="mod-name">Dispensing</div><div class="mod-desc">Dispense & track</div><div class="mod-arrow">→</div></a>{% endif %}
+      {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="mod-card"><div class="mod-icon mi-teal">🎓</div><div class="mod-name">Medical Clearance</div><div class="mod-desc">100L registration</div><div class="mod-arrow">→</div></a>{% endif %}
+      {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="mod-card"><div class="mod-icon mi-slate">📄</div><div class="mod-name">Official Documents</div><div class="mod-desc">Sick leave, referrals</div><div class="mod-arrow">→</div></a>{% endif %}
+      {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="mod-card"><div class="mod-icon mi-gold">📊</div><div class="mod-name">Reports & Analytics</div><div class="mod-desc">Insights & exports</div><div class="mod-arrow">→</div></a>{% endif %}
+      {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="mod-card"><div class="mod-icon mi-purple">👥</div><div class="mod-name">User Management</div><div class="mod-desc">Staff accounts & roles</div><div class="mod-arrow">→</div></a>{% endif %}
     </div>
 
     <!-- Bottom row -->
@@ -441,13 +452,16 @@
       <div class="panel-box">
         <div class="panel-title">Quick Actions <span>Common tasks</span></div>
         <div class="qa-grid">
-          <a href="#" class="qa-btn"><span class="qa-icon">➕</span> New Patient</a>
-          <a href="#" class="qa-btn"><span class="qa-icon">📅</span> Book Appointment</a>
-          <a href="#" class="qa-btn"><span class="qa-icon">💊</span> Add Drug Stock</a>
-          <a href="#" class="qa-btn"><span class="qa-icon">👤</span> Add Staff</a>
-          <a href="#" class="qa-btn"><span class="qa-icon">📋</span> New Prescription</a>
-          <a href="#" class="qa-btn"><span class="qa-icon">🧪</span> Request Lab Test</a>
+          {% if perms_map.patients.can_create %}<a href="{% url 'patient_create' %}" class="qa-btn"><span class="qa-icon">➕</span> New Patient</a>{% endif %}
+          {% if perms_map.appointments.can_create %}<a href="{% url 'appointment_list' %}" class="qa-btn"><span class="qa-icon">📅</span> Book Appointment</a>{% endif %}
+          {% if perms_map.inventory.can_create %}<a href="{% url 'drug_list' %}" class="qa-btn"><span class="qa-icon">💊</span> Add Drug Stock</a>{% endif %}
+          {% if perms_map.users.can_create %}<a href="{% url 'user_create' %}" class="qa-btn"><span class="qa-icon">👤</span> Add Staff</a>{% endif %}
+          {% if perms_map.prescriptions.can_create %}<a href="{% url 'prescription_list' %}" class="qa-btn"><span class="qa-icon">📋</span> New Prescription</a>{% endif %}
+          {% if perms_map.laboratory.can_create %}<a href="{% url 'lab_list' %}" class="qa-btn"><span class="qa-icon">🧪</span> Request Lab Test</a>{% endif %}
         </div>
+        {% if not perms_map.patients.can_create and not perms_map.appointments.can_create and not perms_map.inventory.can_create and not perms_map.users.can_create and not perms_map.prescriptions.can_create and not perms_map.laboratory.can_create %}
+        <div style="font-size:13px;color:var(--slate);padding:8px 0;">No quick actions available for your role.</div>
+        {% endif %}
       </div>
 
       <div class="panel-box">

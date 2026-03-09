@@ -122,24 +122,32 @@
   <nav class="sb-nav">
     <div class="sb-section">Main</div>
     <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    {% if perms_map.patients.can_view or perms_map.appointments.can_view or perms_map.consultations.can_view or perms_map.prescriptions.can_view or perms_map.laboratory.can_view or perms_map.wards.can_view %}
     <div class="sb-section">Clinical</div>
-    <a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon">🩺</div>Patient Records</a>
-    <a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>
-    <a href="{% url 'consultation_list' %}" class="sb-item active"><div class="sb-icon">🔬</div>Consultations</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>
+    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon">🩺</div>Patient Records</a>{% endif %}
+    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>{% endif %}
+    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item active"><div class="sb-icon">🔬</div>Consultations</a>{% endif %}
+    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>{% endif %}
+    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>{% endif %}
+    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>{% endif %}
+    {% endif %}
+    {% if perms_map.inventory.can_view or perms_map.dispensing.can_view %}
     <div class="sb-section">Pharmacy</div>
-    <a href="#" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>
+    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>{% endif %}
+    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>{% endif %}
+    {% endif %}
+    {% if perms_map.clearance.can_view or perms_map.documents.can_view or perms_map.reports.can_view %}
     <div class="sb-section">Administration</div>
-    <a href="#" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>
+    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>{% endif %}
+    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>{% endif %}
+    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>{% endif %}
+    {% endif %}
+    {% if perms_map.users.can_view or perms_map.roles.can_view or perms_map.settings.can_view or user.is_superuser %}
     <div class="sb-section">System</div>
-    <a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>
-    <a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>
-    <a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>
+    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>{% endif %}
+    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>{% endif %}
+    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>{% endif %}
+    {% endif %}
   </nav>
   <div class="sb-footer">
     <div class="sb-user">
@@ -157,7 +165,7 @@
       <p>{{ con.patient.get_full_name }} · {{ con.created_at|date:"d M Y, H:i" }}</p>
     </div>
     <div class="topbar-right">
-      {% if con.status != 'Completed' %}
+      {% if perms_map.consultations.can_edit and con.status != 'Completed' %}
       <a href="{% url 'consultation_edit' con.pk %}" class="btn-sm">✏ Edit</a>
       {% endif %}
       <a href="{% url 'consultation_list' %}" class="btn-back">← Consultations</a>
@@ -300,7 +308,7 @@
         </div>
 
         <!-- Status update -->
-        {% if con.status != 'Completed' %}
+        {% if perms_map.consultations.can_edit and con.status != 'Completed' %}
         <div class="card" style="margin-bottom:14px;">
           <div class="card-header"><div class="card-title" style="font-size:14px;">⚡ Update Status</div></div>
           <div class="card-body">
@@ -323,10 +331,12 @@
           <div class="card-header"><div class="card-title" style="font-size:14px;">🔗 Actions</div></div>
           <div class="card-body">
             <div class="action-grid">
-              <a href="#" class="action-btn {% if con.has_prescription %}done{% endif %}">
+              {% if perms_map.prescriptions.can_view %}
+              <a href="{% if con.has_prescription %}{% url 'prescription_list' %}?q={{ con.patient.matric_no }}{% else %}{% url 'prescription_create' %}?consultation={{ con.pk }}{% endif %}" class="action-btn {% if con.has_prescription %}done{% endif %}">
                 <span class="act-icon">💊</span>
                 {% if con.has_prescription %}Prescription ✓{% else %}Write Prescription{% endif %}
               </a>
+              {% endif %}
               <a href="#" class="action-btn {% if con.has_lab_request %}done{% endif %}">
                 <span class="act-icon">🧪</span>
                 {% if con.has_lab_request %}Lab Request ✓{% else %}Request Lab Test{% endif %}
@@ -340,7 +350,7 @@
                 {% if con.has_clearance %}Clearance ✓{% else %}Issue Clearance{% endif %}
               </a>
             </div>
-            <div style="margin-top:10px;font-size:11.5px;color:var(--slate-2);text-align:center;">These will activate as modules are built</div>
+            <div style="margin-top:10px;font-size:11.5px;color:var(--slate-2);text-align:center;">Lab, Ward and Clearance modules coming soon</div>
           </div>
         </div>
 

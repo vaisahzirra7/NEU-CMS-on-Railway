@@ -1,0 +1,323 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Official Documents — VanaraUniCare</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{--ink:#08131F;--panel:#0C1B2E;--panel-2:#0F2040;--surface:rgba(255,255,255,.03);--surface-2:rgba(255,255,255,.055);--border:rgba(255,255,255,.07);--border-2:rgba(255,255,255,.12);--gold:#C9A84C;--gold-2:#E2C47A;--slate:#6B84A3;--slate-2:#4A6380;--white:#FFF;--success:#3DB87A;--warning:#F0A04A;--danger:#E05555;--info:#4A9EE0;--sw:252px;}
+    html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--ink);color:var(--white);}
+    /* ── SIDEBAR ── */
+    .sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sw);background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;}
+    .sb-logo{padding:22px 20px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);}
+    .sb-mark{width:38px;height:38px;background:linear-gradient(145deg,var(--gold),#a07828);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+    .sb-name{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;}.sb-sub{font-size:9.5px;color:var(--slate);text-transform:uppercase;letter-spacing:.1em;}
+    .sb-nav{flex:1;overflow-y:auto;padding:12px 10px;scrollbar-width:thin;}
+    .sb-section{font-size:9.5px;font-weight:600;color:var(--slate-2);text-transform:uppercase;letter-spacing:.12em;padding:14px 10px 6px;}
+    .sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;color:var(--slate);font-size:13.5px;text-decoration:none;transition:background .15s,color .15s;margin-bottom:1px;}
+    .sb-item:hover{background:var(--surface-2);color:var(--white);}.sb-item.active{background:rgba(201,168,76,.1);color:var(--gold-2);font-weight:500;}
+    .sb-icon{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+    .sb-footer{padding:12px 10px;border-top:1px solid var(--border);}
+    .sb-user{display:flex;align-items:center;gap:10px;padding:10px;border-radius:9px;background:var(--surface);}
+    .sb-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#a07828);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--ink);flex-shrink:0;}
+    .sb-uname{font-size:13px;font-weight:500;}.sb-urole{font-size:10.5px;color:var(--slate);}
+    .sb-logout{margin-left:auto;background:none;border:none;color:var(--slate-2);cursor:pointer;font-size:15px;text-decoration:none;}.sb-logout:hover{color:var(--danger);}
+    /* ── MAIN ── */
+    .main{margin-left:var(--sw);min-height:100vh;display:flex;flex-direction:column;}
+    .topbar{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;background:rgba(8,19,31,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);}
+    .topbar-left h1{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;}
+    .topbar-left p{font-size:12px;color:var(--slate);margin-top:1px;}
+    .topbar-right{display:flex;gap:10px;}
+    .content{padding:28px 32px;flex:1;}
+    .btn-primary{background:linear-gradient(135deg,var(--gold),#a07828);border:none;border-radius:9px;padding:9px 20px;font-family:'Outfit',sans-serif;font-size:13.5px;font-weight:600;color:var(--ink);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+    .btn-secondary{padding:9px 18px;background:var(--surface);border:1px solid var(--border);border-radius:9px;font-size:13.5px;color:var(--white);text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+    .btn-secondary:hover{background:var(--surface-2);}
+    .alert{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:13px 16px;border-radius:10px;font-size:13.5px;margin-bottom:14px;}
+    .alert-success{background:rgba(61,184,122,.08);border:1px solid rgba(61,184,122,.25);color:#90deb5;}
+    .alert-error{background:rgba(224,85,85,.08);border:1px solid rgba(224,85,85,.25);color:#f0a0a0;}
+    .alert-close{background:none;border:none;color:inherit;cursor:pointer;font-size:18px;opacity:.6;}
+    /* ── HERO STATS ── */
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
+    .stat-card{position:relative;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px 22px;overflow:hidden;transition:border-color .2s,transform .2s;}
+    .stat-card:hover{border-color:var(--border-2);transform:translateY(-2px);}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0;}
+    .stat-card.c-gold::before{background:linear-gradient(90deg,var(--gold),transparent);}
+    .stat-card.c-success::before{background:linear-gradient(90deg,var(--success),transparent);}
+    .stat-card.c-info::before{background:linear-gradient(90deg,var(--info),transparent);}
+    .stat-card.c-danger::before{background:linear-gradient(90deg,var(--danger),transparent);}
+    .stat-card.c-slate::before{background:linear-gradient(90deg,var(--slate),transparent);}
+    .stat-icon{font-size:26px;margin-bottom:10px;display:block;}
+    .stat-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;line-height:1;}
+    .stat-label{font-size:11.5px;color:var(--slate);margin-top:5px;text-transform:uppercase;letter-spacing:.06em;}
+    .stat-glow{position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:.06;filter:blur(20px);}
+    .stat-card.c-gold .stat-glow{background:var(--gold);}
+    .stat-card.c-success .stat-glow{background:var(--success);}
+    .stat-card.c-info .stat-glow{background:var(--info);}
+    .stat-card.c-danger .stat-glow{background:var(--danger);}
+    /* ── LAYOUT ── */
+    .layout{display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start;}
+    /* ── FILTERS ── */
+    .filter-bar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+    .filter-bar input,.filter-bar select{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:9px 14px;font-family:'Outfit',sans-serif;font-size:13px;color:var(--white);outline:none;}
+    .filter-bar input{flex:1;min-width:180px;}
+    .filter-bar input:focus,.filter-bar select:focus{border-color:rgba(201,168,76,.4);}
+    .filter-bar select option{background:var(--panel);}
+    .filter-bar button{padding:9px 18px;background:var(--gold);border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;}
+    /* ── DOCUMENT TABLE ── */
+    .doc-table-wrap{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+    .doc-table-head{display:grid;grid-template-columns:140px 1fr 130px 110px 100px 90px;gap:0;padding:12px 20px;background:rgba(255,255,255,.025);border-bottom:1px solid var(--border);}
+    .doc-table-head span{font-size:10.5px;font-weight:600;color:var(--slate-2);text-transform:uppercase;letter-spacing:.08em;}
+    .doc-row{display:grid;grid-template-columns:140px 1fr 130px 110px 100px 90px;gap:0;padding:14px 20px;border-bottom:1px solid var(--border);text-decoration:none;color:var(--white);transition:background .12s;}
+    .doc-row:last-child{border-bottom:none;}
+    .doc-row:hover{background:rgba(255,255,255,.025);}
+    .doc-id{font-family:monospace;font-size:12.5px;font-weight:700;color:var(--gold-2);}
+    .doc-patient{font-size:13.5px;font-weight:500;}
+    .doc-patient-sub{font-size:11.5px;color:var(--slate);margin-top:2px;}
+    .doc-type-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:11.5px;font-weight:500;}
+    .type-sick{background:rgba(240,160,74,.1);color:#f8c87a;border:1px solid rgba(240,160,74,.2);}
+    .type-fit{background:rgba(61,184,122,.1);color:#90deb5;border:1px solid rgba(61,184,122,.2);}
+    .type-referral{background:rgba(74,158,224,.1);color:#a0ccf0;border:1px solid rgba(74,158,224,.2);}
+    .type-report{background:rgba(107,132,163,.1);color:var(--slate);border:1px solid rgba(107,132,163,.2);}
+    .status-badge{padding:3px 10px;border-radius:100px;font-size:11px;font-weight:600;}
+    .s-issued{background:rgba(61,184,122,.1);color:#90deb5;border:1px solid rgba(61,184,122,.2);}
+    .s-draft{background:rgba(240,160,74,.1);color:#f8c87a;border:1px solid rgba(240,160,74,.2);}
+    .s-revoked{background:rgba(224,85,85,.1);color:#f0a0a0;border:1px solid rgba(224,85,85,.2);}
+    .doc-date{font-size:12.5px;color:var(--slate);}
+    .doc-action{display:flex;gap:6px;justify-content:flex-end;}
+    .btn-xs{padding:5px 10px;border-radius:7px;font-size:11.5px;font-weight:500;text-decoration:none;display:inline-flex;align-items:center;gap:4px;border:none;cursor:pointer;font-family:'Outfit',sans-serif;}
+    .btn-xs-gold{background:rgba(201,168,76,.1);color:var(--gold-2);border:1px solid rgba(201,168,76,.2);}
+    .btn-xs-gold:hover{background:rgba(201,168,76,.18);}
+    .empty-state{padding:70px;text-align:center;color:var(--slate);}
+    .empty-icon{font-size:52px;opacity:.25;margin-bottom:16px;}
+    .empty-title{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--white);margin-bottom:8px;}
+    /* ── RIGHT COLUMN ── */
+    .side-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px;}
+    .side-card-title{padding:14px 18px;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;gap:8px;}
+    .side-card-body{padding:14px 18px;}
+    .recent-doc{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);text-decoration:none;}
+    .recent-doc:last-child{border-bottom:none;}
+    .recent-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+    .ri-amber{background:rgba(240,160,74,.1);}
+    .ri-green{background:rgba(61,184,122,.1);}
+    .ri-blue{background:rgba(74,158,224,.1);}
+    .ri-slate{background:rgba(107,132,163,.1);}
+    .recent-info{flex:1;min-width:0;}
+    .recent-id{font-size:11.5px;font-family:monospace;color:var(--gold-2);font-weight:700;}
+    .recent-name{font-size:13px;font-weight:500;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .recent-date{font-size:11px;color:var(--slate);}
+    /* ── TYPE BREAKDOWN ── */
+    .type-breakdown{display:flex;flex-direction:column;gap:10px;}
+    .tb-row{display:flex;align-items:center;gap:10px;}
+    .tb-label{font-size:12.5px;color:var(--slate);flex:1;}
+    .tb-bar-wrap{width:90px;height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;}
+    .tb-bar{height:100%;border-radius:3px;}
+    .tb-count{font-size:12px;font-weight:600;color:var(--white);min-width:20px;text-align:right;}
+  </style>
+</head>
+<body>
+<!-- ── SIDEBAR ── -->
+<div class="sidebar">
+  <div class="sb-logo"><div class="sb-mark">⚕</div><div><div class="sb-name">VanaraUniCare</div><div class="sb-sub">NEU Health Center</div></div></div>
+  <nav class="sb-nav">
+    <div class="sb-section">Main</div>
+    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    {% if perms_map.patients.can_view or perms_map.appointments.can_view or perms_map.consultations.can_view or perms_map.prescriptions.can_view or perms_map.laboratory.can_view or perms_map.wards.can_view %}
+    <div class="sb-section">Clinical</div>
+    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon">🩺</div>Patient Records</a>{% endif %}
+    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>{% endif %}
+    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>{% endif %}
+    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>{% endif %}
+    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>{% endif %}
+    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>{% endif %}
+    {% endif %}
+    {% if perms_map.inventory.can_view or perms_map.dispensing.can_view %}
+    <div class="sb-section">Pharmacy</div>
+    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>{% endif %}
+    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>{% endif %}
+    {% endif %}
+    {% if perms_map.clearance.can_view or perms_map.documents.can_view or perms_map.reports.can_view %}
+    <div class="sb-section">Administration</div>
+    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>{% endif %}
+    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item active"><div class="sb-icon">📄</div>Official Documents</a>{% endif %}
+    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>{% endif %}
+    {% endif %}
+    {% if perms_map.users.can_view or perms_map.roles.can_view or perms_map.settings.can_view or user.is_superuser %}
+    <div class="sb-section">System</div>
+    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>{% endif %}
+    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>{% endif %}
+    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>{% endif %}
+    {% endif %}
+  </nav>
+  <div class="sb-footer"><div class="sb-user">
+    <div class="sb-avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>
+    <div><div class="sb-uname">{{ user.get_short_name }}</div><div class="sb-urole">{{ user.role|default:"Staff" }}</div></div>
+    <a href="{% url 'logout' %}" class="sb-logout">⏻</a>
+  </div></div>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left"><h1>Official Documents</h1><p>Issue and manage medical letters &amp; certificates</p></div>
+    <div class="topbar-right">
+      {% if perms_map.documents.can_create %}<a href="{% url 'document_create' %}" class="btn-primary">+ Issue Document</a>{% endif %}
+    </div>
+  </div>
+  <div class="content">
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }}"><span>{{ msg|safe }}</span><button class="alert-close" onclick="this.parentElement.remove()">×</button></div>
+    {% endfor %}
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card c-gold">
+        <div class="stat-glow"></div>
+        <span class="stat-icon">📄</span>
+        <div class="stat-num">{{ total }}</div>
+        <div class="stat-label">Total Documents</div>
+      </div>
+      <div class="stat-card c-success">
+        <div class="stat-glow"></div>
+        <span class="stat-icon">✅</span>
+        <div class="stat-num">{{ issued_ct }}</div>
+        <div class="stat-label">Issued</div>
+      </div>
+      <div class="stat-card c-info">
+        <div class="stat-glow"></div>
+        <span class="stat-icon">✏️</span>
+        <div class="stat-num">{{ draft_ct }}</div>
+        <div class="stat-label">Drafts</div>
+      </div>
+      <div class="stat-card c-danger">
+        <div class="stat-glow"></div>
+        <span class="stat-icon">🚫</span>
+        <div class="stat-num">{{ revoked_ct }}</div>
+        <div class="stat-label">Revoked</div>
+      </div>
+    </div>
+
+    <div class="layout">
+      <!-- LEFT: Table -->
+      <div>
+        <!-- Filters -->
+        <form method="GET" class="filter-bar">
+          <input type="text" name="q" placeholder="Search patient name, matric, doc ID…" value="{{ q }}"/>
+          <select name="type">
+            <option value="">All types</option>
+            {% for val,label in type_choices %}
+            <option value="{{ val }}" {% if doc_type == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+          <select name="status">
+            <option value="">All statuses</option>
+            <option value="draft"   {% if status == 'draft'   %}selected{% endif %}>Draft</option>
+            <option value="issued"  {% if status == 'issued'  %}selected{% endif %}>Issued</option>
+            <option value="revoked" {% if status == 'revoked' %}selected{% endif %}>Revoked</option>
+          </select>
+          <button type="submit">Filter</button>
+        </form>
+
+        <div class="doc-table-wrap">
+          {% if docs %}
+          <div class="doc-table-head">
+            <span>Doc ID</span>
+            <span>Patient</span>
+            <span>Type</span>
+            <span>Date</span>
+            <span>Status</span>
+            <span></span>
+          </div>
+          {% for doc in docs %}
+          <div class="doc-row">
+            <div class="doc-id">{{ doc.doc_id }}</div>
+            <div>
+              <div class="doc-patient">{{ doc.patient.get_full_name }}</div>
+              <div class="doc-patient-sub">{{ doc.patient.matric_no }}</div>
+            </div>
+            <div>
+              {% if doc.doc_type == 'sick_leave' %}<span class="doc-type-badge type-sick">Sick Leave</span>
+              {% elif doc.doc_type == 'fit_to_resume' %}<span class="doc-type-badge type-fit">Fit to Resume</span>
+              {% elif doc.doc_type == 'referral' %}<span class="doc-type-badge type-referral">Referral</span>
+              {% else %}<span class="doc-type-badge type-report">Med. Report</span>{% endif %}
+            </div>
+            <div class="doc-date">{{ doc.date_issued|date:"d M Y" }}</div>
+            <div>
+              {% if doc.status == 'issued' %}<span class="status-badge s-issued">Issued</span>
+              {% elif doc.status == 'draft' %}<span class="status-badge s-draft">Draft</span>
+              {% else %}<span class="status-badge s-revoked">Revoked</span>{% endif %}
+            </div>
+            <div class="doc-action">
+              <a href="{% url 'document_detail' doc.pk %}" class="btn-xs btn-xs-gold">View →</a>
+            </div>
+          </div>
+          {% endfor %}
+          {% else %}
+          <div class="empty-state">
+            <div class="empty-icon">📄</div>
+            <div class="empty-title">No documents found</div>
+            <div>{% if q or doc_type or status %}Try adjusting your filters.{% else %}Issue your first document to get started.{% endif %}</div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+
+
+
+
+      <!-- RIGHT: Sidebar -->
+      <div>
+        <!-- Recent Issued -->
+        <div class="side-card">
+          <div class="side-card-title">⚡ Recently Issued</div>
+          <div class="side-card-body">
+            {% for doc in recent %}
+            <a href="{% url 'document_detail' doc.pk %}" class="recent-doc">
+              <div class="recent-icon {% if doc.doc_type == 'sick_leave' %}ri-amber{% elif doc.doc_type == 'fit_to_resume' %}ri-green{% elif doc.doc_type == 'referral' %}ri-blue{% else %}ri-slate{% endif %}">{{ doc.type_icon }}</div>
+              <div class="recent-info">
+                <div class="recent-id">{{ doc.doc_id }}</div>
+                <div class="recent-name">{{ doc.patient.get_full_name }}</div>
+                <div class="recent-date">{{ doc.date_issued|date:"d M Y" }}</div>
+              </div>
+            </a>
+            {% empty %}
+            <div style="font-size:13px;color:var(--slate);text-align:center;padding:14px 0;">No issued documents yet.</div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Type Breakdown -->
+        <div class="side-card">
+          <div class="side-card-title">📊 By Document Type</div>
+          <div class="side-card-body">
+            <div class="type-breakdown">
+              {% with sl=docs|length %}
+              <div class="tb-row">
+                <span class="tb-label">🤒 Sick Leave</span>
+                <div class="tb-bar-wrap"><div class="tb-bar" style="width:{% if total %}{% widthratio docs|length total 100 %}%{% else %}0%{% endif %};background:var(--warning);"></div></div>
+                <span class="tb-count">{{ docs|length }}</span>
+              </div>
+              {% endwith %}
+            </div>
+            <div style="margin-top:12px;font-size:12px;color:var(--slate);text-align:center;">Use filters above to view by type</div>
+          </div>
+        </div>
+
+        <!-- Quick Issue -->
+        <div class="side-card">
+          <div class="side-card-title">⚡ Quick Issue</div>
+          <div class="side-card-body" style="display:flex;flex-direction:column;gap:8px;">
+            <a href="{% url 'document_create' %}?type=sick_leave" class="btn-secondary" style="justify-content:center;font-size:13px;">Sick Leave Letter</a>
+            <a href="{% url 'document_create' %}?type=fit_to_resume" class="btn-secondary" style="justify-content:center;font-size:13px;">Fit to Resume</a>
+            <a href="{% url 'document_create' %}?type=referral" class="btn-secondary" style="justify-content:center;font-size:13px;">Referral Letter</a>
+            <a href="{% url 'document_create' %}?type=medical_report" class="btn-secondary" style="justify-content:center;font-size:13px;">Medical Report</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

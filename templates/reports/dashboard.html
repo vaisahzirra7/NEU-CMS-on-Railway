@@ -1,0 +1,804 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Reports & Analytics — VanaraUniCare</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{--ink:#08131F;--panel:#0C1B2E;--panel-2:#0F2040;--surface:rgba(255,255,255,.03);--surface-2:rgba(255,255,255,.055);--border:rgba(255,255,255,.07);--border-2:rgba(255,255,255,.12);--gold:#C9A84C;--gold-2:#E2C47A;--slate:#6B84A3;--slate-2:#4A6380;--white:#FFF;--success:#3DB87A;--warning:#F0A04A;--danger:#E05555;--info:#4A9EE0;--sw:252px;}
+    html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--ink);color:var(--white);}
+    @media print{.sidebar,.topbar,.filter-bar,.tab-nav,.export-bar,.no-print{display:none!important;}.main{margin-left:0!important;}.content{padding:16px!important;}.tab-pane{display:block!important;}.print-title{display:block!important;}}
+    .print-title{display:none;font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;margin-bottom:16px;}
+    /* SIDEBAR */
+    .sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sw);background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;}
+    .sb-logo{padding:22px 20px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);}
+    .sb-mark{width:38px;height:38px;background:linear-gradient(145deg,var(--gold),#a07828);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+    .sb-name{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;}.sb-sub{font-size:9.5px;color:var(--slate);text-transform:uppercase;letter-spacing:.1em;}
+    .sb-nav{flex:1;overflow-y:auto;padding:12px 10px;scrollbar-width:thin;}
+    .sb-section{font-size:9.5px;font-weight:600;color:var(--slate-2);text-transform:uppercase;letter-spacing:.12em;padding:14px 10px 6px;}
+    .sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;color:var(--slate);font-size:13.5px;text-decoration:none;transition:background .15s,color .15s;margin-bottom:1px;}
+    .sb-item:hover{background:var(--surface-2);color:var(--white);}.sb-item.active{background:rgba(201,168,76,.1);color:var(--gold-2);font-weight:500;}
+    .sb-icon{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+    .sb-footer{padding:12px 10px;border-top:1px solid var(--border);}
+    .sb-user{display:flex;align-items:center;gap:10px;padding:10px;border-radius:9px;background:var(--surface);}
+    .sb-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#a07828);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--ink);flex-shrink:0;}
+    .sb-uname{font-size:13px;font-weight:500;}.sb-urole{font-size:10.5px;color:var(--slate);}
+    .sb-logout{margin-left:auto;background:none;border:none;color:var(--slate-2);cursor:pointer;font-size:15px;text-decoration:none;}.sb-logout:hover{color:var(--danger);}
+    /* MAIN */
+    .main{margin-left:var(--sw);min-height:100vh;display:flex;flex-direction:column;}
+    .topbar{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;background:rgba(8,19,31,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);}
+    .topbar-left h1{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;}
+    .topbar-left p{font-size:12px;color:var(--slate);margin-top:1px;}
+    .topbar-right{display:flex;gap:10px;}
+    .content{padding:24px 32px;flex:1;}
+    .btn-primary{background:linear-gradient(135deg,var(--gold),#a07828);border:none;border-radius:9px;padding:9px 18px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+    .btn-secondary{padding:8px 16px;background:var(--surface);border:1px solid var(--border);border-radius:9px;font-size:13px;color:var(--white);text-decoration:none;display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-family:'Outfit',sans-serif;}
+    .btn-secondary:hover{background:var(--surface-2);}
+    /* FILTER BAR */
+    .filter-bar{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;}
+    .filter-field{display:flex;flex-direction:column;gap:5px;}
+    .filter-field label{font-size:10px;font-weight:600;color:var(--slate-2);text-transform:uppercase;letter-spacing:.08em;}
+    .filter-field input,.filter-field select{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'Outfit',sans-serif;font-size:13px;color:var(--white);outline:none;min-width:140px;}
+    .filter-field input:focus,.filter-field select:focus{border-color:rgba(201,168,76,.4);}
+    .filter-field select option{background:var(--panel-2);}
+    /* TAB NAV */
+    .tab-nav{display:flex;gap:4px;margin-bottom:20px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:5px;}
+    .tab-btn{flex:1;padding:10px 8px;border:none;background:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;color:var(--slate);cursor:pointer;transition:background .15s,color .15s;display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;}
+    .tab-btn:hover{background:var(--surface-2);color:var(--white);}
+    .tab-btn.active{background:rgba(201,168,76,.12);color:var(--gold-2);font-weight:600;}
+    .tab-pane{display:none;}
+    .tab-pane.active{display:block;}
+    /* EXPORT BAR */
+    .export-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+    .export-bar-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;}
+    .export-bar-right{display:flex;gap:8px;}
+    /* STAT CARDS */
+    .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+    .stat-row.cols-3{grid-template-columns:repeat(3,1fr);}
+    .stat-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 18px;position:relative;overflow:hidden;}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0;}
+    .stat-card.c-gold::before{background:linear-gradient(90deg,var(--gold),transparent);}
+    .stat-card.c-success::before{background:linear-gradient(90deg,var(--success),transparent);}
+    .stat-card.c-info::before{background:linear-gradient(90deg,var(--info),transparent);}
+    .stat-card.c-warning::before{background:linear-gradient(90deg,var(--warning),transparent);}
+    .stat-card.c-danger::before{background:linear-gradient(90deg,var(--danger),transparent);}
+    .stat-icon{font-size:22px;margin-bottom:8px;}
+    .stat-num{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;line-height:1;}
+    .stat-label{font-size:11.5px;color:var(--slate);margin-top:4px;}
+    /* CHART GRIDS */
+    .chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+    .chart-grid.cols-3{grid-template-columns:1fr 1fr 1fr;}
+    .chart-grid.full{grid-template-columns:1fr;}
+    .chart-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+    .chart-card-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .chart-card-title{font-size:13px;font-weight:600;color:var(--white);}
+    .chart-card-sub{font-size:11.5px;color:var(--slate);}
+    .chart-card-body{padding:18px;}
+    .chart-wrap{width:100%;overflow:hidden;}
+    /* TABLE */
+    .report-table{width:100%;border-collapse:collapse;font-size:13px;}
+    .report-table th{font-size:10.5px;font-weight:600;color:var(--slate-2);text-transform:uppercase;letter-spacing:.08em;padding:10px 14px;background:rgba(255,255,255,.025);border-bottom:1px solid var(--border);text-align:left;}
+    .report-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--white);}
+    .report-table tr:last-child td{border-bottom:none;}
+    .report-table tr:hover td{background:rgba(255,255,255,.02);}
+    .prog-bar-wrap{height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;min-width:80px;}
+    .prog-bar{height:100%;border-radius:3px;background:var(--gold);}
+    /* BADGE */
+    .badge{padding:2px 9px;border-radius:100px;font-size:11px;font-weight:600;}
+    .badge-green{background:rgba(61,184,122,.1);color:#90deb5;border:1px solid rgba(61,184,122,.2);}
+    .badge-amber{background:rgba(240,160,74,.1);color:#f8c87a;border:1px solid rgba(240,160,74,.2);}
+    .badge-red{background:rgba(224,85,85,.1);color:#f0a0a0;border:1px solid rgba(224,85,85,.2);}
+    .badge-slate{background:rgba(107,132,163,.1);color:var(--slate);border:1px solid rgba(107,132,163,.2);}
+    /* RATE BAR */
+    .rate-wrap{display:flex;align-items:center;gap:10px;}
+    .rate-bar-outer{flex:1;height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;}
+    .rate-bar-inner{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--success),#2ab870);}
+    .rate-pct{font-size:12px;font-weight:600;color:#90deb5;min-width:38px;text-align:right;}
+    /* SVG charts */
+    svg text{font-family:'Outfit',sans-serif;}
+    .axis line,.axis path{stroke:rgba(255,255,255,.08);}
+    .axis text{fill:var(--slate);font-size:11px;}
+    .grid line{stroke:rgba(255,255,255,.04);}
+    .empty-chart{display:flex;align-items:center;justify-content:center;height:200px;color:var(--slate);font-size:13px;}
+  </style>
+</head>
+<body>
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sb-logo"><div class="sb-mark">⚕</div><div><div class="sb-name">VanaraUniCare</div><div class="sb-sub">NEU Health Center</div></div></div>
+  <nav class="sb-nav">
+    <div class="sb-section">Main</div>
+    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    {% if perms_map.patients.can_view or perms_map.appointments.can_view or perms_map.consultations.can_view or perms_map.prescriptions.can_view or perms_map.laboratory.can_view or perms_map.wards.can_view %}
+    <div class="sb-section">Clinical</div>
+    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon">🩺</div>Patient Records</a>{% endif %}
+    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>{% endif %}
+    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>{% endif %}
+    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>{% endif %}
+    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>{% endif %}
+    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>{% endif %}
+    {% endif %}
+    {% if perms_map.inventory.can_view or perms_map.dispensing.can_view %}
+    <div class="sb-section">Pharmacy</div>
+    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>{% endif %}
+    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>{% endif %}
+    {% endif %}
+    {% if perms_map.clearance.can_view or perms_map.documents.can_view or perms_map.reports.can_view %}
+    <div class="sb-section">Administration</div>
+    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>{% endif %}
+    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>{% endif %}
+    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item active"><div class="sb-icon">📊</div>Reports & Analytics</a>{% endif %}
+    {% endif %}
+    {% if perms_map.users.can_view or perms_map.roles.can_view or perms_map.settings.can_view or user.is_superuser %}
+    <div class="sb-section">System</div>
+    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>{% endif %}
+    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>{% endif %}
+    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>{% endif %}
+    {% endif %}
+  </nav>
+  <div class="sb-footer"><div class="sb-user">
+    <div class="sb-avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>
+    <div><div class="sb-uname">{{ user.get_short_name }}</div><div class="sb-urole">{{ user.role|default:"Staff" }}</div></div>
+    <a href="{% url 'logout' %}" class="sb-logout">⏻</a>
+  </div></div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left"><h1>Reports &amp; Analytics</h1><p>Data insights across all modules</p></div>
+    <div class="topbar-right no-print">
+      <button onclick="window.print()" class="btn-secondary">🖨 Print Report</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- FILTER BAR -->
+    <form method="GET" id="filterForm" class="filter-bar no-print">
+      <input type="hidden" name="tab" id="activeTabInput" value="{{ active_tab }}"/>
+      <div class="filter-field">
+        <label>Date From</label>
+        <input type="date" name="date_from" value="{{ filters.date_from }}"/>
+      </div>
+      <div class="filter-field">
+        <label>Date To</label>
+        <input type="date" name="date_to" value="{{ filters.date_to }}"/>
+      </div>
+      <div class="filter-field">
+        <label>Faculty</label>
+        <select name="faculty">
+          <option value="">All Faculties</option>
+          {% for fac in faculties %}
+          <option value="{{ fac.pk }}" {% if filters.faculty == fac.pk|stringformat:'s' %}selected{% endif %}>{{ fac.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="filter-field">
+        <label>Department</label>
+        <select name="department">
+          <option value="">All Departments</option>
+          {% for dept in departments %}
+          <option value="{{ dept.pk }}" {% if filters.department == dept.pk|stringformat:'s' %}selected{% endif %}>{{ dept.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="filter-field">
+        <label>Clearance Session</label>
+        <select name="session">
+          <option value="">All Sessions</option>
+          {% for s in sessions %}
+          <option value="{{ s.pk }}" {% if filters.session == s.pk|stringformat:'s' %}selected{% endif %}>{{ s.display_title }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn-primary">Apply Filters</button>
+      <a href="{% url 'reports_dashboard' %}" class="btn-secondary">Reset</a>
+    </form>
+
+    <!-- TAB NAV -->
+    <div class="tab-nav no-print">
+      <button class="tab-btn {% if active_tab == 'patients' %}active{% endif %}" onclick="switchTab('patients', this)">👥 Patients</button>
+      <button class="tab-btn {% if active_tab == 'clinical' %}active{% endif %}" onclick="switchTab('clinical', this)">🔬 Clinical</button>
+      <button class="tab-btn {% if active_tab == 'laboratory' %}active{% endif %}" onclick="switchTab('laboratory', this)">🧪 Laboratory</button>
+      <button class="tab-btn {% if active_tab == 'pharmacy' %}active{% endif %}" onclick="switchTab('pharmacy', this)">💊 Pharmacy</button>
+      <button class="tab-btn {% if active_tab == 'clearance' %}active{% endif %}" onclick="switchTab('clearance', this)">🎓 Clearance</button>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         TAB 1: PATIENT ANALYTICS
+    ════════════════════════════════════════════════════════════ -->
+    <div class="tab-pane {% if active_tab == 'patients' %}active{% endif %}" id="tab-patients">
+      <div class="export-bar">
+        <div class="export-bar-title">👥 Patient Analytics</div>
+        <div class="export-bar-right no-print">
+          {% if perms_map.reports.can_export %}<a href="{% url 'reports_export_csv' 'patients' %}?{{ request.GET.urlencode }}" class="btn-secondary">⬇ CSV</a>{% endif %}
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-card c-gold"><div class="stat-icon">🏥</div><div class="stat-num">{{ total_patients }}</div><div class="stat-label">Total Patients</div></div>
+        <div class="stat-card c-success"><div class="stat-icon">✅</div><div class="stat-num">{{ active_patients }}</div><div class="stat-label">Active Patients</div></div>
+        <div class="stat-card c-info"><div class="stat-icon">🆕</div><div class="stat-num">{{ new_this_period }}</div><div class="stat-label">New This Period</div></div>
+        <div class="stat-card c-warning"><div class="stat-icon">❌</div><div class="stat-num">{{ inactive_patients }}</div><div class="stat-label">Inactive</div></div>
+      </div>
+
+      <div class="chart-grid">
+        <div class="chart-card" style="grid-column:span 2;">
+          <div class="chart-card-header"><div class="chart-card-title">📈 Patient Registrations Over Time</div><div class="chart-card-sub">Monthly</div></div>
+          <div class="chart-card-body"><div class="chart-wrap" id="regChart" style="height:220px;"></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-header"><div class="chart-card-title">⚧ Gender Distribution</div></div>
+          <div class="chart-card-body"><div class="chart-wrap" id="genderChart" style="height:220px;"></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-header"><div class="chart-card-title">🎓 Patient Type</div></div>
+          <div class="chart-card-body"><div class="chart-wrap" id="ptypeChart" style="height:220px;"></div></div>
+        </div>
+      </div>
+
+      <div class="chart-grid">
+        <div class="chart-card">
+          <div class="chart-card-header"><div class="chart-card-title">🏛 Registrations by Faculty</div><div class="chart-card-sub">Top 8</div></div>
+          <div class="chart-card-body"><div class="chart-wrap" id="facultyChart" style="height:260px;"></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-header"><div class="chart-card-title">🩸 Blood Group Distribution</div></div>
+          <div class="chart-card-body"><div class="chart-wrap" id="bloodChart" style="height:260px;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         TAB 2: CLINICAL
+    ════════════════════════════════════════════════════════════ -->
+    <div class="tab-pane {% if active_tab == 'clinical' %}active{% endif %}" id="tab-clinical">
+      <div class="export-bar">
+        <div class="export-bar-title">🔬 Clinical Reports</div>
+        <div class="export-bar-right no-print">
+          {% if perms_map.reports.can_export %}<a href="{% url 'reports_export_csv' 'clinical' %}?{{ request.GET.urlencode }}" class="btn-secondary">⬇ CSV</a>{% endif %}
+        </div>
+      </div>
+
+      <div class="stat-row cols-3">
+        <div class="stat-card c-gold"><div class="stat-icon">🔬</div><div class="stat-num">{{ total_consultations }}</div><div class="stat-label">Total Consultations</div></div>
+        <div class="stat-card c-success"><div class="stat-icon">✅</div><div class="stat-num">{{ total_consultations }}</div><div class="stat-label">This Period</div></div>
+        <div class="stat-card c-info"><div class="stat-icon">📋</div><div class="stat-num" id="diagCount">—</div><div class="stat-label">Unique Diagnoses</div></div>
+      </div>
+
+      <div class="chart-grid">
+        <div class="chart-card" style="grid-column:span 2;">
+          <div class="chart-card-header"><div class="chart-card-title">📈 Consultations Over Time</div><div class="chart-card-sub">Monthly volume</div></div>
+          <div class="chart-card-body"><div class="chart-wrap" id="consultChart" style="height:220px;"></div></div>
+        </div>
+        <div class="chart-card" style="grid-column:span 2;">
+          <div class="chart-card-header"><div class="chart-card-title">🏥 Top 10 Diagnoses</div><div class="chart-card-sub">By frequency</div></div>
+          <div class="chart-card-body"><div class="chart-wrap" id="diagChart" style="height:280px;"></div></div>
+        </div>
+      </div>
+
+      <div class="chart-grid">
+        <div class="chart-card">
+          <div class="chart-card-header"><div class="chart-card-title">📊 Consultation Status</div></div>
+          <div class="chart-card-body"><div class="chart-wrap" id="consultStatusChart" style="height:220px;"></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-header"><div class="chart-card-title">🏥 Top Diagnoses Table</div></div>
+          <div class="chart-card-body" style="padding:0;">
+            <table class="report-table">
+              <thead><tr><th>#</th><th>Diagnosis</th><th>Count</th><th>Share</th></tr></thead>
+              <tbody id="diagTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         TAB 3: LABORATORY
+    ════════════════════════════════════════════════════════════ -->
+    <div class="tab-pane {% if active_tab == 'laboratory' %}active{% endif %}" id="tab-laboratory">
+      <div class="export-bar">
+        <div class="export-bar-title">🧪 Laboratory Reports</div>
+        <div class="export-bar-right no-print">
+          {% if perms_map.reports.can_export %}<a href="{% url 'reports_export_csv' 'laboratory' %}?{{ request.GET.urlencode }}" class="btn-secondary">⬇ CSV</a>{% endif %}
+        </div>
+      </div>
+
+      <div class="stat-row cols-3">
+        <div class="stat-card c-gold"><div class="stat-icon">🧪</div><div class="stat-num">{{ total_lab }}</div><div class="stat-label">Total Requests</div></div>
+        <div class="stat-card c-success"><div class="stat-icon">✅</div><div class="stat-num">{{ completed_lab }}</div><div class="stat-label">Completed</div></div>
+        <div class="stat-card c-warning"><div class="stat-icon">⏳</div><div class="stat-num">{{ total_lab|add:"-"|add:completed_lab }}</div><div class="stat-label">Pending / In Progress</div></div>
+      </div>
+
+      <div class="chart-grid">
+        <div class="chart-card" style="grid-column:span 2;">
+          <div class="chart-card-header"><div class="chart-card-title">📈 Lab Requests Over Time</div><div class="chart-card-sub">Monthly</div></div>
+          <div class="chart-card-body"><div class="chart-wrap" id="labChart" style="height:220px;"></div></div>
+        </div>
+        <div class="chart-card" style="grid-column:span 2;">
+          <div class="chart-card-header"><div class="chart-card-title">🔬 Top Tests Ordered</div><div class="chart-card-sub">By volume</div></div>
+          <div class="chart-card-body"><div class="chart-wrap" id="testChart" style="height:260px;"></div></div>
+        </div>
+      </div>
+
+      <div class="chart-grid">
+        <div class="chart-card">
+          <div class="chart-card-header"><div class="chart-card-title">📊 Request Status</div></div>
+          <div class="chart-card-body"><div class="chart-wrap" id="labStatusChart" style="height:220px;"></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-header"><div class="chart-card-title">🔍 Result Interpretations</div></div>
+          <div class="chart-card-body"><div class="chart-wrap" id="interpChart" style="height:220px;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         TAB 4: PHARMACY
+    ════════════════════════════════════════════════════════════ -->
+    <div class="tab-pane {% if active_tab == 'pharmacy' %}active{% endif %}" id="tab-pharmacy">
+      <div class="export-bar">
+        <div class="export-bar-title">💊 Pharmacy Reports</div>
+        <div class="export-bar-right no-print">
+          {% if perms_map.reports.can_export %}<a href="{% url 'reports_export_csv' 'pharmacy' %}?{{ request.GET.urlencode }}" class="btn-secondary">⬇ CSV</a>{% endif %}
+        </div>
+      </div>
+
+      <div class="stat-row cols-3">
+        <div class="stat-card c-gold"><div class="stat-icon">💊</div><div class="stat-num">{{ total_rx }}</div><div class="stat-label">Total Prescriptions</div></div>
+        <div class="stat-card c-success"><div class="stat-icon">✅</div><div class="stat-num">{{ dispensed_rx }}</div><div class="stat-label">Dispensed</div></div>
+        <div class="stat-card c-warning"><div class="stat-icon">⏳</div><div class="stat-num">{{ pending_rx }}</div><div class="stat-label">Pending</div></div>
+      </div>
+
+      <div class="chart-grid">
+        <div class="chart-card" style="grid-column:span 2;">
+          <div class="chart-card-header"><div class="chart-card-title">📈 Prescriptions Over Time</div><div class="chart-card-sub">Monthly</div></div>
+          <div class="chart-card-body"><div class="chart-wrap" id="rxChart" style="height:220px;"></div></div>
+        </div>
+        <div class="chart-card" style="grid-column:span 2;">
+          <div class="chart-card-header"><div class="chart-card-title">💉 Top 10 Dispensed Drugs</div><div class="chart-card-sub">By prescription count</div></div>
+          <div class="chart-card-body"><div class="chart-wrap" id="drugChart" style="height:260px;"></div></div>
+        </div>
+      </div>
+
+      <div class="chart-grid">
+        <div class="chart-card">
+          <div class="chart-card-header"><div class="chart-card-title">📊 Prescription Status</div></div>
+          <div class="chart-card-body"><div class="chart-wrap" id="rxStatusChart" style="height:220px;"></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-header"><div class="chart-card-title">💊 Top Drugs Table</div></div>
+          <div class="chart-card-body" style="padding:0;">
+            <table class="report-table">
+              <thead><tr><th>#</th><th>Drug</th><th>Count</th><th>Share</th></tr></thead>
+              <tbody id="drugTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         TAB 5: CLEARANCE
+    ════════════════════════════════════════════════════════════ -->
+    <div class="tab-pane {% if active_tab == 'clearance' %}active{% endif %}" id="tab-clearance">
+      <div class="export-bar">
+        <div class="export-bar-title">🎓 Clearance Reports</div>
+        <div class="export-bar-right no-print">
+          {% if perms_map.reports.can_export %}<a href="{% url 'reports_export_csv' 'clearance' %}?{{ request.GET.urlencode }}" class="btn-secondary">⬇ CSV</a>{% endif %}
+        </div>
+      </div>
+
+      <div class="stat-row cols-3">
+        <div class="stat-card c-gold"><div class="stat-icon">🎓</div><div class="stat-num">{{ total_cl }}</div><div class="stat-label">Total Submissions</div></div>
+        <div class="stat-card c-success"><div class="stat-icon">✅</div><div class="stat-num">{{ approved_cl }}</div><div class="stat-label">Approved</div></div>
+        <div class="stat-card c-info"><div class="stat-icon">📊</div><div class="stat-num">{{ approval_rate }}%</div><div class="stat-label">Approval Rate</div></div>
+      </div>
+
+      <div class="chart-grid">
+        <div class="chart-card" style="grid-column:span 2;">
+          <div class="chart-card-header"><div class="chart-card-title">📈 Clearance Submissions Over Time</div><div class="chart-card-sub">Monthly</div></div>
+          <div class="chart-card-body"><div class="chart-wrap" id="clChart" style="height:220px;"></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-header"><div class="chart-card-title">📊 Submission Status</div></div>
+          <div class="chart-card-body"><div class="chart-wrap" id="clStatusChart" style="height:220px;"></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-header"><div class="chart-card-title">📈 Approval Rate by Faculty</div></div>
+          <div class="chart-card-body"><div class="chart-wrap" id="clFacultyChart" style="height:220px;"></div></div>
+        </div>
+      </div>
+
+      <!-- Session breakdown table -->
+      <div class="chart-card">
+        <div class="chart-card-header"><div class="chart-card-title">🗓 Clearance by Session</div></div>
+        <div class="chart-card-body" style="padding:0;">
+          <table class="report-table">
+            <thead><tr><th>Session</th><th>Stream</th><th>Total</th><th>Approved</th><th>Approval Rate</th></tr></thead>
+            <tbody>
+              {% for s in cl_by_session %}
+              <tr>
+                <td>{{ s.session__academic_session }}</td>
+                <td>{{ s.session__stream }}</td>
+                <td>{{ s.total }}</td>
+                <td><span class="badge badge-green">{{ s.approved }}</span></td>
+                <td>
+                  <div class="rate-wrap">
+                    <div class="rate-bar-outer"><div class="rate-bar-inner" style="width:{% if s.total %}{% widthratio s.approved s.total 100 %}%{% else %}0%{% endif %};"></div></div>
+                    <span class="rate-pct">{% if s.total %}{% widthratio s.approved s.total 100 %}%{% else %}0%{% endif %}</span>
+                  </div>
+                </td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="5" style="text-align:center;color:var(--slate);padding:24px;">No clearance data for this period.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Faculty breakdown table -->
+      {% if cl_by_faculty %}
+      <div class="chart-card" style="margin-top:16px;">
+        <div class="chart-card-header"><div class="chart-card-title">🏛 Clearance by Faculty</div></div>
+        <div class="chart-card-body" style="padding:0;">
+          <table class="report-table">
+            <thead><tr><th>Faculty</th><th>Total</th><th>Approved</th><th>Approval Rate</th></tr></thead>
+            <tbody>
+              {% for row in cl_by_faculty %}
+              <tr>
+                <td>{{ row.patient__faculty__name }}</td>
+                <td>{{ row.total }}</td>
+                <td><span class="badge badge-green">{{ row.approved }}</span></td>
+                <td>
+                  <div class="rate-wrap">
+                    <div class="rate-bar-outer"><div class="rate-bar-inner" style="width:{% if row.total %}{% widthratio row.approved row.total 100 %}%{% else %}0%{% endif %};"></div></div>
+                    <span class="rate-pct">{% if row.total %}{% widthratio row.approved row.total 100 %}%{% else %}0%{% endif %}</span>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+  </div><!-- content -->
+</div><!-- main -->
+
+<!-- D3 DATA -->
+{{ reg_labels|json_script:"reg_labels" }}
+{{ reg_values|json_script:"reg_values" }}
+{{ gender_data|json_script:"gender_data" }}
+{{ ptype_data|json_script:"ptype_data" }}
+{{ faculty_data|json_script:"faculty_data" }}
+{{ blood_data|json_script:"blood_data" }}
+{{ consult_labels|json_script:"consult_labels" }}
+{{ consult_values|json_script:"consult_values" }}
+{{ diag_labels|json_script:"diag_labels" }}
+{{ diag_values|json_script:"diag_values" }}
+{{ consult_status|json_script:"consult_status" }}
+{{ lab_labels|json_script:"lab_labels" }}
+{{ lab_values|json_script:"lab_values" }}
+{{ test_labels|json_script:"test_labels" }}
+{{ test_values|json_script:"test_values" }}
+{{ lab_status|json_script:"lab_status" }}
+{{ interp_data|json_script:"interp_data" }}
+{{ rx_labels|json_script:"rx_labels" }}
+{{ rx_values|json_script:"rx_values" }}
+{{ drug_labels|json_script:"drug_labels" }}
+{{ drug_values|json_script:"drug_values" }}
+{{ rx_status|json_script:"rx_status" }}
+{{ cl_labels|json_script:"cl_labels" }}
+{{ cl_values|json_script:"cl_values" }}
+{{ cl_status|json_script:"cl_status" }}
+{{ cl_by_faculty|json_script:"cl_by_faculty" }}
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script>
+// ── HELPERS ────────────────────────────────────────────────────────────────
+// json_script outputs valid JSON directly — just parse the element's textContent
+function getData(id){
+  var el = document.getElementById(id);
+  if (!el) return [];
+  try { return JSON.parse(el.textContent); } catch(e) { return []; }
+}
+
+var GOLD    = '#C9A84C';
+var SUCCESS = '#3DB87A';
+var INFO    = '#4A9EE0';
+var WARN    = '#F0A04A';
+var DANGER  = '#E05555';
+var SLATE   = '#6B84A3';
+var PALETTE = [GOLD, SUCCESS, INFO, WARN, DANGER, SLATE, '#9B59B6', '#E67E22', '#1ABC9C', '#E74C3C'];
+
+// ── LINE CHART ──────────────────────────────────────────────────────────────
+function lineChart(containerId, labels, values, color) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  if (!labels.length) { el.innerHTML = '<div class="empty-chart">No data for this period</div>'; return; }
+
+  var W = el.clientWidth || 560, H = 200;
+  var margin = {top:16,right:20,bottom:36,left:44};
+  var w = W - margin.left - margin.right, h = H - margin.top - margin.bottom;
+
+  d3.select(el).selectAll('*').remove();
+  var svg = d3.select(el).append('svg').attr('width', W).attr('height', H);
+  var g = svg.append('g').attr('transform', 'translate('+margin.left+','+margin.top+')');
+
+  var x = d3.scaleBand().domain(labels).range([0, w]).padding(0.1);
+  var y = d3.scaleLinear().domain([0, d3.max(values) * 1.15 || 1]).range([h, 0]);
+
+  // Grid
+  g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(4).tickSize(-w).tickFormat(''));
+
+  // Area
+  var area = d3.area().x(function(d,i){ return x(labels[i]) + x.bandwidth()/2; })
+    .y0(h).y1(function(d){ return y(d); }).curve(d3.curveMonotoneX);
+  g.append('path').datum(values)
+    .attr('fill', color).attr('fill-opacity',.12).attr('d', area);
+
+  // Line
+  var line = d3.line().x(function(d,i){ return x(labels[i]) + x.bandwidth()/2; })
+    .y(function(d){ return y(d); }).curve(d3.curveMonotoneX);
+  g.append('path').datum(values).attr('fill','none')
+    .attr('stroke', color).attr('stroke-width', 2.5).attr('d', line);
+
+  // Dots
+  g.selectAll('.dot').data(values).enter().append('circle').attr('class','dot')
+    .attr('cx', function(d,i){ return x(labels[i]) + x.bandwidth()/2; })
+    .attr('cy', function(d){ return y(d); })
+    .attr('r', 4).attr('fill', color).attr('stroke','#0C1B2E').attr('stroke-width',2);
+
+  // Axes
+  g.append('g').attr('class','axis').attr('transform','translate(0,'+h+')')
+    .call(d3.axisBottom(x).tickSize(0))
+    .selectAll('text').style('fill', SLATE).style('font-size','11px')
+    .attr('transform','rotate(-30)').style('text-anchor','end');
+  g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(4))
+    .selectAll('text').style('fill', SLATE).style('font-size','11px');
+}
+
+// ── DONUT CHART ─────────────────────────────────────────────────────────────
+function donutChart(containerId, data, labelKey, valueKey) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  if (!data.length) { el.innerHTML = '<div class="empty-chart">No data</div>'; return; }
+
+  var W = el.clientWidth || 300, H = 210;
+  var R = Math.min(W, H) / 2 - 20;
+
+  d3.select(el).selectAll('*').remove();
+  var svg = d3.select(el).append('svg').attr('width', W).attr('height', H);
+  var g = svg.append('g').attr('transform', 'translate('+(W/2)+','+(H/2)+')');
+
+  var pie = d3.pie().value(function(d){ return d[valueKey]; }).sort(null);
+  var arc = d3.arc().innerRadius(R * 0.55).outerRadius(R);
+  var arcHover = d3.arc().innerRadius(R * 0.52).outerRadius(R + 6);
+
+  var color = d3.scaleOrdinal(PALETTE);
+  var arcs  = pie(data);
+
+  var path = g.selectAll('path').data(arcs).enter().append('path')
+    .attr('d', arc).attr('fill', function(d,i){ return color(i); })
+    .attr('stroke', '#0C1B2E').attr('stroke-width', 2)
+    .style('cursor','pointer')
+    .on('mouseover', function(event, d){
+      d3.select(this).transition().duration(150).attr('d', arcHover);
+      tooltip.style('opacity',1).html('<b>'+d.data[labelKey]+'</b><br/>'+d.data[valueKey]);
+    })
+    .on('mousemove', function(event){
+      tooltip.style('left',(event.pageX+12)+'px').style('top',(event.pageY-28)+'px');
+    })
+    .on('mouseout', function(){
+      d3.select(this).transition().duration(150).attr('d', arc);
+      tooltip.style('opacity',0);
+    });
+
+  // Center total
+  var total = d3.sum(data, function(d){ return d[valueKey]; });
+  g.append('text').attr('text-anchor','middle').attr('dy','0.3em')
+    .style('fill','#fff').style('font-size','20px').style('font-weight','700')
+    .style('font-family','Cormorant Garamond,serif').text(total);
+
+  // Legend
+  var legend = svg.append('g').attr('transform','translate(8,'+(H-data.length*16-8)+')');
+  data.forEach(function(d, i){
+    var row = legend.append('g').attr('transform','translate(0,'+(i*16)+')');
+    row.append('rect').attr('width',10).attr('height',10).attr('rx',2).attr('fill',color(i));
+    row.append('text').attr('x',14).attr('y',9).style('fill',SLATE).style('font-size','11px').text(d[labelKey]);
+  });
+}
+
+// ── HORIZONTAL BAR CHART ────────────────────────────────────────────────────
+function hbarChart(containerId, labels, values, color) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  if (!labels.length) { el.innerHTML = '<div class="empty-chart">No data</div>'; return; }
+
+  var W = el.clientWidth || 520;
+  var H = Math.max(labels.length * 28 + 20, 120);
+  var margin = {top:8,right:50,bottom:8,left:150};
+  var w = W - margin.left - margin.right, h = H - margin.top - margin.bottom;
+
+  d3.select(el).selectAll('*').remove();
+  var svg = d3.select(el).append('svg').attr('width', W).attr('height', H);
+  var g = svg.append('g').attr('transform','translate('+margin.left+','+margin.top+')');
+
+  var y = d3.scaleBand().domain(labels).range([0, h]).padding(0.28);
+  var x = d3.scaleLinear().domain([0, d3.max(values) * 1.12 || 1]).range([0, w]);
+
+  g.selectAll('rect').data(values).enter().append('rect')
+    .attr('y', function(d,i){ return y(labels[i]); })
+    .attr('height', y.bandwidth())
+    .attr('x', 0).attr('width', 0)
+    .attr('fill', function(d,i){ return d3.interpolateRgb(color,'#2a2a6a')(i/labels.length); })
+    .attr('rx', 4)
+    .transition().duration(600).delay(function(d,i){ return i*40; })
+    .attr('width', function(d){ return x(d); });
+
+  // Value labels
+  g.selectAll('.val-label').data(values).enter().append('text')
+    .attr('class','val-label')
+    .attr('y', function(d,i){ return y(labels[i]) + y.bandwidth()/2 + 4; })
+    .attr('x', function(d){ return x(d) + 6; })
+    .style('fill','#fff').style('font-size','11.5px').style('font-weight','600')
+    .text(function(d){ return d; });
+
+  // Y axis (labels)
+  g.append('g').attr('class','axis').call(d3.axisLeft(y).tickSize(0))
+    .selectAll('text').style('fill','#cdd5e0').style('font-size','12px').attr('dx','-6px');
+}
+
+// ── BAR CHART (vertical) ─────────────────────────────────────────────────────
+function barChart(containerId, labels, values, color) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  if (!labels.length) { el.innerHTML = '<div class="empty-chart">No data</div>'; return; }
+
+  var W = el.clientWidth || 520, H = 220;
+  var margin = {top:14,right:14,bottom:50,left:40};
+  var w = W - margin.left - margin.right, h = H - margin.top - margin.bottom;
+
+  d3.select(el).selectAll('*').remove();
+  var svg = d3.select(el).append('svg').attr('width', W).attr('height', H);
+  var g = svg.append('g').attr('transform','translate('+margin.left+','+margin.top+')');
+
+  var x = d3.scaleBand().domain(labels).range([0, w]).padding(0.28);
+  var y = d3.scaleLinear().domain([0, d3.max(values) * 1.15 || 1]).range([h, 0]);
+
+  g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(4).tickSize(-w).tickFormat(''));
+
+  g.selectAll('rect').data(values).enter().append('rect')
+    .attr('x', function(d,i){ return x(labels[i]); })
+    .attr('width', x.bandwidth())
+    .attr('y', h).attr('height', 0)
+    .attr('fill', color).attr('rx', 4)
+    .transition().duration(500).delay(function(d,i){ return i*40; })
+    .attr('y', function(d){ return y(d); }).attr('height', function(d){ return h - y(d); });
+
+  g.append('g').attr('class','axis').attr('transform','translate(0,'+h+')')
+    .call(d3.axisBottom(x).tickSize(0))
+    .selectAll('text').style('fill',SLATE).style('font-size','11px')
+    .attr('transform','rotate(-30)').style('text-anchor','end');
+  g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(4))
+    .selectAll('text').style('fill',SLATE).style('font-size','11px');
+}
+
+// ── TOOLTIP ──────────────────────────────────────────────────────────────────
+var tooltip = d3.select('body').append('div')
+  .style('position','fixed').style('background','rgba(12,27,46,.95)')
+  .style('border','1px solid rgba(201,168,76,.3)').style('border-radius','8px')
+  .style('padding','8px 12px').style('font-family','Outfit,sans-serif')
+  .style('font-size','12px').style('color','#fff').style('pointer-events','none')
+  .style('opacity',0).style('z-index','9999').style('line-height','1.7');
+
+// ── BUILD DIAGNOSES TABLE ─────────────────────────────────────────────────────
+function buildDiagTable(){
+  var labels = getData('diag_labels'), values = getData('diag_values');
+  var body = document.getElementById('diagTableBody');
+  if (!body) return;
+  var total = values.reduce(function(a,b){ return a+b; }, 0);
+  document.getElementById('diagCount').textContent = labels.length;
+  body.innerHTML = '';
+  labels.forEach(function(l, i){
+    var pct = total ? Math.round(values[i]/total*100) : 0;
+    body.innerHTML += '<tr><td style="color:var(--slate);">'+(i+1)+'</td><td>'+l+'</td><td><b>'+values[i]+'</b></td>'
+      +'<td><div class="prog-bar-wrap"><div class="prog-bar" style="width:'+pct+'%;background:'+PALETTE[i%PALETTE.length]+';"></div></div></td></tr>';
+  });
+  if (!labels.length) body.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--slate);padding:20px;">No diagnoses recorded.</td></tr>';
+}
+
+function buildDrugTable(){
+  var labels = getData('drug_labels'), values = getData('drug_values');
+  var body = document.getElementById('drugTableBody');
+  if (!body) return;
+  var total = values.reduce(function(a,b){ return a+b; }, 0);
+  body.innerHTML = '';
+  labels.forEach(function(l, i){
+    var pct = total ? Math.round(values[i]/total*100) : 0;
+    body.innerHTML += '<tr><td style="color:var(--slate);">'+(i+1)+'</td><td>'+l+'</td><td><b>'+values[i]+'</b></td>'
+      +'<td><div class="prog-bar-wrap"><div class="prog-bar" style="width:'+pct+'%;background:'+PALETTE[i%PALETTE.length]+';"></div></div></td></tr>';
+  });
+  if (!labels.length) body.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--slate);padding:20px;">No dispensing data.</td></tr>';
+}
+
+// ── STATUS DONUT ADAPTERS ─────────────────────────────────────────────────────
+function statusDonut(id, rawData){
+  var data = rawData.map(function(d){ return {label: d.status || d.gender || d.patient_type || d.interpretation, count: d.count}; });
+  donutChart(id, data, 'label', 'count');
+}
+
+// ── RENDER ALL CHARTS ─────────────────────────────────────────────────────────
+function renderAll(){
+  // Patients
+  lineChart('regChart', getData('reg_labels'), getData('reg_values'), GOLD);
+  var gd = getData('gender_data').map(function(d){ return {label:d.gender||'Unknown', count:d.count}; });
+  donutChart('genderChart', gd, 'label', 'count');
+  var pt = getData('ptype_data').map(function(d){ return {label:d.patient_type||'Unknown', count:d.count}; });
+  donutChart('ptypeChart', pt, 'label', 'count');
+  var fd = getData('faculty_data');
+  hbarChart('facultyChart', fd.map(function(d){ return d.faculty__name||'Unknown'; }), fd.map(function(d){ return d.count; }), GOLD);
+  var bd = getData('blood_data').map(function(d){ return {label:d.blood_group, count:d.count}; });
+  donutChart('bloodChart', bd, 'label', 'count');
+
+  // Clinical
+  lineChart('consultChart', getData('consult_labels'), getData('consult_values'), SUCCESS);
+  hbarChart('diagChart', getData('diag_labels'), getData('diag_values'), INFO);
+  var cs = getData('consult_status').map(function(d){ return {label:d.status, count:d.count}; });
+  donutChart('consultStatusChart', cs, 'label', 'count');
+  buildDiagTable();
+
+  // Lab
+  lineChart('labChart', getData('lab_labels'), getData('lab_values'), INFO);
+  hbarChart('testChart', getData('test_labels'), getData('test_values'), INFO);
+  var ls = getData('lab_status').map(function(d){ return {label:d.status, count:d.count}; });
+  donutChart('labStatusChart', ls, 'label', 'count');
+  var id = getData('interp_data').map(function(d){ return {label:d.interpretation||'Unknown', count:d.count}; });
+  donutChart('interpChart', id, 'label', 'count');
+
+  // Pharmacy
+  lineChart('rxChart', getData('rx_labels'), getData('rx_values'), WARN);
+  hbarChart('drugChart', getData('drug_labels'), getData('drug_values'), WARN);
+  var rs = getData('rx_status').map(function(d){ return {label:d.status, count:d.count}; });
+  donutChart('rxStatusChart', rs, 'label', 'count');
+  buildDrugTable();
+
+  // Clearance
+  lineChart('clChart', getData('cl_labels'), getData('cl_values'), GOLD);
+  var clS = getData('cl_status').map(function(d){ return {label:d.status, count:d.count}; });
+  donutChart('clStatusChart', clS, 'label', 'count');
+  var clf = getData('cl_by_faculty');
+  if (clf && clf.length){
+    hbarChart('clFacultyChart',
+      clf.map(function(d){ return d.patient__faculty__name||'Unknown'; }),
+      clf.map(function(d){ return d.approved; }),
+      SUCCESS
+    );
+  }
+}
+
+// ── TAB SWITCHING ─────────────────────────────────────────────────────────────
+function switchTab(name, btn){
+  document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+  document.getElementById('activeTabInput').value = name;
+  // re-render charts in newly visible tab
+  setTimeout(renderAll, 50);
+}
+
+// Initial render
+window.addEventListener('load', function(){ setTimeout(renderAll, 100); });
+window.addEventListener('resize', function(){ renderAll(); });
+</script>
+</body>
+</html>

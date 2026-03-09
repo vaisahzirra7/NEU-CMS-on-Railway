@@ -74,6 +74,8 @@
     .btn-secondary:hover { background: var(--surface-2); }
     .btn-back { padding: 7px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 12.5px; color: var(--slate); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: background .15s, color .15s; }
     .btn-back:hover { background: var(--surface-2); color: var(--white); }
+    .btn-danger { background: rgba(224,85,85,.1); border: 1px solid rgba(224,85,85,.25); border-radius: 8px; padding: 6px 13px; font-family: 'Outfit', sans-serif; font-size: 12px; color: #f0a0a0; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: background .15s; }
+    .btn-danger:hover { background: rgba(224,85,85,.2); }
 
     /* ── ROLES GRID ── */
     .roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
@@ -82,7 +84,6 @@
     .role-card { background: var(--panel); border: 1px solid var(--border); border-radius: 13px; overflow: hidden; transition: border-color .2s, transform .2s; position: relative; }
     .role-card:hover { border-color: var(--border-2); transform: translateY(-2px); }
     .role-card.system { border-color: rgba(201,168,76,.2); }
-    .role-card-top { border-top: 3px solid; }
 
     .role-header { padding: 20px 22px 16px; }
     .role-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
@@ -95,6 +96,7 @@
     .chip-custom { background: rgba(74,158,224,.08); border: 1px solid rgba(74,158,224,.18); color: #a0d4f5; }
     .chip-active { background: rgba(61,184,122,.08); color: #90deb5; }
     .chip-inactive { background: rgba(224,85,85,.08); color: #f0a0a0; }
+    .chip-protected { background: rgba(240,160,74,.08); border: 1px solid rgba(240,160,74,.2); color: var(--gold-2); }
 
     /* ── ROLE STATS ── */
     .role-stats { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--border); }
@@ -109,10 +111,6 @@
     .role-action { font-size: 13px; font-weight: 500; color: var(--gold-2); text-decoration: none; display: flex; align-items: center; gap: 5px; transition: color .15s; }
     .role-action:hover { color: var(--white); }
 
-    /* ── PERMISSION PREVIEW ── */
-    .perm-preview { padding: 0 22px 16px; display: flex; flex-wrap: wrap; gap: 6px; }
-    .perm-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-
     /* ── EMPTY ── */
     .empty-state { padding: 72px 32px; text-align: center; background: var(--panel); border: 1px solid var(--border); border-radius: 13px; }
     .empty-icon  { font-size: 52px; opacity: .3; margin-bottom: 18px; }
@@ -122,6 +120,25 @@
     /* ── INFO BANNER ── */
     .info-banner { background: rgba(74,158,224,.05); border: 1px solid rgba(74,158,224,.15); border-radius: 11px; padding: 14px 18px; margin-bottom: 22px; display: flex; align-items: flex-start; gap: 12px; font-size: 13px; color: var(--slate); line-height: 1.6; }
     .info-banner strong { color: var(--white); }
+
+    /* ── MODAL ── */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.65); z-index: 500; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--panel); border: 1px solid var(--border-2); border-radius: 16px; width: 100%; max-width: 440px; padding: 28px; animation: modalIn .25s cubic-bezier(.16,1,.3,1); }
+    @keyframes modalIn { from { opacity: 0; transform: scale(.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--white); margin-bottom: 6px; }
+    .modal-sub { font-size: 13px; color: var(--slate); margin-bottom: 22px; }
+    .modal-field { margin-bottom: 16px; }
+    .modal-label { display: block; font-size: 12px; font-weight: 600; color: var(--slate); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 7px; }
+    .modal-input { width: 100%; background: rgba(255,255,255,.04); border: 1px solid var(--border-2); border-radius: 9px; padding: 10px 14px; font-family: 'Outfit', sans-serif; font-size: 14px; color: var(--white); outline: none; transition: border-color .15s; }
+    .modal-input:focus { border-color: var(--gold); }
+    .modal-input::placeholder { color: var(--slate-2); }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
+
+    /* ── DELETE CONFIRM MODAL ── */
+    .delete-modal-body { font-size: 13.5px; color: var(--slate); line-height: 1.6; margin-bottom: 22px; }
+    .delete-modal-body strong { color: var(--white); }
+    .delete-modal-warn { background: rgba(224,85,85,.07); border: 1px solid rgba(224,85,85,.2); border-radius: 9px; padding: 12px 14px; font-size: 12.5px; color: #f0a0a0; margin-top: 12px; }
   </style>
 </head>
 <body>
@@ -138,25 +155,32 @@
   <nav class="sb-nav">
     <div class="sb-section">Main</div>
     <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    {% if perms_map.patients.can_view or perms_map.appointments.can_view or perms_map.consultations.can_view or perms_map.prescriptions.can_view or perms_map.laboratory.can_view or perms_map.wards.can_view %}
     <div class="sb-section">Clinical</div>
-    <a href="#" class="sb-item"><div class="sb-icon">🩺</div>Patient Records</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>
+    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon">🩺</div>Patient Records</a>{% endif %}
+    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>{% endif %}
+    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>{% endif %}
+    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>{% endif %}
+    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>{% endif %}
+    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>{% endif %}
+    {% endif %}
+    {% if perms_map.inventory.can_view or perms_map.dispensing.can_view %}
     <div class="sb-section">Pharmacy</div>
-    <a href="#" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>
+    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>{% endif %}
+    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>{% endif %}
+    {% endif %}
+    {% if perms_map.clearance.can_view or perms_map.documents.can_view or perms_map.reports.can_view %}
     <div class="sb-section">Administration</div>
-    <a href="#" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>
+    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>{% endif %}
+    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>{% endif %}
+    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>{% endif %}
+    {% endif %}
+    {% if perms_map.users.can_view or perms_map.roles.can_view or perms_map.settings.can_view or user.is_superuser %}
     <div class="sb-section">System</div>
-    <a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>
-    <a href="{% url 'role_list' %}" class="sb-item active"><div class="sb-icon">🛡</div>Role Permissions</a>
-    <a href="#" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🕐</div>Audit Trail</a>
+    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>{% endif %}
+    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item active"><div class="sb-icon">🛡</div>Role Permissions</a>{% endif %}
+    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>{% endif %}
+    {% endif %}
   </nav>
   <div class="sb-footer">
     <div class="sb-user">
@@ -171,7 +195,6 @@
 </div>
 
 
-
 <!-- ══ MAIN ══ -->
 <div class="main">
 
@@ -182,6 +205,7 @@
     </div>
     <div class="topbar-right">
       <a href="{% url 'user_list' %}" class="btn-back">← Users</a>
+      {% if perms_map.roles.can_create %}<button class="btn-primary" onclick="openAddModal()">＋ New Role</button>{% endif %}
     </div>
   </div>
 
@@ -201,6 +225,7 @@
         Each role controls what modules staff members can <strong>view, create, edit, delete, and export</strong>.
         Click <strong>Edit Permissions</strong> on any role to configure its access matrix.
         <strong>System roles</strong> are built-in and cannot be deleted.
+        <strong>Admin</strong> and <strong>Super Admin</strong> permissions are permanently protected.
       </span>
     </div>
 
@@ -209,9 +234,10 @@
       {% for role in roles %}
 
       {% with user_count=role.users.count perm_count=role.permissions.count %}
+      {% with role_lower=role.name|lower %}
       <div class="role-card {% if role.is_system_role %}system{% endif %}">
 
-        <!-- Coloured top border via inline style -->
+        <!-- Coloured top border -->
         <div style="height: 3px; background: linear-gradient(90deg,
           {% cycle '#4A9EE0' '#3DB87A' '#C9A84C' '#F0A04A' '#9B72CF' '#E05555' '#3DBDB8' '#E06B9E' as colors %},
           transparent);"></div>
@@ -228,14 +254,14 @@
               {% endif %}
             </div>
             <div class="role-icon-wrap" style="background: rgba(255,255,255,.05); font-size: 22px;">
-              {% if 'doctor' in role.name|lower or 'physician' in role.name|lower %}🩺
-              {% elif 'nurse' in role.name|lower %}💉
-              {% elif 'pharm' in role.name|lower %}💊
-              {% elif 'lab' in role.name|lower %}🧪
-              {% elif 'admin' in role.name|lower %}⚙
-              {% elif 'ict' in role.name|lower or 'tech' in role.name|lower %}💻
-              {% elif 'record' in role.name|lower %}📋
-              {% elif 'manager' in role.name|lower or 'management' in role.name|lower %}📊
+              {% if 'doctor' in role_lower or 'physician' in role_lower %}🩺
+              {% elif 'nurse' in role_lower %}💉
+              {% elif 'pharm' in role_lower %}💊
+              {% elif 'lab' in role_lower %}🧪
+              {% elif 'admin' in role_lower %}⚙
+              {% elif 'ict' in role_lower or 'tech' in role_lower %}💻
+              {% elif 'record' in role_lower %}📋
+              {% elif 'manager' in role_lower or 'management' in role_lower %}📊
               {% else %}🛡
               {% endif %}
             </div>
@@ -252,13 +278,15 @@
             {% else %}
               <span class="chip chip-inactive">● Inactive</span>
             {% endif %}
+            {% if 'super admin' in role_lower or 'superadmin' in role_lower or role_lower == 'admin' %}
+              <span class="chip chip-protected">🔒 Protected</span>
+            {% endif %}
             {% if user_count == 0 %}
               <span class="chip" style="background: rgba(240,160,74,.08); color: #f5c87a; border: 1px solid rgba(240,160,74,.18);">⚠ Unassigned</span>
             {% endif %}
           </div>
         </div>
 
-        
         <!-- Stats -->
         <div class="role-stats">
           <div class="role-stat">
@@ -276,12 +304,24 @@
           <div class="role-created">
             Created {{ role.created_at|date:"d M Y" }}
           </div>
-          <a href="{% url 'role_permissions' role.pk %}" class="role-action">
-            Edit Permissions →
-          </a>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <!-- Delete button — hidden for system roles and protected roles -->
+            {% if not role.is_system_role and 'super admin' not in role_lower and 'superadmin' not in role_lower and role_lower != 'admin' %}
+            {% if perms_map.roles.can_delete %}
+            <button class="btn-danger"
+                    onclick="openDeleteModal({{ role.pk }}, '{{ role.name|escapejs }}', {{ user_count }})">
+              🗑
+            </button>
+            {% endif %}
+            {% endif %}
+            <a href="{% url 'role_permissions' role.pk %}" class="role-action">
+              Edit Permissions →
+            </a>
+          </div>
         </div>
 
       </div>
+      {% endwith %}
       {% endwith %}
       {% endfor %}
     </div>
@@ -291,14 +331,105 @@
       <div class="empty-icon">🛡</div>
       <div class="empty-title">No roles defined yet</div>
       <div class="empty-desc">
-        Roles are seeded automatically when you run the initial data migration.
-        Check your <code>management/commands/seed_data.py</code> command.
+        Click <strong>New Role</strong> above to create your first role, or run the seed data migration.
       </div>
     </div>
     {% endif %}
 
   </div>
 </div>
+
+
+<!-- ══ ADD ROLE MODAL ══ -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <div class="modal-title">Create New Role</div>
+    <div class="modal-sub">Define a new role and then set its module permissions.</div>
+    <form method="POST" action="{% url 'role_create' %}">
+      {% csrf_token %}
+      <div class="modal-field">
+        <label class="modal-label" for="roleName">Role Name *</label>
+        <input class="modal-input" type="text" id="roleName" name="name"
+               placeholder="e.g. Radiologist, Records Officer…" required autofocus/>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label" for="roleDesc">Description</label>
+        <input class="modal-input" type="text" id="roleDesc" name="description"
+               placeholder="Brief description of this role's responsibilities"/>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeAddModal()">Cancel</button>
+        <button type="submit" class="btn-primary">Create & Set Permissions →</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- ══ DELETE CONFIRM MODAL ══ -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <div class="modal-title" style="color: #f0a0a0;">Delete Role</div>
+    <div class="delete-modal-body">
+      Are you sure you want to delete the role <strong id="deleteRoleName"></strong>?
+      <div class="delete-modal-warn" id="deleteWarnStaff" style="display:none;">
+        ⚠ This role has staff assigned. You must reassign them before deleting.
+      </div>
+      <div class="delete-modal-warn" id="deleteWarnOk" style="display:none;">
+        This role has no staff assigned. It can be safely removed.
+      </div>
+    </div>
+    <form method="POST" id="deleteForm">
+      {% csrf_token %}
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+        <button type="submit" id="deleteConfirmBtn"
+                style="background: var(--danger); border: none; border-radius: 9px; padding: 9px 20px;
+                       font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 600;
+                       color: var(--white); cursor: pointer;">
+          Delete Role
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<script>
+  // ── Add Role Modal ────────────────────────────────────────────────
+  function openAddModal() {
+    document.getElementById('addModal').classList.add('open');
+    setTimeout(function() { document.getElementById('roleName').focus(); }, 100);
+  }
+  function closeAddModal() {
+    document.getElementById('addModal').classList.remove('open');
+  }
+  document.getElementById('addModal').addEventListener('click', function(e) {
+    if (e.target === this) closeAddModal();
+  });
+
+  // ── Delete Role Modal ─────────────────────────────────────────────
+  function openDeleteModal(pk, name, userCount) {
+    document.getElementById('deleteRoleName').textContent = name;
+    document.getElementById('deleteForm').action = '/roles/' + pk + '/delete/';
+    document.getElementById('deleteWarnStaff').style.display = userCount > 0 ? 'block' : 'none';
+    document.getElementById('deleteWarnOk').style.display    = userCount === 0 ? 'block' : 'none';
+    document.getElementById('deleteConfirmBtn').disabled     = userCount > 0;
+    document.getElementById('deleteConfirmBtn').style.opacity = userCount > 0 ? '.4' : '1';
+    document.getElementById('deleteModal').classList.add('open');
+  }
+  function closeDeleteModal() {
+    document.getElementById('deleteModal').classList.remove('open');
+  }
+  document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) closeDeleteModal();
+  });
+
+  // Close modals on Escape
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { closeAddModal(); closeDeleteModal(); }
+  });
+</script>
 
 </body>
 </html>

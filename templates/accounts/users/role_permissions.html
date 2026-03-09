@@ -76,6 +76,9 @@
     .btn-back { padding: 7px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 12.5px; color: var(--slate); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: background .15s, color .15s; }
     .btn-back:hover { background: var(--surface-2); color: var(--white); }
 
+    /* ── PROTECTED BANNER ── */
+    .protected-banner { background: rgba(240,160,74,.06); border: 1px solid rgba(240,160,74,.2); border-radius: 11px; padding: 14px 18px; margin-bottom: 22px; display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--gold-2); line-height: 1.6; }
+
     /* ── ROLE SUMMARY BAR ── */
     .role-bar { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px 24px; margin-bottom: 22px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
     .role-bar-left { display: flex; align-items: center; gap: 14px; }
@@ -91,6 +94,7 @@
     .bulk-label { font-size: 12.5px; color: var(--slate); margin-right: 4px; }
     .bulk-btn { padding: 7px 14px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: 12.5px; color: var(--white); background: var(--surface); cursor: pointer; transition: background .15s, border-color .15s; }
     .bulk-btn:hover { background: var(--surface-2); border-color: var(--border-2); }
+    .bulk-btn:disabled { opacity: .35; cursor: not-allowed; }
     .bulk-btn.grant-all { border-color: rgba(61,184,122,.25); color: #90deb5; }
     .bulk-btn.grant-all:hover { background: rgba(61,184,122,.08); }
     .bulk-btn.revoke-all { border-color: rgba(224,85,85,.2); color: #f0a0a0; }
@@ -102,35 +106,27 @@
     .matrix-wrap { background: var(--panel); border: 1px solid var(--border); border-radius: 13px; overflow: hidden; }
     .matrix-table { width: 100%; border-collapse: collapse; }
 
-    /* Header row */
     .matrix-table thead tr { border-bottom: 1px solid var(--border); background: rgba(255,255,255,.018); }
     .matrix-table th { padding: 13px 16px; font-size: 11px; font-weight: 600; color: var(--slate); text-transform: uppercase; letter-spacing: .08em; text-align: center; white-space: nowrap; }
     .matrix-table th.col-module { text-align: left; min-width: 220px; }
     .matrix-table th.col-action { width: 90px; }
 
-    /* Permission column headers — coloured */
     .col-view   { color: #4A9EE0 !important; }
     .col-create { color: #3DB87A !important; }
     .col-edit   { color: #C9A84C !important; }
     .col-delete { color: #E05555 !important; }
     .col-export { color: #9B72CF !important; }
 
-    /* Body rows */
     .matrix-table tbody tr { border-bottom: 1px solid rgba(255,255,255,.04); transition: background .12s; }
     .matrix-table tbody tr:last-child { border-bottom: none; }
     .matrix-table tbody tr:hover { background: rgba(255,255,255,.02); }
     .matrix-table td { padding: 13px 16px; text-align: center; vertical-align: middle; }
     .matrix-table td.td-module { text-align: left; }
 
-    /* Module cell */
     .module-cell { display: flex; align-items: center; gap: 12px; }
     .module-icon { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; background: rgba(255,255,255,.05); }
     .module-name { font-size: 13.5px; font-weight: 500; color: var(--white); }
     .module-desc { font-size: 11.5px; color: var(--slate); margin-top: 1px; }
-
-    /* Row header (group label) */
-    .group-row td { padding: 10px 16px 6px; background: rgba(255,255,255,.018); border-bottom: 1px solid var(--border); }
-    .group-label { font-size: 10px; font-weight: 700; color: var(--slate-2); text-transform: uppercase; letter-spacing: .12em; }
 
     /* ── CUSTOM CHECKBOX ── */
     .cb-wrap { display: flex; align-items: center; justify-content: center; }
@@ -140,17 +136,18 @@
     .cb-box::after { content: ''; display: none; width: 5px; height: 9px; border: 2px solid var(--white); border-top: none; border-left: none; transform: rotate(45deg) translateY(-1px); }
     .cb-wrap input:checked + .cb-box { border-color: transparent; }
     .cb-wrap input:checked + .cb-box::after { display: block; }
-
-    /* Per-column check colours */
     .cb-view   input:checked + .cb-box { background: rgba(74,158,224,.8); }
     .cb-create input:checked + .cb-box { background: rgba(61,184,122,.8); }
     .cb-edit   input:checked + .cb-box { background: rgba(201,168,76,.8); }
     .cb-delete input:checked + .cb-box { background: rgba(224,85,85,.8); }
     .cb-export input:checked + .cb-box { background: rgba(155,114,207,.8); }
 
-    /* Row-level quick toggle (check all for that module) */
+    /* Disabled state for protected roles */
+    .cb-wrap input:disabled + .cb-box { cursor: not-allowed; opacity: .45; }
+
     .row-toggle { width: 26px; height: 26px; border-radius: 7px; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; transition: background .15s; }
     .row-toggle:hover { background: var(--surface-2); }
+    .row-toggle.disabled { cursor: not-allowed; opacity: .35; }
 
     /* ── STICKY SAVE BAR ── */
     .save-bar { position: sticky; bottom: 0; z-index: 50; padding: 14px 32px; background: rgba(8,19,31,.95); border-top: 1px solid var(--border); backdrop-filter: blur(16px); display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 -32px; }
@@ -173,25 +170,32 @@
   <nav class="sb-nav">
     <div class="sb-section">Main</div>
     <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    {% if perms_map.patients.can_view or perms_map.appointments.can_view or perms_map.consultations.can_view or perms_map.prescriptions.can_view or perms_map.laboratory.can_view or perms_map.wards.can_view %}
     <div class="sb-section">Clinical</div>
-    <a href="#" class="sb-item"><div class="sb-icon">🩺</div>Patient Records</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>
+    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon">🩺</div>Patient Records</a>{% endif %}
+    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>{% endif %}
+    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>{% endif %}
+    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>{% endif %}
+    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>{% endif %}
+    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>{% endif %}
+    {% endif %}
+    {% if perms_map.inventory.can_view or perms_map.dispensing.can_view %}
     <div class="sb-section">Pharmacy</div>
-    <a href="#" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>
+    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>{% endif %}
+    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>{% endif %}
+    {% endif %}
+    {% if perms_map.clearance.can_view or perms_map.documents.can_view or perms_map.reports.can_view %}
     <div class="sb-section">Administration</div>
-    <a href="#" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>
-    <a href="#" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>
+    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>{% endif %}
+    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>{% endif %}
+    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>{% endif %}
+    {% endif %}
+    {% if perms_map.users.can_view or perms_map.roles.can_view or perms_map.settings.can_view or user.is_superuser %}
     <div class="sb-section">System</div>
-    <a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>
-    <a href="{% url 'role_list' %}" class="sb-item active"><div class="sb-icon">🛡</div>Role Permissions</a>
-    <a href="#" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>
-    <a href="#" class="sb-item"><div class="sb-icon">🕐</div>Audit Trail</a>
+    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>{% endif %}
+    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item active"><div class="sb-icon">🛡</div>Role Permissions</a>{% endif %}
+    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>{% endif %}
+    {% endif %}
   </nav>
   <div class="sb-footer">
     <div class="sb-user">
@@ -214,7 +218,9 @@
       <p>Configure module access for this role</p>
     </div>
     <div class="topbar-right">
+      {% if not protected %}
       <div class="unsaved-badge" id="unsavedBadge">● Unsaved changes</div>
+      {% endif %}
       <a href="{% url 'role_list' %}" class="btn-back">← All Roles</a>
     </div>
   </div>
@@ -227,6 +233,16 @@
       <button class="alert-close" onclick="this.parentElement.remove()">×</button>
     </div>
     {% endfor %}
+
+    {% if protected %}
+    <div class="protected-banner">
+      <span style="font-size: 20px; flex-shrink: 0;">🔒</span>
+      <span>
+        <strong>{{ role.name }}</strong> is a protected role. Its permissions are fixed and cannot be modified.
+        This ensures the system always has a fully privileged administrator account.
+      </span>
+    </div>
+    {% endif %}
 
     <!-- Role Summary Bar -->
     <div class="role-bar">
@@ -253,6 +269,7 @@
       {% csrf_token %}
 
       <!-- Bulk Controls -->
+      {% if not protected %}
       <div class="bulk-bar">
         <span class="bulk-label">Quick select:</span>
         <button type="button" class="bulk-btn grant-all" onclick="grantAll()">Grant All</button>
@@ -263,6 +280,7 @@
         <button type="button" class="bulk-btn" onclick="revokeColumn('delete')">Clear Delete</button>
         <button type="button" class="bulk-btn" onclick="revokeColumn('export')">Clear Export</button>
       </div>
+      {% endif %}
 
       <!-- Matrix -->
       <div class="matrix-wrap">
@@ -275,136 +293,123 @@
               <th class="col-action col-edit">✏ Edit</th>
               <th class="col-action col-delete">🗑 Delete</th>
               <th class="col-action col-export">📤 Export</th>
-              <th class="col-action" style="width: 60px; color: var(--slate-2);">All</th>
+              {% if not protected %}<th class="col-action" style="width: 60px; color: var(--slate-2);">All</th>{% endif %}
             </tr>
           </thead>
           <tbody>
 
-            {% regroup modules by parent as module_groups %}
+            {% for mp in module_perms %}
+            <tr data-row="{{ mp.module.id }}">
 
-            {% for group in module_groups %}
+              <td class="td-module">
+                <div class="module-cell">
+                  <div class="module-icon">
+                    {% with s=mp.module.slug %}
+                    {% if 'patient' in s %}🩺
+                    {% elif 'appointment' in s %}📅
+                    {% elif 'consult' in s %}🔬
+                    {% elif 'prescription' in s %}📋
+                    {% elif 'lab' in s %}🧪
+                    {% elif 'ward' in s %}🛏
+                    {% elif 'inventory' in s or 'drug' in s %}💊
+                    {% elif 'dispens' in s %}🏥
+                    {% elif 'clearance' in s %}🎓
+                    {% elif 'document' in s %}📄
+                    {% elif 'report' in s or 'analytic' in s %}📊
+                    {% elif 'user' in s %}👥
+                    {% elif 'role' in s or 'permission' in s %}🛡
+                    {% elif 'setting' in s %}⚙
+                    {% elif 'audit' in s %}🕐
+                    {% else %}📦{% endif %}
+                    {% endwith %}
+                  </div>
+                  <div>
+                    <div class="module-name">{{ mp.module.name }}</div>
+                    {% if mp.module.description %}
+                    <div class="module-desc">{{ mp.module.description }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+              </td>
 
-              {% if group.grouper %}
-              <!-- Group header row -->
-              <tr class="group-row">
-                <td colspan="7">
-                  <span class="group-label">{{ group.grouper.name }}</span>
-                </td>
-              </tr>
+              <!-- View -->
+              <td>
+                <label class="cb-wrap cb-view">
+                  <input type="checkbox"
+                         name="mod_{{ mp.module.id }}_view"
+                         id="v_{{ mp.module.id }}"
+                         class="perm-cb"
+                         data-row="{{ mp.module.id }}"
+                         {% if mp.can_view %}checked{% endif %}
+                         {% if protected %}disabled{% endif %}/>
+                  <div class="cb-box"></div>
+                </label>
+              </td>
+
+              <!-- Create -->
+              <td>
+                <label class="cb-wrap cb-create">
+                  <input type="checkbox"
+                         name="mod_{{ mp.module.id }}_create"
+                         id="c_{{ mp.module.id }}"
+                         class="perm-cb"
+                         data-row="{{ mp.module.id }}"
+                         {% if mp.can_create %}checked{% endif %}
+                         {% if protected %}disabled{% endif %}/>
+                  <div class="cb-box"></div>
+                </label>
+              </td>
+
+              <!-- Edit -->
+              <td>
+                <label class="cb-wrap cb-edit">
+                  <input type="checkbox"
+                         name="mod_{{ mp.module.id }}_edit"
+                         id="e_{{ mp.module.id }}"
+                         class="perm-cb"
+                         data-row="{{ mp.module.id }}"
+                         {% if mp.can_edit %}checked{% endif %}
+                         {% if protected %}disabled{% endif %}/>
+                  <div class="cb-box"></div>
+                </label>
+              </td>
+
+              <!-- Delete -->
+              <td>
+                <label class="cb-wrap cb-delete">
+                  <input type="checkbox"
+                         name="mod_{{ mp.module.id }}_delete"
+                         id="d_{{ mp.module.id }}"
+                         class="perm-cb"
+                         data-row="{{ mp.module.id }}"
+                         {% if mp.can_delete %}checked{% endif %}
+                         {% if protected %}disabled{% endif %}/>
+                  <div class="cb-box"></div>
+                </label>
+              </td>
+
+              <!-- Export -->
+              <td>
+                <label class="cb-wrap cb-export">
+                  <input type="checkbox"
+                         name="mod_{{ mp.module.id }}_export"
+                         id="x_{{ mp.module.id }}"
+                         class="perm-cb"
+                         data-row="{{ mp.module.id }}"
+                         {% if mp.can_export %}checked{% endif %}
+                         {% if protected %}disabled{% endif %}/>
+                  <div class="cb-box"></div>
+                </label>
+              </td>
+
+              <!-- Row toggle -->
+              {% if not protected %}
+              <td>
+                <div class="row-toggle" onclick="toggleRow({{ mp.module.id }})" title="Toggle all for this module">⇄</div>
+              </td>
               {% endif %}
 
-              {% for module in group.list %}
-              {% with perm=perms|default_if_none:None %}
-              <tr data-row="{{ module.id }}">
-                <td class="td-module">
-                  <div class="module-cell">
-                    <div class="module-icon">
-                      {% if 'patient' in module.slug %}🩺
-                      {% elif 'appointment' in module.slug %}📅
-                      {% elif 'consult' in module.slug %}🔬
-                      {% elif 'prescription' in module.slug %}📋
-                      {% elif 'lab' in module.slug %}🧪
-                      {% elif 'ward' in module.slug %}🛏
-                      {% elif 'inventory' in module.slug or 'drug' in module.slug %}💊
-                      {% elif 'dispens' in module.slug %}🏥
-                      {% elif 'clearance' in module.slug %}🎓
-                      {% elif 'document' in module.slug %}📄
-                      {% elif 'report' in module.slug or 'analytic' in module.slug %}📊
-                      {% elif 'user' in module.slug %}👥
-                      {% elif 'role' in module.slug or 'permission' in module.slug %}🛡
-                      {% elif 'setting' in module.slug %}⚙
-                      {% elif 'audit' in module.slug %}🕐
-                      {% else %}📦{% endif %}
-                    </div>
-                    <div>
-                      <div class="module-name">{{ module.name }}</div>
-                      {% if module.description %}
-                      <div class="module-desc">{{ module.description }}</div>
-                      {% endif %}
-                    </div>
-                  </div>
-                </td>
-
-                <!-- View -->
-                <td>
-                  <label class="cb-wrap cb-view">
-                    <input type="checkbox"
-                           name="mod_{{ module.id }}_view"
-                           id="v_{{ module.id }}"
-                           class="perm-cb"
-                           data-row="{{ module.id }}"
-                           {% if perms and module.id in perms and perms|get_item:module.id %}
-                             {% if perms|get_item:module.id and perms|get_item:module.id %}checked{% endif %}
-                           {% endif %}
-                           {% if module.id in perms and perms|get_item:module.id %}
-                             {% with p=perms|get_item:module.id %}{% if p.can_view %}checked{% endif %}{% endwith %}
-                           {% endif %}
-                           />
-                    <div class="cb-box"></div>
-                  </label>
-                </td>
-
-                <!-- Create -->
-                <td>
-                  <label class="cb-wrap cb-create">
-                    <input type="checkbox"
-                           name="mod_{{ module.id }}_create"
-                           id="c_{{ module.id }}"
-                           class="perm-cb"
-                           data-row="{{ module.id }}"
-                           {% if module.id in perms %}{% with p=perms|get_item:module.id %}{% if p.can_create %}checked{% endif %}{% endwith %}{% endif %}/>
-                    <div class="cb-box"></div>
-                  </label>
-                </td>
-
-                <!-- Edit -->
-                <td>
-                  <label class="cb-wrap cb-edit">
-                    <input type="checkbox"
-                           name="mod_{{ module.id }}_edit"
-                           id="e_{{ module.id }}"
-                           class="perm-cb"
-                           data-row="{{ module.id }}"
-                           {% if module.id in perms %}{% with p=perms|get_item:module.id %}{% if p.can_edit %}checked{% endif %}{% endwith %}{% endif %}/>
-                    <div class="cb-box"></div>
-                  </label>
-                </td>
-
-                <!-- Delete -->
-                <td>
-                  <label class="cb-wrap cb-delete">
-                    <input type="checkbox"
-                           name="mod_{{ module.id }}_delete"
-                           id="d_{{ module.id }}"
-                           class="perm-cb"
-                           data-row="{{ module.id }}"
-                           {% if module.id in perms %}{% with p=perms|get_item:module.id %}{% if p.can_delete %}checked{% endif %}{% endwith %}{% endif %}/>
-                    <div class="cb-box"></div>
-                  </label>
-                </td>
-
-                <!-- Export -->
-                <td>
-                  <label class="cb-wrap cb-export">
-                    <input type="checkbox"
-                           name="mod_{{ module.id }}_export"
-                           id="x_{{ module.id }}"
-                           class="perm-cb"
-                           data-row="{{ module.id }}"
-                           {% if module.id in perms %}{% with p=perms|get_item:module.id %}{% if p.can_export %}checked{% endif %}{% endwith %}{% endif %}/>
-                    <div class="cb-box"></div>
-                  </label>
-                </td>
-
-                <!-- Row toggle (select all for this module) -->
-                <td>
-                  <div class="row-toggle" onclick="toggleRow({{ module.id }})" title="Toggle all for this module">⇄</div>
-                </td>
-
-              </tr>
-              {% endwith %}
-              {% endfor %}
-
+            </tr>
             {% endfor %}
 
           </tbody>
@@ -414,14 +419,20 @@
       <!-- Sticky Save Bar -->
       <div class="save-bar">
         <div class="save-bar-left">
-          Editing permissions for <strong>{{ role.name }}</strong> —
-          changes affect {{ role.users.count }} staff member{{ role.users.count|pluralize }}
+          {% if protected %}
+            🔒 <strong>{{ role.name }}</strong> permissions are locked — read only
+          {% else %}
+            Editing permissions for <strong>{{ role.name }}</strong> —
+            changes affect {{ role.users.count }} staff member{{ role.users.count|pluralize }}
+          {% endif %}
         </div>
         <div class="save-bar-right">
-          <a href="{% url 'role_list' %}" class="btn-secondary">Cancel</a>
+          <a href="{% url 'role_list' %}" class="btn-secondary">← Back to Roles</a>
+          {% if not protected %}
           <button type="submit" class="btn-primary" id="saveBtn">
             💾 Save Permissions
           </button>
+          {% endif %}
         </div>
       </div>
 
@@ -431,58 +442,52 @@
 </div>
 
 <script>
-  // ── Unsaved changes indicator ──────────────────────────────────────────────
   var changed = false;
   var badge   = document.getElementById('unsavedBadge');
 
   document.querySelectorAll('.perm-cb').forEach(function(cb) {
     cb.addEventListener('change', function() {
-      if (!changed) { changed = true; badge.classList.add('show'); }
+      if (!changed && badge) { changed = true; badge.classList.add('show'); }
     });
   });
 
-  document.getElementById('permForm').addEventListener('submit', function() {
-    changed = false;
-    var btn = document.getElementById('saveBtn');
-    btn.textContent = '💾 Saving…';
-    btn.disabled = true;
-    btn.style.opacity = '.7';
-  });
+  var permForm = document.getElementById('permForm');
+  if (permForm) {
+    permForm.addEventListener('submit', function() {
+      changed = false;
+      var btn = document.getElementById('saveBtn');
+      if (btn) { btn.textContent = '💾 Saving…'; btn.disabled = true; btn.style.opacity = '.7'; }
+    });
+  }
 
   window.addEventListener('beforeunload', function(e) {
     if (changed) { e.preventDefault(); e.returnValue = ''; }
   });
 
-  // ── Grant / Revoke All ─────────────────────────────────────────────────────
   function grantAll() {
-    document.querySelectorAll('.perm-cb').forEach(function(cb) { cb.checked = true; });
+    document.querySelectorAll('.perm-cb:not(:disabled)').forEach(function(cb) { cb.checked = true; });
     setChanged();
   }
   function revokeAll() {
-    document.querySelectorAll('.perm-cb').forEach(function(cb) { cb.checked = false; });
+    document.querySelectorAll('.perm-cb:not(:disabled)').forEach(function(cb) { cb.checked = false; });
     setChanged();
   }
-
-  // ── Column actions ─────────────────────────────────────────────────────────
   function grantColumn(type) {
-    document.querySelectorAll('[name$="_' + type + '"]').forEach(function(cb) { cb.checked = true; });
+    document.querySelectorAll('[name$="_' + type + '"]:not(:disabled)').forEach(function(cb) { cb.checked = true; });
     setChanged();
   }
   function revokeColumn(type) {
-    document.querySelectorAll('[name$="_' + type + '"]').forEach(function(cb) { cb.checked = false; });
+    document.querySelectorAll('[name$="_' + type + '"]:not(:disabled)').forEach(function(cb) { cb.checked = false; });
     setChanged();
   }
-
-  // ── Row toggle ─────────────────────────────────────────────────────────────
   function toggleRow(moduleId) {
-    var cbs = document.querySelectorAll('[data-row="' + moduleId + '"]');
+    var cbs = document.querySelectorAll('[data-row="' + moduleId + '"]:not(:disabled)');
     var allChecked = Array.from(cbs).every(function(cb) { return cb.checked; });
     cbs.forEach(function(cb) { cb.checked = !allChecked; });
     setChanged();
   }
-
   function setChanged() {
-    if (!changed) { changed = true; badge.classList.add('show'); }
+    if (!changed && badge) { changed = true; badge.classList.add('show'); }
   }
 </script>
 

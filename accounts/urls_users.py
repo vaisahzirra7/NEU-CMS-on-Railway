@@ -33,8 +33,16 @@ urlpatterns = [
          views_users.role_list,
          name='role_list'),
 
+    path('roles/create/',
+         views_users.role_create,
+         name='role_create'),
+
     path('roles/<int:pk>/permissions/',
          views_users.role_permissions,
          name='role_permissions'),
+
+    path('roles/<int:pk>/delete/',
+         views_users.role_delete,
+         name='role_delete'),
 
 ]

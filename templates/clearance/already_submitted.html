@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Already Submitted — VanaraUniCare</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    :root{--ink:#08131F;--panel:#0C1B2E;--gold:#C9A84C;--gold-2:#E2C47A;--slate:#6B84A3;--border:rgba(255,255,255,.08);--white:#FFF;--warning:#F0A04A;}
+    body{font-family:'Outfit',sans-serif;background:var(--ink);color:var(--white);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+    .box{background:var(--panel);border:1px solid var(--border);border-radius:16px;width:100%;max-width:460px;padding:40px 36px;text-align:center;}
+    .icon{font-size:48px;margin-bottom:16px;}
+    .title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;margin-bottom:8px;}
+    .sub{font-size:13.5px;color:var(--slate);line-height:1.7;margin-bottom:22px;}
+    .info-box{background:rgba(240,160,74,.06);border:1px solid rgba(240,160,74,.15);border-radius:10px;padding:14px 18px;margin-bottom:22px;text-align:left;}
+    .info-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+    .info-row:last-child{border-bottom:none;}
+    .info-lbl{color:var(--slate);}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:11px 22px;border-radius:9px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;text-decoration:none;cursor:pointer;border:none;}
+    .btn-gold{background:linear-gradient(135deg,var(--gold),#a07828);color:#08131F;}
+    .btn-sec{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--white);margin-left:8px;}
+    .chip-approved{display:inline-flex;padding:3px 10px;border-radius:100px;font-size:12px;font-weight:600;background:rgba(61,184,122,.1);color:#90deb5;border:1px solid rgba(61,184,122,.2);}
+    .chip-rejected{display:inline-flex;padding:3px 10px;border-radius:100px;font-size:12px;font-weight:600;background:rgba(224,85,85,.1);color:#f0a0a0;border:1px solid rgba(224,85,85,.2);}
+  </style>
+</head>
+<body>
+<div class="box">
+  <div class="icon">🔒</div>
+  <div class="title">Already Submitted</div>
+  <div class="sub">You have already submitted a clearance form for this session. To make changes, please visit the health center and request access from a staff member.</div>
+  <div class="info-box">
+    <div class="info-row"><span class="info-lbl">Reference ID</span><span style="font-family:monospace;font-weight:600;color:var(--gold-2);">{{ sub.submission_id }}</span></div>
+    <div class="info-row"><span class="info-lbl">Session</span><span>{{ sub.session.display_title }}</span></div>
+    <div class="info-row"><span class="info-lbl">Submitted</span><span>{{ sub.submitted_at|date:"d M Y, H:i" }}</span></div>
+    <div class="info-row"><span class="info-lbl">Status</span>
+      <span>{% if sub.status == 'Approved' %}<span class="chip-approved">✓ Approved</span>{% else %}<span class="chip-rejected">✕ Rejected</span>{% endif %}</span>
+    </div>
+  </div>
+  {% if sub.status == 'Approved' %}
+  <a href="{% url 'clearance_certificate' sub.pk %}" class="btn btn-gold" target="_blank">🖨 Print Certificate</a>
+  {% endif %}
+  <a href="{% url 'clearance_status_check' %}" class="btn btn-sec">Check Status</a>
+</div>
+</body>
+</html>
