@@ -104,6 +104,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 #     }
 # }
 
+
 # Database fallback to sqlite3 locally if no DATABASE_URL is defined.
 # This prevents dj_database_url from crashing when DATABASE_URL is None or an empty string.
 DATABASE_URL = os.environ.get('DATABASE_URL') or config('DATABASE_URL', default=None)
@@ -113,13 +114,22 @@ if DATABASE_URL:
         'default': dj_database_url.parse(DATABASE_URL)
     }
 else:
-    # Use SQLite as a lightweight fallback for local development or during collecting static files
+    # Local dev — use MySQL
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'ENGINE':   'django.db.backends.mysql',
+            'NAME':     config('DB_NAME'),
+            'USER':     config('DB_USER'),
+            'PASSWORD': config('DB_PASSWORD'),
+            'HOST':     config('DB_HOST', default='localhost'),
+            'PORT':     config('DB_PORT', default='3306'),
+            'OPTIONS': {
+                'charset': 'utf8mb4',
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            },
         }
     }
+    
 # =============================================================================
 # CUSTOM AUTH — We use our own User model in accounts app
 # =============================================================================
