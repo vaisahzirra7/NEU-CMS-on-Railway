@@ -89,9 +89,313 @@
     .sum-item:last-child{border-bottom:none;}
     .sum-label{color:var(--slate);}
     .sum-val{font-weight:500;}
+  
+    /* ── MOBILE SIDEBAR ─────────────────────────────────────── */
+    .sb-overlay {
+      display:none; position:fixed; inset:0; background:rgba(0,0,0,.55);
+      z-index:299; backdrop-filter:blur(2px);
+    }
+    .sb-overlay.open { display:block; }
+
+    .hamburger {
+      display:none; align-items:center; justify-content:center;
+      width:38px; height:38px; background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.1); border-radius:9px;
+      cursor:pointer; flex-shrink:0; margin-right:12px;
+      transition:background .2s;
+    }
+    .hamburger:hover { background:rgba(255,255,255,.12); }
+    .hamburger span,
+    .hamburger span::before,
+    .hamburger span::after {
+      display:block; width:18px; height:2px;
+      background:var(--slate, #6B84A3); border-radius:2px;
+      position:relative; transition:all .25s;
+    }
+    .hamburger span::before,
+    .hamburger span::after {
+      content:''; position:absolute; left:0;
+    }
+    .hamburger span::before { top:-5px; }
+    .hamburger span::after  { top:5px; }
+    .hamburger.open span    { background:transparent; }
+    .hamburger.open span::before { transform:rotate(45deg);  top:0; }
+    .hamburger.open span::after  { transform:rotate(-45deg); top:0; }
+
+    @media (max-width: 768px) {
+      .hamburger { display:flex; }
+
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform .28s cubic-bezier(.4,0,.2,1);
+        z-index: 300;
+      }
+      .sidebar.open { transform: translateX(0); }
+
+      .main, .content, [class*="main"] {
+        margin-left: 0 !important;
+        width: 100% !important;
+      }
+    }
+    /* ── END MOBILE SIDEBAR ─────────────────────────────────── */
+
+  
+    /* Overlay */
+    .sb-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,.72);
+      z-index:299; backdrop-filter:blur(3px);
+      -webkit-backdrop-filter:blur(3px);
+    }
+    .sb-overlay.open { display:block; }
+
+    /* Hamburger button */
+    .hamburger {
+      display:none; align-items:center; justify-content:center;
+      width:36px; height:36px; flex-shrink:0;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:8px; cursor:pointer;
+      transition:background .2s;
+    }
+    .hamburger:hover { background:rgba(255,255,255,.12); }
+    .hamburger span,
+    .hamburger span::before,
+    .hamburger span::after {
+      display:block; width:16px; height:2px;
+      background:#6B84A3; border-radius:2px;
+      position:relative; transition:all .25s;
+    }
+    .hamburger span::before,
+    .hamburger span::after {
+      content:''; position:absolute; left:0;
+    }
+    .hamburger span::before { top:-5px; }
+    .hamburger span::after  { top:5px;  }
+    .hamburger.open span             { background:transparent; }
+    .hamburger.open span::before     { transform:rotate(45deg);  top:0; }
+    .hamburger.open span::after      { transform:rotate(-45deg); top:0; }
+
+    @media (max-width: 768px) {
+      /* Show hamburger */
+      .hamburger { display:flex; }
+
+      /* Sidebar off-screen */
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform .28s cubic-bezier(.4,0,.2,1);
+        z-index: 300;
+      }
+      .sidebar.open { transform: translateX(0); }
+
+      /* Main content full width */
+      .main { margin-left: 0 !important; }
+
+      /* Topbar */
+      .topbar {
+        padding: 0 16px !important;
+        height: auto !important;
+        min-height: 56px;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+      }
+      .topbar-left h1 { font-size: 16px !important; }
+      .topbar-left p  { font-size: 11px !important; display:none; }
+      .topbar-right {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .topbar-right .btn-primary,
+      .topbar-right .btn-sm {
+        font-size: 12px !important;
+        padding: 7px 12px !important;
+      }
+
+      /* Content padding */
+      .content { padding: 16px !important; }
+
+      /* Stat cards — 2 columns on mobile */
+      .stats-grid,
+      .stats-row,
+      [class*="stat-grid"],
+      [class*="stats"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+      }
+
+      /* grid-2 layouts stack */
+      .grid-2 {
+        grid-template-columns: 1fr !important;
+      }
+
+      /* Tables scroll horizontally */
+      .table-wrap,
+      .card { overflow-x: auto; }
+
+      table {
+        min-width: 500px;
+      }
+
+      /* Cards full width */
+      .card { border-radius: 10px !important; }
+      .card-body { padding: 14px !important; }
+      .card-header { padding: 12px 14px !important; }
+
+      /* Buttons in cards */
+      .btn-primary, .btn-sm {
+        font-size: 12.5px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      /* Stat cards — 1 column on very small screens */
+      .stats-grid,
+      .stats-row,
+      [class*="stat-grid"],
+      [class*="stats"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+      .topbar-right .btn-primary,
+      .topbar-right .btn-sm {
+        font-size: 11px !important;
+        padding: 6px 10px !important;
+      }
+    }
+    /* ═══════════════════════════════════════════════════════════ */
+
+  
+    /* ═══════════════════════════════════════════════════════════
+       MOBILE RESPONSIVE v2 — fix_mobile_responsive.py
+       ═══════════════════════════════════════════════════════════ */
+
+    .sb-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,.75);
+      z-index:299; backdrop-filter:blur(3px);
+      -webkit-backdrop-filter:blur(3px);
+    }
+    .sb-overlay.open { display:block; }
+
+    .hamburger {
+      display:none; align-items:center; justify-content:center;
+      width:36px; height:36px; flex-shrink:0;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:8px; cursor:pointer;
+      transition:background .2s;
+    }
+    .hamburger:hover { background:rgba(255,255,255,.12); }
+    .hamburger span,
+    .hamburger span::before,
+    .hamburger span::after {
+      display:block; width:16px; height:2px;
+      background:#6B84A3; border-radius:2px;
+      position:relative; transition:all .25s;
+    }
+    .hamburger span::before,
+    .hamburger span::after { content:''; position:absolute; left:0; }
+    .hamburger span::before { top:-5px; }
+    .hamburger span::after  { top:5px;  }
+    .hamburger.open span             { background:transparent; }
+    .hamburger.open span::before     { transform:rotate(45deg);  top:0; }
+    .hamburger.open span::after      { transform:rotate(-45deg); top:0; }
+
+    @media (max-width: 768px) {
+      .hamburger { display:flex; }
+
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform .28s cubic-bezier(.4,0,.2,1);
+        z-index: 300;
+      }
+      .sidebar.open { transform: translateX(0); }
+
+      .main { margin-left: 0 !important; }
+
+      /* Topbar */
+      .topbar {
+        padding: 10px 14px !important;
+        height: auto !important;
+        min-height: 56px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .topbar-left h1 { font-size: 16px !important; }
+      .topbar-left p  { display: none !important; }
+      .topbar-right   { flex-wrap: wrap; gap: 6px; }
+      .topbar-right .btn-primary,
+      .topbar-right .btn-sm {
+        font-size: 12px !important;
+        padding: 7px 11px !important;
+      }
+
+      /* Content padding */
+      .content { padding: 14px !important; }
+
+      /* ALL named grid layouts → single column */
+      .grid-2, .grid-3, .grid-4,
+      .bottom-grid, .qa-grid,
+      .layout, .two-col, .split,
+      [class*="col-grid"], [class*="two-col"] {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+      }
+
+      /* Stat/KPI grids → 2 columns */
+      .kpi-grid,
+      .stats-grid,
+      .stats-row,
+      [class*="stat-grid"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+      }
+
+      /* Module grid → 2 columns */
+      .mod-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+
+      /* Cards */
+      .card { border-radius: 10px; overflow-x: auto; }
+      .card-body   { padding: 14px !important; }
+      .card-header { padding: 12px 14px !important; }
+
+      /* Tables scroll */
+      .table-wrap { overflow-x: auto; }
+      table { min-width: 480px; }
+
+      /* Form rows */
+      .field-row, .form-row {
+        grid-template-columns: 1fr !important;
+        flex-direction: column !important;
+      }
+
+      /* Welcome card */
+      .welcome-card { padding: 20px !important; }
+      .welcome-card h2 { font-size: 22px !important; }
+
+      .btn-primary, .btn-sm { font-size: 12.5px; }
+      .stat-card p { font-size: 11px; }
+    }
+
+    @media (max-width: 420px) {
+      .topbar-right .btn-primary,
+      .topbar-right .btn-sm {
+        font-size: 11px !important;
+        padding: 6px 9px !important;
+      }
+      .content { padding: 10px !important; }
+    }
+    /* ═══════════════════════════════════════════════════════════ */
+
   </style>
 </head>
 <body>
+
+<div class="sb-overlay" id="sbOverlay"></div>
 <div class="sidebar">
   <div class="sb-logo">
     <div class="sb-mark">⚕</div>
@@ -138,7 +442,8 @@
 
 <div class="main">
   <div class="topbar">
-    <div class="topbar-left">
+        <button class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()" aria-label="Toggle menu"><span></span></button>
+         <div class="topbar-left">
       <h1>New Prescription</h1>
       <p>Create a drug prescription for a patient</p>
     </div>
@@ -516,5 +821,75 @@ document.addEventListener('click', function(e) {
   });
 });
 </script>
+
+<script>
+/* Mobile sidebar toggle */
+function toggleSidebar() {
+  const sidebar  = document.querySelector('.sidebar');
+  const overlay  = document.getElementById('sbOverlay');
+  const hamburger = document.getElementById('hamburgerBtn');
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('open');
+  hamburger.classList.toggle('open');
+}
+document.getElementById('sbOverlay').addEventListener('click', function() {
+  const sidebar   = document.querySelector('.sidebar');
+  const overlay   = document.getElementById('sbOverlay');
+  const hamburger = document.getElementById('hamburgerBtn');
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+  hamburger.classList.remove('open');
+});
+// Close sidebar on nav link click (mobile)
+document.querySelectorAll('.sb-item').forEach(function(link) {
+  link.addEventListener('click', function() {
+    if (window.innerWidth <= 768) {
+      const sidebar   = document.querySelector('.sidebar');
+      const overlay   = document.getElementById('sbOverlay');
+      const hamburger = document.getElementById('hamburgerBtn');
+      sidebar.classList.remove('open');
+      overlay.classList.remove('open');
+      hamburger.classList.remove('open');
+    }
+  });
+});
+</script>
+
+
+<script>
+/* Mobile sidebar */
+function toggleSidebar() {
+  var s = document.querySelector('.sidebar');
+  var o = document.getElementById('sbOverlay');
+  var h = document.getElementById('hamburgerBtn');
+  if (!s) return;
+  s.classList.toggle('open');
+  if (o) o.classList.toggle('open');
+  if (h) h.classList.toggle('open');
+}
+(function() {
+  var o = document.getElementById('sbOverlay');
+  if (o) o.addEventListener('click', function() {
+    var s = document.querySelector('.sidebar');
+    var h = document.getElementById('hamburgerBtn');
+    if (s) s.classList.remove('open');
+    o.classList.remove('open');
+    if (h) h.classList.remove('open');
+  });
+  document.querySelectorAll('.sb-item').forEach(function(l) {
+    l.addEventListener('click', function() {
+      if (window.innerWidth <= 768) {
+        var s = document.querySelector('.sidebar');
+        var o = document.getElementById('sbOverlay');
+        var h = document.getElementById('hamburgerBtn');
+        if (s) s.classList.remove('open');
+        if (o) o.classList.remove('open');
+        if (h) h.classList.remove('open');
+      }
+    });
+  });
+})();
+</script>
+
 </body>
 </html>

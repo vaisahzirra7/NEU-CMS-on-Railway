@@ -9,6 +9,7 @@ from django.http import HttpResponse
 from django.db.models import Count, Q, Avg
 from django.db.models.functions import TruncMonth, TruncDate, TruncWeek
 from django.utils import timezone
+import pytz
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -73,7 +74,7 @@ def reports_dashboard(request):
 
     # Registrations per month
     reg_monthly = (
-        patients_qs.annotate(month=TruncMonth('created_at'))
+        patients_qs.annotate(month=TruncMonth('created_at', tzinfo=pytz.UTC))
         .values('month').annotate(count=Count('pk')).order_by('month')
     )
     reg_labels, reg_values = _month_labels(reg_monthly)
@@ -115,7 +116,7 @@ def reports_dashboard(request):
 
     # Consultations per month
     consult_monthly = (
-        consult_qs.annotate(month=TruncMonth('created_at'))
+        consult_qs.annotate(month=TruncMonth('created_at', tzinfo=pytz.UTC))
         .values('month').annotate(count=Count('pk')).order_by('month')
     )
     consult_labels, consult_values = _month_labels(consult_monthly)
@@ -146,7 +147,7 @@ def reports_dashboard(request):
 
     # Lab requests per month
     lab_monthly = (
-        lab_qs.annotate(month=TruncMonth('created_at'))
+        lab_qs.annotate(month=TruncMonth('created_at', tzinfo=pytz.UTC))
         .values('month').annotate(count=Count('pk')).order_by('month')
     )
     lab_labels, lab_values = _month_labels(lab_monthly)
@@ -178,7 +179,7 @@ def reports_dashboard(request):
 
     # Prescriptions per month
     rx_monthly = (
-        rx_qs.annotate(month=TruncMonth('created_at'))
+        rx_qs.annotate(month=TruncMonth('created_at', tzinfo=pytz.UTC))
         .values('month').annotate(count=Count('pk')).order_by('month')
     )
     rx_labels, rx_values = _month_labels(rx_monthly)
@@ -211,7 +212,7 @@ def reports_dashboard(request):
 
     # Submissions per month
     cl_monthly = (
-        clearance_qs.annotate(month=TruncMonth('submitted_at'))
+        clearance_qs.annotate(month=TruncMonth('submitted_at', tzinfo=pytz.UTC))
         .values('month').annotate(count=Count('pk')).order_by('month')
     )
     cl_labels, cl_values = _month_labels(cl_monthly)

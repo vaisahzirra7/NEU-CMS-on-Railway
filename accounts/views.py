@@ -107,10 +107,47 @@ def dashboard(request):
     else:
         greeting = 'evening'
 
+    # ── KPI Cards ─────────────────────────────────────────────
+    today = timezone.localdate()
+
+    try:
+        from patients.models import Patient
+        patients_today = Patient.objects.filter(created_at__date=today).count()
+    except Exception:
+        patients_today = 0
+
+    try:
+        from appointments.models import Appointment
+        appointments_pending = Appointment.objects.filter(
+            status__in=['Scheduled', 'Pending']
+        ).count()
+    except Exception:
+        appointments_pending = 0
+
+    try:
+        from wards.models import Bed
+        beds_occupied = Bed.objects.filter(status='Occupied').count()
+    except Exception:
+        beds_occupied = 0
+
+    try:
+        from inventory.models import Drug
+        from django.db.models import F
+        low_stock_items = Drug.objects.filter(
+            is_active=True,
+            current_stock__lte=F('reorder_level')
+        ).count()
+    except Exception:
+        low_stock_items = 0
+
     context = {
-        'user':               user,
-        'accessible_modules': user.get_accessible_modules(),
-        'greeting':           greeting,
+        'user':                 user,
+        'accessible_modules':   user.get_accessible_modules(),
+        'greeting':             greeting,
+        'patients_today':       patients_today,
+        'appointments_pending': appointments_pending,
+        'beds_occupied':        beds_occupied,
+        'low_stock_items':      low_stock_items,
     }
     return render(request, 'accounts/dashboard.html', context)
 
