@@ -1,5 +1,18 @@
 #!/usr/bin/env bash
 # build.sh — Render build script
+
+# Start of code to extract the content of the database
+# ---------------------------------------
+# set "DJANGO_DB_ENGINE=django.db.backends.mysql"
+# set "DJANGO_DB_NAME=your_local_db"
+# set "DJANGO_DB_USER=your_user"
+# set "DJANGO_DB_PASSWORD=your_password"
+# set "DJANGO_DB_HOST=127.0.0.1"
+# set "DJANGO_DB_PORT=3306"
+
+# python -c "import os, django; os.environ.setdefault('DJANGO_SETTINGS_MODULE','core.settings'); django.setup(); from django.core.management import call_command; call_command('dumpdata','--exclude','auth.permission','--exclude','contenttypes','--exclude','admin.logentry', stdout=open('data.json','w', encoding='utf-8'))"
+# ----------------------------------------
+# End of code to extract the content of the database
 set -o errexit
 
 pip install -r requirements.txt
