@@ -1,20 +1,21 @@
 <!--Login Page-->
-{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VanaraUniCare — Sign In</title>
+
   <!-- Open Graph / Link Preview -->
-  <meta property="og:type"         content="website" />
-  <meta property="og:url"          content="https://neu-cms-draft.onrender.com/" />
-  <meta property="og:title"        content="VanaraUniCare — NEU Health Management System" />
-  <meta property="og:description"  content="North-Eastern University Clinic Management System" />
-  <meta property="og:image"        content="https://neu-cms-draft.onrender.com/static/images/og-preview.png" />
+   <!--Preview Looks for Sharing Link-->
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://neu-cms-draft.onrender.com/" />
+  <meta property="og:title"       content="VanaraUniCare" />
+  <meta property="og:description" content="North-Eastern University Clinic Management System" />
+  <meta property="og:image"       content="https://neu-cms-draft.onrender.com/static/img/og-preview.png" />
   <meta property="og:image:width"  content="1200" />
   <meta property="og:image:height" content="630" />
-
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -205,7 +206,6 @@
   <div class="left">
     <div>
       <div class="pill"><div class="pill-dot"></div><span>System Online</span></div>
-      <img src="{% static 'images/neu_logo.png' %}" alt="NEU Logo" style="width:120px;height:120px;object-fit:contain;margin-bottom:24px;display:block;" />
       <h1 class="hero-title">North-Eastern University<em>Clinic Management System</em></h1>
       <p class="hero-desc">VanaraUniCare is a comprehensive clinical management system digitising patient care, drug accountability, and staff workflow for NEU Health Center.</p>
       <div class="kpi-row">
