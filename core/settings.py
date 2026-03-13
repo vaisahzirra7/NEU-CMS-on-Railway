@@ -205,6 +205,7 @@ MESSAGE_TAGS = {
 # =============================================================================
 # EMAIL (configure properly when ready to send emails)
 # =============================================================================
+#Comment whiever one you may not want to use.
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # Use SMTP backend for production
 #EMAIL_BACKEND       = 'django.core.mail.backends.console.EmailBackend'  # Prints to console in dev

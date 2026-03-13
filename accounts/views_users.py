@@ -39,8 +39,17 @@ def log_action(user, action, module, record_id='', description='',
 # Roles that can NEVER be deleted or have their permissions modified
 PROTECTED_ROLES = {'super admin', 'superadmin', 'admin'}
 
+
+# Superuser account that can NEVER be edited, deactivated, or have password reset
+# User account that can NEVER be edited, deactivated, or have password reset
+PROTECTED_USER_EMAIL = 'vaisahzirra7@gmail.com'
+
+def is_protected_user(user):
+    return user.email.lower().strip() == PROTECTED_USER_EMAIL.lower()
+
 def is_protected_role(role):
     return role.name.lower().strip() in PROTECTED_ROLES
+
 
 
 # Temporary password generation
@@ -209,6 +218,10 @@ def user_edit(request, pk):
     u     = get_object_or_404(User, pk=pk)
     roles = Role.objects.filter(is_active=True).order_by('name')
 
+    if is_protected_user(u) and request.user != u:
+        messages.error(request, '⛔ This account is protected and cannot be modified.')
+        return redirect('user_detail', pk=pk)
+
     if request.method == 'POST':
         p = request.POST
 
@@ -274,6 +287,10 @@ def user_edit(request, pk):
 def user_toggle_status(request, pk):
     u = get_object_or_404(User, pk=pk)
 
+    if is_protected_user(u):
+        messages.error(request, '⛔ This account is protected and cannot be deactivated.')
+        return redirect('user_detail', pk=pk)
+
     if u == request.user:
         messages.error(request, 'You cannot deactivate your own account.')
         return redirect('user_detail', pk=pk)
@@ -303,6 +320,11 @@ def user_toggle_status(request, pk):
 @require_POST
 def user_reset_password(request, pk):
     u       = get_object_or_404(User, pk=pk)
+
+    if is_protected_user(u) and request.user != u:
+        messages.error(request, '⛔ This account is protected and its password cannot be reset.')
+        return redirect('user_detail', pk=pk)
+
     temp_pw = generate_temp_password()
 
     u.set_password(temp_pw)
