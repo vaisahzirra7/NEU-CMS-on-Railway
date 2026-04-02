@@ -265,7 +265,7 @@
           <label class="field-label" for="password">Password</label>
           <div class="field-wrap">
             <input type="password" id="password" name="password" class="field-input has-icon" placeholder="••••••••••" required />
-            <button type="button" class="toggle-btn" onclick="togglePwd()"><span id="eyeIcon">👁</span></button>
+            <button type="button" class="toggle-btn" onclick="togglePwd()"><span id="eyeIcon"><i class="bx bx-eye-alt"></i></span></button>
           </div>
         </div>
         <div class="field-row"><a href="{% url 'forgot_password' %}" class="forgot">Forgot password?</a></div>
@@ -284,13 +284,25 @@
 
 <script>
   function togglePwd() {
-    const i = document.getElementById('password'), e = document.getElementById('eyeIcon');
+    const i = document.getElementById('password'),
+          e = document.getElementById('eyeIcon'),
+          icon = e.querySelector('i');
+
     i.type = i.type === 'password' ? 'text' : 'password';
-    e.textContent = i.type === 'text' ? '🙈' : '👁';
+
+    if (i.type === 'text') {
+      icon.classList.remove('bx-eye');
+      icon.classList.add('bx-eye-slash');
+    } else {
+      icon.classList.remove('bx-eye-slash');
+      icon.classList.add('bx-eye');
+    }
   }
+
   document.getElementById('form').addEventListener('submit', function() {
     const b = document.getElementById('submitBtn');
-    b.classList.add('busy'); b.textContent = 'Signing in…';
+    b.classList.add('busy'); 
+    b.textContent = 'Signing in…';
   });
 </script>
 </body>

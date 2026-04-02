@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Add Staff Member — VanaraUniCare</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  
+  <!--Boxicons Reference-->
+  <!-- Basic Icons -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/basic/boxicons.min.css" rel="stylesheet">
+  <!-- Filled Icons -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/filled/boxicons-filled.min.css" rel="stylesheet">
+  <!-- Brand Icons -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/brands/boxicons-brands.min.css" rel="stylesheet">
+  
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -455,32 +464,32 @@
   </div>
   <nav class="sb-nav">
     <div class="sb-section">Main</div>
-    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-home"></i></div>Dashboard</a>
     {% if perms_map.patients.can_view or perms_map.appointments.can_view or perms_map.consultations.can_view or perms_map.prescriptions.can_view or perms_map.laboratory.can_view or perms_map.wards.can_view %}
     <div class="sb-section">Clinical</div>
-    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon">🩺</div>Patient Records</a>{% endif %}
-    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>{% endif %}
-    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>{% endif %}
-    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>{% endif %}
-    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>{% endif %}
-    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>{% endif %}
+    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-group"></i></div>Patient Records</a>{% endif %}
+    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-note-book"></i></div>Appointments</a>{% endif %}
+    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-microscope"></i></div>Consultations</a>{% endif %}
+    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-pill-bottle-alt"></i></div>Prescriptions</a>{% endif %}
+    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-medical-flask"></i></div>Laboratory</a>{% endif %}
+    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-bed-alt"></i></div>Ward Management</a>{% endif %}
     {% endif %}
     {% if perms_map.inventory.can_view or perms_map.dispensing.can_view %}
     <div class="sb-section">Pharmacy</div>
-    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>{% endif %}
-    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>{% endif %}
+    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-pill"></i></div>Drug Inventory</a>{% endif %}
+    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-pill-bottle"></i></div>Dispensing</a>{% endif %}
     {% endif %}
     {% if perms_map.clearance.can_view or perms_map.documents.can_view or perms_map.reports.can_view %}
     <div class="sb-section">Administration</div>
-    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>{% endif %}
-    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>{% endif %}
-    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>{% endif %}
+    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-education"></i></div>Medical Clearance</a>{% endif %}
+    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-copy-plus"></i></div>Official Documents</a>{% endif %}
+    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-report"></i></div>Reports & Analytics</a>{% endif %}
     {% endif %}
     {% if perms_map.users.can_view or perms_map.roles.can_view or perms_map.settings.can_view or user.is_superuser %}
     <div class="sb-section">System</div>
-    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item active"><div class="sb-icon">👥</div>User Management</a>{% endif %}
-    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>{% endif %}
-    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>{% endif %}
+    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item active"><div class="sb-icon"><i class="bx bx-community"></i></div>User Management</a>{% endif %}
+    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-shield"></i></div>Role Permissions</a>{% endif %}
+    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-cog"></i></div>System Settings</a>{% endif %}
     {% endif %}
   </nav>
   <div class="sb-footer">
@@ -514,7 +523,7 @@
     {% for msg in messages %}
     <div class="alert alert-{{ msg.tags }}">
       <span>{{ msg|safe }}</span>
-      <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+      <button class="alert-close" onclick="this.parentElement.remove()"><i class="bx bx-x"></i></button>
     </div>
     {% endfor %}
 
@@ -528,7 +537,7 @@
 
           <!-- Personal Information -->
           <div class="form-section">
-            <div class="section-title">👤 Personal Information</div>
+            <div class="section-title"><i class="bx bx-community"></i> Personal Information</div>
             <div class="form-grid cols-2">
               <div class="field">
                 <label>First Name <span class="req">*</span></label>
@@ -568,7 +577,7 @@
 
           <!-- Professional Details -->
           <div class="form-section">
-            <div class="section-title">💼 Professional Details</div>
+            <div class="section-title"><i class="bx bx-briefcase-alt-2"></i> Professional Details</div>
             <div class="form-grid cols-2">
               <div class="field">
                 <label>Staff ID</label>
@@ -619,7 +628,7 @@
           <!--Staff Login-->
           <!-- Login Credentials -->
           <div class="form-section">
-            <div class="section-title">📧 Login Credentials</div>
+            <div class="section-title"><i class="bx bx-car-key"></i> Login Credentials</div>
             <div class="form-grid cols-1">
               <div class="field">
                 <label>Email Address <span class="req">*</span></label>
@@ -641,7 +650,7 @@
 
           <!-- Account Settings -->
           <div class="side-card">
-            <div class="side-title">⚙ Account Settings</div>
+            <div class="side-title"><i class="bx bx-cog"></i> Account Settings</div>
 
             <div class="toggle-row">
               <div>

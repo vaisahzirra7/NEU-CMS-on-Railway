@@ -1,0 +1,838 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Issue Document — VanaraUniCare</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet"/>
+  
+  <!--Boxicons Reference-->
+  <!-- Basic Icons -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/basic/boxicons.min.css" rel="stylesheet">
+  <!-- Filled Icons -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/filled/boxicons-filled.min.css" rel="stylesheet">
+  <!-- Brand Icons -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/brands/boxicons-brands.min.css" rel="stylesheet">
+  
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{--ink:#08131F;--panel:#0C1B2E;--panel-2:#0F2040;--surface:rgba(255,255,255,.03);--surface-2:rgba(255,255,255,.055);--border:rgba(255,255,255,.07);--border-2:rgba(255,255,255,.12);--gold:#C9A84C;--gold-2:#E2C47A;--slate:#6B84A3;--slate-2:#4A6380;--white:#FFF;--success:#3DB87A;--warning:#F0A04A;--danger:#E05555;--sw:252px;}
+    html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--ink);color:var(--white);}
+    .sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sw);background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;}
+    .sb-logo{padding:22px 20px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);}
+    .sb-mark{width:38px;height:38px;background:linear-gradient(145deg,var(--gold),#a07828);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+    .sb-name{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;}.sb-sub{font-size:9.5px;color:var(--slate);text-transform:uppercase;letter-spacing:.1em;}
+    .sb-nav{flex:1;overflow-y:auto;padding:12px 10px;scrollbar-width:thin;}
+    .sb-section{font-size:9.5px;font-weight:600;color:var(--slate-2);text-transform:uppercase;letter-spacing:.12em;padding:14px 10px 6px;}
+    .sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;color:var(--slate);font-size:13.5px;text-decoration:none;transition:background .15s,color .15s;margin-bottom:1px;}
+    .sb-item:hover{background:var(--surface-2);color:var(--white);}.sb-item.active{background:rgba(201,168,76,.1);color:var(--gold-2);font-weight:500;}
+    .sb-icon{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+    .sb-footer{padding:12px 10px;border-top:1px solid var(--border);}
+    .sb-user{display:flex;align-items:center;gap:10px;padding:10px;border-radius:9px;background:var(--surface);}
+    .sb-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#a07828);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--ink);flex-shrink:0;}
+    .sb-uname{font-size:13px;font-weight:500;}.sb-urole{font-size:10.5px;color:var(--slate);}
+    .sb-logout{margin-left:auto;background:none;border:none;color:var(--slate-2);cursor:pointer;font-size:15px;text-decoration:none;}.sb-logout:hover{color:var(--danger);}
+    .main{margin-left:var(--sw);min-height:100vh;display:flex;flex-direction:column;}
+    .topbar{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;background:rgba(8,19,31,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);}
+    .topbar-left h1{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;}
+    .topbar-left p{font-size:12px;color:var(--slate);margin-top:1px;}
+    .topbar-right{display:flex;gap:10px;}
+    .btn-secondary{padding:9px 18px;background:var(--surface);border:1px solid var(--border);border-radius:9px;font-size:13.5px;color:var(--white);text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+    .btn-secondary:hover{background:var(--surface-2);}
+    .content{padding:28px 32px;flex:1;}
+    /* ── TYPE PICKER ── */
+    .type-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
+    .type-card{position:relative;background:var(--panel);border:2px solid var(--border);border-radius:14px;padding:22px 18px;cursor:pointer;transition:border-color .15s,background .15s,transform .15s;text-align:center;}
+    .type-card:hover{border-color:var(--border-2);transform:translateY(-2px);}
+    .type-card.selected{border-color:var(--gold);background:rgba(201,168,76,.06);}
+    .type-card input[type=radio]{position:absolute;opacity:0;width:0;height:0;}
+    .type-icon{font-size:32px;margin-bottom:10px;display:block;}
+    .type-name{font-size:13.5px;font-weight:600;color:var(--white);}
+    .type-desc{font-size:11.5px;color:var(--slate);margin-top:4px;line-height:1.5;}
+    .type-card.selected .type-name{color:var(--gold-2);}
+    /* ── FORM LAYOUT ── */
+    .form-layout{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start;}
+    .form-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px;}
+    .form-card-header{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+    .form-card-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;}
+    .form-card-body{padding:22px;}
+    .form-grid{display:grid;gap:16px;}
+    .form-grid.cols-2{grid-template-columns:1fr 1fr;}
+    .span-2{grid-column:span 2;}
+    .field{display:flex;flex-direction:column;gap:6px;}
+    label{font-size:11px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:.08em;}
+    input[type=text],input[type=date],input[type=email],select,textarea{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:9px;padding:11px 14px;font-family:'Outfit',sans-serif;font-size:14px;color:var(--white);outline:none;width:100%;}
+    input:focus,select:focus,textarea:focus{border-color:rgba(201,168,76,.45);}
+    select option{background:var(--panel-2);}
+    textarea{resize:vertical;min-height:90px;line-height:1.6;}
+    .hint{font-size:11.5px;color:var(--slate-2);}
+    /* ── SPECIFIC PANELS ── */
+    .specific-panel{display:none;}
+    .specific-panel.visible{display:block;}
+    /* ── SIDE CARD ── */
+    .side-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px;}
+    .side-card-title{padding:14px 18px;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:.08em;}
+    .side-card-body{padding:16px 18px;}
+    /* ── PATIENT PREVIEW ── */
+    .patient-preview{background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.15);border-radius:10px;padding:14px 16px;margin-top:10px;display:none;}
+    .patient-preview.visible{display:block;}
+    .pp-name{font-size:15px;font-weight:600;color:var(--white);}
+    .pp-meta{font-size:12px;color:var(--slate);margin-top:3px;}
+    /* ── SUBMIT ── */
+    .submit-row{display:flex;gap:10px;margin-top:6px;}
+    .btn-primary{background:linear-gradient(135deg,var(--gold),#a07828);border:none;border-radius:9px;padding:11px 26px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:7px;}
+    .btn-draft{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:11px 20px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;color:var(--white);cursor:pointer;}
+    .btn-draft:hover{background:var(--surface-2);}
+    .errors{background:rgba(224,85,85,.08);border:1px solid rgba(224,85,85,.2);border-radius:10px;padding:12px 16px;margin-bottom:18px;}
+    .error-item{font-size:13px;color:#f0a0a0;line-height:1.7;}
+    /* Tom Select overrides */
+    .ts-wrapper .ts-control{background:rgba(255,255,255,.04)!important;border:1px solid var(--border)!important;border-radius:9px!important;padding:8px 14px!important;color:var(--white)!important;}
+    .ts-wrapper.focus .ts-control{border-color:rgba(201,168,76,.45)!important;}
+    .ts-dropdown{background:var(--panel-2)!important;border:1px solid var(--border)!important;border-radius:9px!important;}
+    .ts-dropdown .option{color:var(--white)!important;font-family:'Outfit',sans-serif!important;font-size:13.5px!important;}
+    .ts-dropdown .option.active,.ts-dropdown .option:hover{background:rgba(201,168,76,.1)!important;}
+  
+    /* ── MOBILE SIDEBAR ─────────────────────────────────────── */
+    .sb-overlay {
+      display:none; position:fixed; inset:0; background:rgba(0,0,0,.55);
+      z-index:299; backdrop-filter:blur(2px);
+    }
+    .sb-overlay.open { display:block; }
+
+    .hamburger {
+      display:none; align-items:center; justify-content:center;
+      width:38px; height:38px; background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.1); border-radius:9px;
+      cursor:pointer; flex-shrink:0; margin-right:12px;
+      transition:background .2s;
+    }
+    .hamburger:hover { background:rgba(255,255,255,.12); }
+    .hamburger span,
+    .hamburger span::before,
+    .hamburger span::after {
+      display:block; width:18px; height:2px;
+      background:var(--slate, #6B84A3); border-radius:2px;
+      position:relative; transition:all .25s;
+    }
+    .hamburger span::before,
+    .hamburger span::after {
+      content:''; position:absolute; left:0;
+    }
+    .hamburger span::before { top:-5px; }
+    .hamburger span::after  { top:5px; }
+    .hamburger.open span    { background:transparent; }
+    .hamburger.open span::before { transform:rotate(45deg);  top:0; }
+    .hamburger.open span::after  { transform:rotate(-45deg); top:0; }
+
+    @media (max-width: 768px) {
+      .hamburger { display:flex; }
+
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform .28s cubic-bezier(.4,0,.2,1);
+        z-index: 300;
+      }
+      .sidebar.open { transform: translateX(0); }
+
+      .main, .content, [class*="main"] {
+        margin-left: 0 !important;
+        width: 100% !important;
+      }
+    }
+    /* ── END MOBILE SIDEBAR ─────────────────────────────────── */
+
+  
+    /* Overlay */
+    .sb-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,.72);
+      z-index:299; backdrop-filter:blur(3px);
+      -webkit-backdrop-filter:blur(3px);
+    }
+    .sb-overlay.open { display:block; }
+
+    /* Hamburger button */
+    .hamburger {
+      display:none; align-items:center; justify-content:center;
+      width:36px; height:36px; flex-shrink:0;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:8px; cursor:pointer;
+      transition:background .2s;
+    }
+    .hamburger:hover { background:rgba(255,255,255,.12); }
+    .hamburger span,
+    .hamburger span::before,
+    .hamburger span::after {
+      display:block; width:16px; height:2px;
+      background:#6B84A3; border-radius:2px;
+      position:relative; transition:all .25s;
+    }
+    .hamburger span::before,
+    .hamburger span::after {
+      content:''; position:absolute; left:0;
+    }
+    .hamburger span::before { top:-5px; }
+    .hamburger span::after  { top:5px;  }
+    .hamburger.open span             { background:transparent; }
+    .hamburger.open span::before     { transform:rotate(45deg);  top:0; }
+    .hamburger.open span::after      { transform:rotate(-45deg); top:0; }
+
+    @media (max-width: 768px) {
+      /* Show hamburger */
+      .hamburger { display:flex; }
+
+      /* Sidebar off-screen */
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform .28s cubic-bezier(.4,0,.2,1);
+        z-index: 300;
+      }
+      .sidebar.open { transform: translateX(0); }
+
+      /* Main content full width */
+      .main { margin-left: 0 !important; }
+
+      /* Topbar */
+      .topbar {
+        padding: 0 16px !important;
+        height: auto !important;
+        min-height: 56px;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+      }
+      .topbar-left h1 { font-size: 16px !important; }
+      .topbar-left p  { font-size: 11px !important; display:none; }
+      .topbar-right {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .topbar-right .btn-primary,
+      .topbar-right .btn-sm {
+        font-size: 12px !important;
+        padding: 7px 12px !important;
+      }
+
+      /* Content padding */
+      .content { padding: 16px !important; }
+
+      /* Stat cards — 2 columns on mobile */
+      .stats-grid,
+      .stats-row,
+      [class*="stat-grid"],
+      [class*="stats"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+      }
+
+      /* grid-2 layouts stack */
+      .grid-2 {
+        grid-template-columns: 1fr !important;
+      }
+
+      /* Tables scroll horizontally */
+      .table-wrap,
+      .card { overflow-x: auto; }
+
+      table {
+        min-width: 500px;
+      }
+
+      /* Cards full width */
+      .card { border-radius: 10px !important; }
+      .card-body { padding: 14px !important; }
+      .card-header { padding: 12px 14px !important; }
+
+      /* Buttons in cards */
+      .btn-primary, .btn-sm {
+        font-size: 12.5px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      /* Stat cards — 1 column on very small screens */
+      .stats-grid,
+      .stats-row,
+      [class*="stat-grid"],
+      [class*="stats"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+      .topbar-right .btn-primary,
+      .topbar-right .btn-sm {
+        font-size: 11px !important;
+        padding: 6px 10px !important;
+      }
+    }
+    /* ═══════════════════════════════════════════════════════════ */
+
+  
+    /* ═══════════════════════════════════════════════════════════
+       MOBILE RESPONSIVE v2 — fix_mobile_responsive.py
+       ═══════════════════════════════════════════════════════════ */
+
+    .sb-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,.75);
+      z-index:299; backdrop-filter:blur(3px);
+      -webkit-backdrop-filter:blur(3px);
+    }
+    .sb-overlay.open { display:block; }
+
+    .hamburger {
+      display:none; align-items:center; justify-content:center;
+      width:36px; height:36px; flex-shrink:0;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:8px; cursor:pointer;
+      transition:background .2s;
+    }
+    .hamburger:hover { background:rgba(255,255,255,.12); }
+    .hamburger span,
+    .hamburger span::before,
+    .hamburger span::after {
+      display:block; width:16px; height:2px;
+      background:#6B84A3; border-radius:2px;
+      position:relative; transition:all .25s;
+    }
+    .hamburger span::before,
+    .hamburger span::after { content:''; position:absolute; left:0; }
+    .hamburger span::before { top:-5px; }
+    .hamburger span::after  { top:5px;  }
+    .hamburger.open span             { background:transparent; }
+    .hamburger.open span::before     { transform:rotate(45deg);  top:0; }
+    .hamburger.open span::after      { transform:rotate(-45deg); top:0; }
+
+    @media (max-width: 768px) {
+      .hamburger { display:flex; }
+
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform .28s cubic-bezier(.4,0,.2,1);
+        z-index: 300;
+      }
+      .sidebar.open { transform: translateX(0); }
+
+      .main { margin-left: 0 !important; }
+
+      /* Topbar */
+      .topbar {
+        padding: 10px 14px !important;
+        height: auto !important;
+        min-height: 56px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .topbar-left h1 { font-size: 16px !important; }
+      .topbar-left p  { display: none !important; }
+      .topbar-right   { flex-wrap: wrap; gap: 6px; }
+      .topbar-right .btn-primary,
+      .topbar-right .btn-sm {
+        font-size: 12px !important;
+        padding: 7px 11px !important;
+      }
+
+      /* Content padding */
+      .content { padding: 14px !important; }
+
+      /* ALL named grid layouts → single column */
+      .grid-2, .grid-3, .grid-4,
+      .bottom-grid, .qa-grid,
+      .layout, .two-col, .split,
+      [class*="col-grid"], [class*="two-col"] {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+      }
+
+      /* Stat/KPI grids → 2 columns */
+      .kpi-grid,
+      .stats-grid,
+      .stats-row,
+      [class*="stat-grid"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+      }
+
+      /* Module grid → 2 columns */
+      .mod-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+
+      /* Cards */
+      .card { border-radius: 10px; overflow-x: auto; }
+      .card-body   { padding: 14px !important; }
+      .card-header { padding: 12px 14px !important; }
+
+      /* Tables scroll */
+      .table-wrap { overflow-x: auto; }
+      table { min-width: 480px; }
+
+      /* Form rows */
+      .field-row, .form-row {
+        grid-template-columns: 1fr !important;
+        flex-direction: column !important;
+      }
+
+      /* Welcome card */
+      .welcome-card { padding: 20px !important; }
+      .welcome-card h2 { font-size: 22px !important; }
+
+      .btn-primary, .btn-sm { font-size: 12.5px; }
+      .stat-card p { font-size: 11px; }
+    }
+
+    @media (max-width: 420px) {
+      .topbar-right .btn-primary,
+      .topbar-right .btn-sm {
+        font-size: 11px !important;
+        padding: 6px 9px !important;
+      }
+      .content { padding: 10px !important; }
+    }
+    /* ═══════════════════════════════════════════════════════════ */
+
+  </style>
+</head>
+<body>
+<!-- SIDEBAR -->
+
+<div class="sb-overlay" id="sbOverlay"></div>
+<div class="sidebar">
+  <div class="sb-logo"><div class="sb-mark">⚕</div><div><div class="sb-name">VanaraUniCare</div><div class="sb-sub">NEU Health Center</div></div></div>
+  <nav class="sb-nav">
+    <div class="sb-section">Main</div>
+    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-home"></i></div>Dashboard</a>
+    {% if perms_map.patients.can_view or perms_map.appointments.can_view or perms_map.consultations.can_view or perms_map.prescriptions.can_view or perms_map.laboratory.can_view or perms_map.wards.can_view %}
+    <div class="sb-section">Clinical</div>
+    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-group"></i></div>Patient Records</a>{% endif %}
+    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-note-book"></i></div>Appointments</a>{% endif %}
+    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-microscope"></i></div>Consultations</a>{% endif %}
+    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-pill-bottle-alt"></i></div>Prescriptions</a>{% endif %}
+    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-medical-flask"></i></div>Laboratory</a>{% endif %}
+    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-bed-alt"></i></div>Ward Management</a>{% endif %}
+    {% endif %}
+    {% if perms_map.inventory.can_view or perms_map.dispensing.can_view %}
+    <div class="sb-section">Pharmacy</div>
+    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-pill"></i></div>Drug Inventory</a>{% endif %}
+    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-pill-bottle"></i></div>Dispensing</a>{% endif %}
+    {% endif %}
+    {% if perms_map.clearance.can_view or perms_map.documents.can_view or perms_map.reports.can_view %}
+    <div class="sb-section">Administration</div>
+    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-education"></i></div>Medical Clearance</a>{% endif %}
+    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item active"><div class="sb-icon"><i class="bx bx-copy-plus"></i></div>Official Documents</a>{% endif %}
+    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-report"></i></div>Reports & Analytics</a>{% endif %}
+    {% endif %}
+    {% if perms_map.users.can_view or perms_map.roles.can_view or perms_map.settings.can_view or user.is_superuser %}
+    <div class="sb-section">System</div>
+    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-community"></i></div>User Management</a>{% endif %}
+    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-shield"></i></div>Role Permissions</a>{% endif %}
+    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-cog"></i></div>System Settings</a>{% endif %}
+    {% endif %}
+  </nav>
+  <div class="sb-footer"><div class="sb-user">
+    <div class="sb-avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>
+    <div><div class="sb-uname">{{ user.get_short_name }}</div><div class="sb-urole">{{ user.role|default:"Staff" }}</div></div>
+    <a href="{% url 'logout' %}" class="sb-logout">⏻</a>
+  </div></div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+        <button class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()" aria-label="Toggle menu"><span></span></button>
+         <div class="topbar-left"><h1>Issue Official Document</h1><p>Create and issue a medical letter or certificate</p></div>
+    <div class="topbar-right">
+      <a href="{% url 'documents_dashboard' %}" class="btn-secondary">← Back</a>
+    </div>
+  </div>
+  <div class="content">
+    {% if errors %}
+    <div class="errors">{% for e in errors %}<div class="error-item">• {{ e }}</div>{% endfor %}</div>
+    {% endif %}
+
+    <form method="POST" id="docForm">
+      {% csrf_token %}
+
+      <!-- ── STEP 1: TYPE PICKER ── -->
+      <div class="form-card" style="margin-bottom:20px;">
+        <div class="form-card-header">
+          <span style="font-size:20px;">1️.</span>
+          <div class="form-card-title">Select Document Type</div>
+        </div>
+        <div class="form-card-body">
+          <div class="type-picker">
+            <label class="type-card {% if post.doc_type == 'sick_leave' or not post.doc_type %}selected{% endif %}" id="card-sick_leave">
+              <input type="radio" name="doc_type" value="sick_leave" {% if post.doc_type == 'sick_leave' or not post.doc_type %}checked{% endif %} onchange="switchType(this.value)"/>
+              <span class="type-icon"><i class="bx bx-group"></i></span>
+              <div class="type-name">Sick Leave Letter</div>
+              <div class="type-desc">Certifies a student is on medical-approved leave</div>
+            </label>
+            <label class="type-card {% if post.doc_type == 'fit_to_resume' %}selected{% endif %}" id="card-fit_to_resume">
+              <input type="radio" name="doc_type" value="fit_to_resume" {% if post.doc_type == 'fit_to_resume' %}checked{% endif %} onchange="switchType(this.value)"/>
+              <span class="type-icon"><i class="bx bx-check-circle"></i></span>
+              <div class="type-name">Fit to Resume</div>
+              <div class="type-desc">Confirms student is medically fit to return</div>
+            </label>
+            <label class="type-card {% if post.doc_type == 'referral' %}selected{% endif %}" id="card-referral">
+              <input type="radio" name="doc_type" value="referral" {% if post.doc_type == 'referral' %}checked{% endif %} onchange="switchType(this.value)"/>
+              <span class="type-icon"></span>
+              <div class="type-name"><i class="bx bx-hospital"></i><i class="bx bx-hospital"></i></div>
+              <div class="type-desc">Refers patient to external facility or specialist</div>
+            </label>
+            <label class="type-card {% if post.doc_type == 'medical_report' %}selected{% endif %}" id="card-medical_report">
+              <input type="radio" name="doc_type" value="medical_report" {% if post.doc_type == 'medical_report' %}checked{% endif %} onchange="switchType(this.value)"/>
+              <span class="type-icon">📑</span>
+              <div class="type-name">Medical Report</div>
+              <div class="type-desc">Comprehensive summary of patient's health status</div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-layout">
+        <div>
+          <!-- ── STEP 2: PATIENT + DATE ── -->
+          <div class="form-card">
+            <div class="form-card-header">
+              <span style="font-size:20px;">2️. </span>
+              <div class="form-card-title">Patient &amp; Date</div>
+            </div>
+            <div class="form-card-body">
+              <div class="form-grid cols-2">
+                <div class="field span-2">
+                  <label>Patient *</label>
+                  <select name="patient_id" id="patientSelect" required>
+                    <option value="">— Search patient —</option>
+                    {% for p in patients %}
+                    <option value="{{ p.pk }}" {% if post.patient_id == p.pk|stringformat:'s' %}selected{% endif %}
+                      data-name="{{ p.get_full_name }}" data-matric="{{ p.matric_no }}"
+                      data-dept="{{ p.department }}" data-level="{{ p.level }}">
+                      {{ p.get_full_name }} — {{ p.matric_no }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                  <div class="patient-preview" id="patientPreview">
+                    <div class="pp-name" id="ppName">—</div>
+                    <div class="pp-meta" id="ppMeta">—</div>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Date Issued *</label>
+                  <input type="date" name="date_issued" value="{{ post.date_issued|default:today }}" required/>
+                </div>
+                <div class="field">
+                  <label>Linked Consultation <span style="color:var(--slate);font-weight:400;">(optional)</span></label>
+                  <select name="consultation_id" id="consultationSelect">
+                    <option value="">— Select patient first —</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── STEP 3: DOCUMENT DETAILS ── -->
+          <!-- Sick Leave Panel -->
+          <div class="form-card specific-panel {% if not post.doc_type or post.doc_type == 'sick_leave' %}visible{% endif %}" id="panel-sick_leave">
+            <div class="form-card-header"><span style="font-size:20px;">3️. </span><div class="form-card-title">Sick Leave Details</div></div>
+            <div class="form-card-body">
+              <div class="form-grid cols-2">
+                <div class="field">
+                  <label>Leave From *</label>
+                  <input type="date" name="leave_from" value="{{ post.leave_from|default:'' }}"/>
+                </div>
+                <div class="field">
+                  <label>Leave To *</label>
+                  <input type="date" name="leave_to" value="{{ post.leave_to|default:'' }}"/>
+                </div>
+                <div class="field span-2">
+                  <label>Diagnosis / Condition</label>
+                  <input type="text" name="diagnosis" placeholder="e.g. Acute Malaria, Upper Respiratory Tract Infection" value="{{ post.diagnosis|default:'' }}"/>
+                </div>
+                <div class="field span-2">
+                  <label>Doctor's Notes</label>
+                  <textarea name="notes" placeholder="Additional clinical notes or recommendations…">{{ post.notes|default:'' }}</textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fit to Resume Panel -->
+          <div class="form-card specific-panel {% if post.doc_type == 'fit_to_resume' %}visible{% endif %}" id="panel-fit_to_resume">
+            <div class="form-card-header"><span style="font-size:20px;">3️. </span><div class="form-card-title">Fit to Resume Details</div></div>
+            <div class="form-card-body">
+              <div class="form-grid cols-2">
+                <div class="field span-2">
+                  <label>Fit to Resume From</label>
+                  <input type="date" name="resume_date" value="{{ post.resume_date|default:'' }}"/>
+                </div>
+                <div class="field span-2">
+                  <label>Diagnosis / Previous Condition</label>
+                  <input type="text" name="diagnosis" placeholder="Condition the student was treated for" value="{{ post.diagnosis|default:'' }}"/>
+                </div>
+                <div class="field span-2">
+                  <label>Doctor's Notes</label>
+                  <textarea name="notes" placeholder="Any restrictions, follow-up instructions…">{{ post.notes|default:'' }}</textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Referral Panel -->
+          <div class="form-card specific-panel {% if post.doc_type == 'referral' %}visible{% endif %}" id="panel-referral">
+            <div class="form-card-header"><span style="font-size:20px;">3️. </span><div class="form-card-title">Referral Details</div></div>
+            <div class="form-card-body">
+              <div class="form-grid cols-2">
+                <div class="field">
+                  <label>Refer To (Facility) *</label>
+                  <input type="text" name="referral_to" placeholder="e.g. Federal Medical Centre, Gombe" value="{{ post.referral_to|default:'' }}"/>
+                </div>
+                <div class="field">
+                  <label>Department / Specialty</label>
+                  <input type="text" name="referral_department" placeholder="e.g. Cardiology, Neurology" value="{{ post.referral_department|default:'' }}"/>
+                </div>
+                <div class="field">
+                  <label>Urgency</label>
+                  <select name="referral_urgency">
+                    <option value="routine" {% if post.referral_urgency == 'routine' %}selected{% endif %}>Routine</option>
+                    <option value="urgent"  {% if post.referral_urgency == 'urgent'  %}selected{% endif %}>Urgent</option>
+                    <option value="emergency" {% if post.referral_urgency == 'emergency' %}selected{% endif %}>Emergency</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Diagnosis</label>
+                  <input type="text" name="diagnosis" placeholder="Working diagnosis" value="{{ post.diagnosis|default:'' }}"/>
+                </div>
+                <div class="field span-2">
+                  <label>Reason for Referral *</label>
+                  <textarea name="referral_reason" placeholder="Describe clinical reason for referral, history, and what is being requested…">{{ post.referral_reason|default:'' }}</textarea>
+                </div>
+                <div class="field span-2">
+                  <label>Additional Notes</label>
+                  <textarea name="notes" placeholder="Any other relevant clinical information">{{ post.notes|default:'' }}</textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Medical Report Panel -->
+          <div class="form-card specific-panel {% if post.doc_type == 'medical_report' %}visible{% endif %}" id="panel-medical_report">
+            <div class="form-card-header"><span style="font-size:20px;">3️. </span><div class="form-card-title">Medical Report Details</div></div>
+            <div class="form-card-body">
+              <div class="form-grid cols-2">
+                <div class="field span-2">
+                  <label>Diagnosis / Summary</label>
+                  <input type="text" name="diagnosis" placeholder="Primary diagnosis or health summary" value="{{ post.diagnosis|default:'' }}"/>
+                </div>
+                <div class="field span-2">
+                  <label>Clinical Report Body</label>
+                  <textarea name="notes" placeholder="Full clinical report — history, examination findings, investigations, assessment…" style="min-height:140px;">{{ post.notes|default:'' }}</textarea>
+                </div>
+                <div class="field span-2">
+                  <label>Recommendations</label>
+                  <textarea name="additional_info" placeholder="Treatment recommendations, follow-up plan…">{{ post.additional_info|default:'' }}</textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div>
+          <div class="side-card">
+            <div class="side-card-title"><i class="bx bx-cog"></i> Document Settings</div>
+            <div class="side-card-body">
+              <div class="field" style="margin-bottom:16px;">
+                <label>Issue Status</label>
+                <select name="status">
+                  <option value="draft"  {% if post.status != 'issued' %}selected{% endif %}>Save as Draft</option>
+                  <option value="issued" {% if post.status == 'issued' %}selected{% endif %}>Issue Now</option>
+                </select>
+                <span class="hint" style="margin-top:6px;">"Issue Now" locks the document and opens the print view.</span>
+              </div>
+              <div class="field">
+                <label>Issued By</label>
+                <input type="text" value="{{ user.get_full_name }}" disabled style="opacity:.6;cursor:not-allowed;"/>
+              </div>
+            </div>
+          </div>
+
+          <div class="side-card">
+            <div class="side-card-title">ℹ️ Document Info</div>
+            <div class="side-card-body" style="font-size:13px;color:var(--slate);line-height:1.8;">
+              <div id="docInfoText">📌 Select a document type above to see what will be generated.</div>
+            </div>
+          </div>
+
+          
+          <!--
+          <div class="side-card">
+            <div class="side-card-title"><i class="bx bx-pill-bottle-alt"></i> What prints on document</div>
+            <div class="side-card-body">
+              <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--slate);">
+                <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--success);">✓</span> University logo &amp; clinic header</div>
+                <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--success);">✓</span> Patient personal &amp; academic info</div>
+                <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--success);">✓</span> Doctor's name &amp; signature line</div>
+                <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--success);">✓</span> Official stamp placeholder</div>
+                <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--success);">✓</span> QR code for verification</div>
+                <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--success);">✓</span> Auto-generated reference ID</div>
+              </div>
+            </div>
+          </div>
+
+          -->
+
+          <div class="submit-row">
+            {% if perms_map.documents.can_create %}<button type="submit" name="status" value="issued" class="btn-primary"><i class="bx bx-copy-plus"></i> Issue Document</button>{% endif %}
+            <button type="submit" name="status" value="draft" class="btn-draft">Save Draft</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+<script>
+  // Type switcher
+  var types = ['sick_leave','fit_to_resume','referral','medical_report'];
+  var docInfo = {
+    'sick_leave':    '🤒 Generates a formal sick leave letter stating the student is on medical leave from a specified start date to end date.',
+    'fit_to_resume': '<i class="bx bx-check-circle"></i> Certifies the student has recovered and is medically fit to resume academic activities from a given date.',
+    'referral':      '<i class="bx bx-pill-bottle"></i> Formal <i class="bx bx-hospital"></i> to an external hospital, clinic, or specialist with clinical details and urgency level.',
+    'medical_report':'<i class="bx bx-pill-bottle-alt"></i> A comprehensive health summary including diagnosis, clinical findings, and recommendations.'
+  };
+
+  function switchType(val) {
+    types.forEach(function(t) {
+      document.getElementById('card-' + t).classList.toggle('selected', t === val);
+      var p = document.getElementById('panel-' + t);
+      if (p) p.classList.toggle('visible', t === val);
+    });
+    document.getElementById('docInfoText').textContent = docInfo[val] || '';
+  }
+
+  // Set initial info
+  var checked = document.querySelector('input[name=doc_type]:checked');
+  if (checked) document.getElementById('docInfoText').textContent = docInfo[checked.value] || '';
+
+  // Patient select with Tom Select
+  var patientSelect = new TomSelect('#patientSelect', {
+    placeholder: 'Search by name or matric…',
+    maxOptions: 50,
+    onChange: function(val) {
+      var opt = this.options[val];
+      var preview = document.getElementById('patientPreview');
+      if (opt && val) {
+        document.getElementById('ppName').textContent = opt.text.split(' — ')[0];
+        document.getElementById('ppMeta').textContent = (opt.$option.dataset.dept || '') + (opt.$option.dataset.level ? ' · ' + opt.$option.dataset.level + 'L' : '');
+        preview.classList.add('visible');
+        loadConsultations(val);
+      } else {
+        preview.classList.remove('visible');
+        document.getElementById('consultationSelect').innerHTML = '<option value="">— Select patient first —</option>';
+      }
+    }
+  });
+
+  function loadConsultations(patientId) {
+    var sel = document.getElementById('consultationSelect');
+    sel.innerHTML = '<option value="">Loading…</option>';
+    fetch('/ajax/documents/consultations/?patient_id=' + patientId)
+      .then(r => r.json())
+      .then(data => {
+        sel.innerHTML = '<option value="">— None (standalone) —</option>';
+        data.consultations.forEach(function(c) {
+          var opt = document.createElement('option');
+          opt.value = c.id;
+          opt.textContent = c.label;
+          sel.appendChild(opt);
+        });
+      })
+      .catch(function() {
+        sel.innerHTML = '<option value="">— None (standalone) —</option>';
+      });
+  }
+
+  // Pre-select type from URL param
+  var urlParams = new URLSearchParams(window.location.search);
+  var typeParam = urlParams.get('type');
+  if (typeParam && types.includes(typeParam)) {
+    var radio = document.querySelector('input[value="' + typeParam + '"]');
+    if (radio) { radio.checked = true; switchType(typeParam); }
+  }
+</script>
+
+<script>
+/* Mobile sidebar toggle */
+function toggleSidebar() {
+  const sidebar  = document.querySelector('.sidebar');
+  const overlay  = document.getElementById('sbOverlay');
+  const hamburger = document.getElementById('hamburgerBtn');
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('open');
+  hamburger.classList.toggle('open');
+}
+document.getElementById('sbOverlay').addEventListener('click', function() {
+  const sidebar   = document.querySelector('.sidebar');
+  const overlay   = document.getElementById('sbOverlay');
+  const hamburger = document.getElementById('hamburgerBtn');
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+  hamburger.classList.remove('open');
+});
+// Close sidebar on nav link click (mobile)
+document.querySelectorAll('.sb-item').forEach(function(link) {
+  link.addEventListener('click', function() {
+    if (window.innerWidth <= 768) {
+      const sidebar   = document.querySelector('.sidebar');
+      const overlay   = document.getElementById('sbOverlay');
+      const hamburger = document.getElementById('hamburgerBtn');
+      sidebar.classList.remove('open');
+      overlay.classList.remove('open');
+      hamburger.classList.remove('open');
+    }
+  });
+});
+</script>
+
+
+<script>
+/* Mobile sidebar */
+function toggleSidebar() {
+  var s = document.querySelector('.sidebar');
+  var o = document.getElementById('sbOverlay');
+  var h = document.getElementById('hamburgerBtn');
+  if (!s) return;
+  s.classList.toggle('open');
+  if (o) o.classList.toggle('open');
+  if (h) h.classList.toggle('open');
+}
+(function() {
+  var o = document.getElementById('sbOverlay');
+  if (o) o.addEventListener('click', function() {
+    var s = document.querySelector('.sidebar');
+    var h = document.getElementById('hamburgerBtn');
+    if (s) s.classList.remove('open');
+    o.classList.remove('open');
+    if (h) h.classList.remove('open');
+  });
+  document.querySelectorAll('.sb-item').forEach(function(l) {
+    l.addEventListener('click', function() {
+      if (window.innerWidth <= 768) {
+        var s = document.querySelector('.sidebar');
+        var o = document.getElementById('sbOverlay');
+        var h = document.getElementById('hamburgerBtn');
+        if (s) s.classList.remove('open');
+        if (o) o.classList.remove('open');
+        if (h) h.classList.remove('open');
+      }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

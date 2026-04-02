@@ -6,6 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ward Setup — VanaraUniCare</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  
+  <!--Boxicons Reference-->
+  <!-- Basic Icons -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/basic/boxicons.min.css" rel="stylesheet">
+  <!-- Filled Icons -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/filled/boxicons-filled.min.css" rel="stylesheet">
+  <!-- Brand Icons -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/brands/boxicons-brands.min.css" rel="stylesheet">
+  
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     :root{--ink:#08131F;--panel:#0C1B2E;--panel-2:#0F2040;--surface:rgba(255,255,255,.03);--surface-2:rgba(255,255,255,.055);--border:rgba(255,255,255,.07);--border-2:rgba(255,255,255,.12);--gold:#C9A84C;--gold-2:#E2C47A;--slate:#6B84A3;--slate-2:#4A6380;--white:#FFF;--success:#3DB87A;--warning:#F0A04A;--danger:#E05555;--info:#4A9EE0;--sw:252px;}
@@ -396,32 +405,32 @@
   </div>
   <nav class="sb-nav">
     <div class="sb-section">Main</div>
-    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-home"></i></div>Dashboard</a>
     {% if perms_map.patients.can_view or perms_map.appointments.can_view or perms_map.consultations.can_view or perms_map.prescriptions.can_view or perms_map.laboratory.can_view or perms_map.wards.can_view %}
     <div class="sb-section">Clinical</div>
-    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon">🩺</div>Patient Records</a>{% endif %}
-    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>{% endif %}
-    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>{% endif %}
-    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>{% endif %}
-    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>{% endif %}
-    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item active"><div class="sb-icon">🛏</div>Ward Management</a>{% endif %}
+    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-group"></i></div>Patient Records</a>{% endif %}
+    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-note-book"></i></div>Appointments</a>{% endif %}
+    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-microscope"></i></div>Consultations</a>{% endif %}
+    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-pill-bottle-alt"></i></div>Prescriptions</a>{% endif %}
+    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-medical-flask"></i></div>Laboratory</a>{% endif %}
+    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item active"><div class="sb-icon"><i class="bx bx-bed-alt"></i></div>Ward Management</a>{% endif %}
     {% endif %}
     {% if perms_map.inventory.can_view or perms_map.dispensing.can_view %}
     <div class="sb-section">Pharmacy</div>
-    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>{% endif %}
-    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>{% endif %}
+    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-pill"></i></div>Drug Inventory</a>{% endif %}
+    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-pill-bottle"></i></div>Dispensing</a>{% endif %}
     {% endif %}
     {% if perms_map.clearance.can_view or perms_map.documents.can_view or perms_map.reports.can_view %}
     <div class="sb-section">Administration</div>
-    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>{% endif %}
-    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>{% endif %}
-    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>{% endif %}
+    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-education"></i></div>Medical Clearance</a>{% endif %}
+    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-copy-plus"></i></div>Official Documents</a>{% endif %}
+    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-report"></i></div>Reports & Analytics</a>{% endif %}
     {% endif %}
     {% if perms_map.users.can_view or perms_map.roles.can_view or perms_map.settings.can_view or user.is_superuser %}
     <div class="sb-section">System</div>
-    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>{% endif %}
-    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>{% endif %}
-    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>{% endif %}
+    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-community"></i></div>User Management</a>{% endif %}
+    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-shield"></i></div>Role Permissions</a>{% endif %}
+    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-cog"></i></div>System Settings</a>{% endif %}
     {% endif %}
   </nav>
   <div class="sb-footer">
@@ -453,7 +462,7 @@
       <!-- Left: Create ward form -->
       <div>
         <div class="card">
-          <div class="card-header"><div class="card-title">➕ Create New Ward</div></div>
+          <div class="card-header"><div class="card-title"><i class="bx bx-plus-circle"></i> Create New Ward</div></div>
           <div class="card-body">
             <form method="POST">
               {% csrf_token %}
@@ -501,7 +510,7 @@
                   {% csrf_token %}
                   <input type="hidden" name="action" value="update_bed_status"/>
                   <input type="hidden" name="bed_id" value="{{ bed.pk }}"/>
-                  🛏 {{ bed.bed_number }}
+                  <i class="bx bx-bed-alt"></i> {{ bed.bed_number }}
                   {% if bed.status != 'Occupied' %}
                   <select name="status" onchange="this.closest('form').submit()" title="Change status">
                     <option value="Available"   {% if bed.status == 'Available'   %}selected{% endif %}>Available</option>
@@ -546,7 +555,7 @@
         </div>
         {% empty %}
         <div style="text-align:center;padding:40px 20px;color:var(--slate);">
-          <div style="font-size:32px;margin-bottom:10px;">🏥</div>
+          <div style="font-size:32px;margin-bottom:10px;"><i class="bx bx-pill-bottle"></i></div>
           <div>No wards yet. Create your first ward on the left.</div>
         </div>
         {% endfor %}

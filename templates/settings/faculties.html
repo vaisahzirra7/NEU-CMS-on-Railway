@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Faculties — VanaraUniCare Settings</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  
+  
+  <!--Boxicons Reference-->
+  <!-- Basic Icons -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/basic/boxicons.min.css" rel="stylesheet">
+  <!-- Filled Icons -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/filled/boxicons-filled.min.css" rel="stylesheet">
+  <!-- Brand Icons -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/brands/boxicons-brands.min.css" rel="stylesheet">
+  
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -408,32 +418,32 @@
   </div>
   <nav class="sb-nav">
     <div class="sb-section">Main</div>
-    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-home"></i></div>Dashboard</a>
     {% if perms_map.patients.can_view or perms_map.appointments.can_view or perms_map.consultations.can_view or perms_map.prescriptions.can_view or perms_map.laboratory.can_view or perms_map.wards.can_view %}
     <div class="sb-section">Clinical</div>
-    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon">🩺</div>Patient Records</a>{% endif %}
-    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>{% endif %}
-    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>{% endif %}
-    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>{% endif %}
-    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>{% endif %}
-    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>{% endif %}
+    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-group"></i></div>Patient Records</a>{% endif %}
+    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-note-book"></i></div>Appointments</a>{% endif %}
+    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-microscope"></i></div>Consultations</a>{% endif %}
+    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-pill-bottle-alt"></i></div>Prescriptions</a>{% endif %}
+    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-medical-flask"></i></div>Laboratory</a>{% endif %}
+    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-bed-alt"></i></div>Ward Management</a>{% endif %}
     {% endif %}
     {% if perms_map.inventory.can_view or perms_map.dispensing.can_view %}
     <div class="sb-section">Pharmacy</div>
-    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>{% endif %}
-    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>{% endif %}
+    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-pill"></i></div>Drug Inventory</a>{% endif %}
+    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-pill-bottle"></i></div>Dispensing</a>{% endif %}
     {% endif %}
     {% if perms_map.clearance.can_view or perms_map.documents.can_view or perms_map.reports.can_view %}
     <div class="sb-section">Administration</div>
-    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>{% endif %}
-    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>{% endif %}
-    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>{% endif %}
+    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-education"></i></div>Medical Clearance</a>{% endif %}
+    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-copy-plus"></i></div>Official Documents</a>{% endif %}
+    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-report"></i></div>Reports & Analytics</a>{% endif %}
     {% endif %}
     {% if perms_map.users.can_view or perms_map.roles.can_view or perms_map.settings.can_view or user.is_superuser %}
     <div class="sb-section">System</div>
-    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>{% endif %}
-    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>{% endif %}
-    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item active"><div class="sb-icon">⚙</div>System Settings</a>{% endif %}
+    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-community"></i></div>User Management</a>{% endif %}
+    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-shield"></i></div>Role Permissions</a>{% endif %}
+    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item active"><div class="sb-icon"><i class="bx bx-cog"></i></div>System Settings</a>{% endif %}
     {% endif %}
   </nav>
   <div class="sb-footer">
@@ -449,7 +459,7 @@
   <div class="topbar">
         <button class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()" aria-label="Toggle menu"><span></span></button>
          <div class="topbar-left">
-      <h1>🏛 Faculties</h1>
+      <h1><i class="bx bx-building-small"></i> Faculties</h1>
       <p>System Settings · Manage university faculties</p>
     </div>
     <div class="topbar-right">
@@ -483,13 +493,13 @@
               <td>{% if f.is_active %}<span class="chip-active">● Active</span>{% else %}<span class="chip-inactive">● Inactive</span>{% endif %}</td>
               <td>
                 <div class="action-row">
-                  {% if perms_map.settings.can_edit %}<button class="btn-sm" onclick="openEdit({{ f.id }}, '{{ f.name|escapejs }}', '{{ f.code|escapejs }}')">✏ Edit</button>{% endif %}
+                  {% if perms_map.settings.can_edit %}<button class="btn-sm" onclick="openEdit({{ f.id }}, '{{ f.name|escapejs }}', '{{ f.code|escapejs }}')"><i class="bx bx-edit"></i> Edit</button>{% endif %}
                   <form method="POST" action="{% url 'faculty_toggle' f.id %}" style="display:inline;">
                     {% csrf_token %}
                     {% if f.is_active %}
-                      <button type="submit" class="btn-sm btn-danger-sm">⛔ Deactivate</button>
+                      <button type="submit" class="btn-sm btn-danger-sm"><i class="bx bx-no-entry"></i> Deactivate</button>
                     {% else %}
-                      <button type="submit" class="btn-sm btn-success-sm">✅ Activate</button>
+                      <button type="submit" class="btn-sm btn-success-sm"><i class="bx bx-check-circle"></i> Activate</button>
                     {% endif %}
                   </form>
                 </div>
@@ -511,11 +521,11 @@
       <!-- Quick links -->
       <div>
         <div class="card">
-          <div class="card-header"><div class="card-title">⚙ Settings</div></div>
+          <div class="card-header"><div class="card-title"><i class="bx bx-cog"></i> Settings</div></div>
           <div class="card-body" style="display:flex; flex-direction:column; gap:8px;">
-            <a href="{% url 'faculty_list' %}" class="btn-sm" style="justify-content:flex-start;">🏛 Faculties</a>
-            <a href="{% url 'department_list' %}" class="btn-sm" style="justify-content:flex-start;">🏢 Departments</a>
-            <a href="{% url 'programme_list' %}" class="btn-sm" style="justify-content:flex-start;">🎓 Programmes</a>
+            <a href="{% url 'faculty_list' %}" class="btn-sm" style="justify-content:flex-start;"><i class="bx bx-building-small"></i> Faculties</a>
+            <a href="{% url 'department_list' %}" class="btn-sm" style="justify-content:flex-start;"><i class="bx bx-hospital"></i> Departments</a>
+            <a href="{% url 'programme_list' %}" class="btn-sm" style="justify-content:flex-start;"><i class="bx bx-education"></i> Programmes</a>
           </div>
         </div>
         <div style="padding:14px 16px; background:rgba(201,168,76,.05); border:1px solid rgba(201,168,76,.15); border-radius:11px; font-size:13px; color:var(--slate); line-height:1.7;">
@@ -552,7 +562,7 @@
 <!-- EDIT MODAL -->
 <div class="modal-backdrop" id="editModal">
   <div class="modal">
-    <div class="modal-title">✏ Edit Faculty</div>
+    <div class="modal-title"><i class="bx bx-edit"></i> Edit Faculty</div>
     <form method="POST" id="editForm">
       {% csrf_token %}
       <div class="field">

@@ -7,6 +7,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.min.css" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+  
+  <!--Boxicons Reference-->
+  <!-- Basic Icons -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/basic/boxicons.min.css" rel="stylesheet">
+  <!-- Filled Icons -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/filled/boxicons-filled.min.css" rel="stylesheet">
+  <!-- Brand Icons -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/brands/boxicons-brands.min.css" rel="stylesheet">
+  
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -436,32 +446,32 @@
   </div>
   <nav class="sb-nav">
     <div class="sb-section">Main</div>
-    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-home"></i></div>Dashboard</a>
     {% if perms_map.patients.can_view or perms_map.appointments.can_view or perms_map.consultations.can_view or perms_map.prescriptions.can_view or perms_map.laboratory.can_view or perms_map.wards.can_view %}
     <div class="sb-section">Clinical</div>
-    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon">🩺</div>Patient Records</a>{% endif %}
-    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item active"><div class="sb-icon">📅</div>Appointments</a>{% endif %}
-    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>{% endif %}
-    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>{% endif %}
-    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>{% endif %}
-    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>{% endif %}
+    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-group"></i></div>Patient Records</a>{% endif %}
+    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item active"><div class="sb-icon"><i class="bx bx-note-book"></i></div>Appointments</a>{% endif %}
+    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-microscope"></i></div>Consultations</a>{% endif %}
+    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-pill-bottle-alt"></i></div>Prescriptions</a>{% endif %}
+    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-medical-flask"></i></div>Laboratory</a>{% endif %}
+    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-bed-alt"></i></div>Ward Management</a>{% endif %}
     {% endif %}
     {% if perms_map.inventory.can_view or perms_map.dispensing.can_view %}
     <div class="sb-section">Pharmacy</div>
-    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>{% endif %}
-    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>{% endif %}
+    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-pill"></i></div>Drug Inventory</a>{% endif %}
+    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-pill-bottle"></i></div>Dispensing</a>{% endif %}
     {% endif %}
     {% if perms_map.clearance.can_view or perms_map.documents.can_view or perms_map.reports.can_view %}
     <div class="sb-section">Administration</div>
-    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>{% endif %}
-    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>{% endif %}
-    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>{% endif %}
+    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-education"></i></div>Medical Clearance</a>{% endif %}
+    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-copy-plus"></i></div>Official Documents</a>{% endif %}
+    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-report"></i></div>Reports & Analytics</a>{% endif %}
     {% endif %}
     {% if perms_map.users.can_view or perms_map.roles.can_view or perms_map.settings.can_view or user.is_superuser %}
     <div class="sb-section">System</div>
-    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>{% endif %}
-    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>{% endif %}
-    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>{% endif %}
+    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-community"></i></div>User Management</a>{% endif %}
+    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-shield"></i></div>Role Permissions</a>{% endif %}
+    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-cog"></i></div>System Settings</a>{% endif %}
     {% endif %}
   </nav>
   <div class="sb-footer">
@@ -503,7 +513,7 @@
           <!-- Details card -->
           <div class="card">
             <div class="card-header">
-              <div class="card-title">📋 Appointment Details</div>
+              <div class="card-title"><i class="bx bx-pill-bottle-alt"></i> Appointment Details</div>
               <div class="card-sub">Patient, type and reason for visit</div>
             </div>
             <div class="card-body">
@@ -546,7 +556,7 @@
           <!-- Date & Time card -->
           <div class="card">
             <div class="card-header">
-              <div class="card-title">📅 Date & Time</div>
+              <div class="card-title"><i class="bx bx-note-book"></i> Date & Time</div>
               <div class="card-sub">Pick a date, doctor and set the appointment time</div>
             </div>
             <div class="card-body">
@@ -608,10 +618,10 @@
         <!-- ── Right sidebar ── -->
         <div>
           <div class="card">
-            <div class="card-header"><div class="card-title">✅ Booking Summary</div></div>
+            <div class="card-header"><div class="card-title"><i class="bx bx-check-circle"></i> Booking Summary</div></div>
             <div class="card-body">
               <div class="summary-row">
-                <div class="summary-icon">🧑</div>
+                <div class="summary-icon"><i class="bxf bx-user"></i></div>
                 <div id="sumPatient" class="summary-empty">No patient selected</div>
               </div>
               <div class="summary-row">
@@ -619,20 +629,20 @@
                 <div id="sumType" class="summary-empty">No type selected</div>
               </div>
               <div class="summary-row">
-                <div class="summary-icon">📅</div>
+                <div class="summary-icon"><i class="bx bx-note-book"></i></div>
                 <div id="sumDate" class="summary-empty">No date selected</div>
               </div>
               <div class="summary-row">
-                <div class="summary-icon">🕐</div>
+                <div class="summary-icon">🕒</div>
                 <div id="sumTime" class="summary-empty">No time selected</div>
               </div>
               <div class="summary-row" style="border:none; padding-bottom:0;">
-                <div class="summary-icon">👨‍⚕️</div>
+                <div class="summary-icon"><i class="bx bx-head"></i></div>
                 <div id="sumDoctor" class="summary-empty">Unassigned</div>
               </div>
             </div>
           </div>
-          <button type="submit" class="btn-primary" id="submitBtn" style="width:100%; justify-content:center; margin-bottom:8px;">📅 Book Appointment</button>
+          <button type="submit" class="btn-primary" id="submitBtn" style="width:100%; justify-content:center; margin-bottom:8px;"><i class="bx bx-note-book"></i> Book Appointment</button>
           <a href="{% url 'appointment_list' %}" class="btn-secondary" style="width:100%; justify-content:center;">Cancel</a>
 
           <div style="margin-top:14px; padding:13px 15px; background:rgba(201,168,76,.04); border:1px solid rgba(201,168,76,.12); border-radius:10px; font-size:12.5px; color:var(--slate); line-height:1.7;">
@@ -712,7 +722,7 @@ function render() {
   document.getElementById('timeSlotInput').value = val24;
 
   var label = tp.hour + ':' + mStr + ' ' + tp.period;
-  document.getElementById('tpResult').textContent = '🕐 ' + label;
+  document.getElementById('tpResult').textContent = '🕒 ' + label;
   document.getElementById('sumTime').innerHTML = '<span class="summary-val">' + label + '</span>';
 
   // Conflict check

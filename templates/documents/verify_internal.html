@@ -46,7 +46,7 @@
   </div>
 
   <div class="status-banner {% if doc.is_issued %}sb-valid{% elif doc.status == 'revoked' %}sb-revoked{% else %}sb-draft{% endif %}">
-    <div class="status-icon">{% if doc.is_issued %}✅{% elif doc.status == 'revoked' %}🚫{% else %}⚠️{% endif %}</div>
+    <div class="status-icon">{% if doc.is_issued %}<i class="bx bx-check-circle"></i>{% elif doc.status == 'revoked' %}🚫{% else %}⚠️{% endif %}</div>
     <div>
       <div class="status-text">
         {% if doc.is_issued %}Document Valid &amp; Officially Issued

@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>{{ patient.get_full_name }} — VanaraUniCare</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  
+  <!--Boxicons Reference-->
+  <!-- Basic Icons -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/basic/boxicons.min.css" rel="stylesheet">
+  <!-- Filled Icons -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/filled/boxicons-filled.min.css" rel="stylesheet">
+  <!-- Brand Icons -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/brands/boxicons-brands.min.css" rel="stylesheet">
+  
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -473,32 +482,32 @@
   </div>
   <nav class="sb-nav">
     <div class="sb-section">Main</div>
-    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-home"></i></div>Dashboard</a>
     {% if perms_map.patients.can_view or perms_map.appointments.can_view or perms_map.consultations.can_view or perms_map.prescriptions.can_view or perms_map.laboratory.can_view or perms_map.wards.can_view %}
     <div class="sb-section">Clinical</div>
-    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item active"><div class="sb-icon">🩺</div>Patient Records</a>{% endif %}
-    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>{% endif %}
-    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>{% endif %}
-    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>{% endif %}
-    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>{% endif %}
-    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>{% endif %}
+    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item active"><div class="sb-icon"><i class="bx bx-group"></i></div>Patient Records</a>{% endif %}
+    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-note-book"></i></div>Appointments</a>{% endif %}
+    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-microscope"></i></div>Consultations</a>{% endif %}
+    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-pill-bottle-alt"></i></div>Prescriptions</a>{% endif %}
+    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-medical-flask"></i></div>Laboratory</a>{% endif %}
+    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-bed-alt"></i></div>Ward Management</a>{% endif %}
     {% endif %}
     {% if perms_map.inventory.can_view or perms_map.dispensing.can_view %}
     <div class="sb-section">Pharmacy</div>
-    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>{% endif %}
-    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>{% endif %}
+    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-pill"></i></div>Drug Inventory</a>{% endif %}
+    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-pill-bottle"></i></div>Dispensing</a>{% endif %}
     {% endif %}
     {% if perms_map.clearance.can_view or perms_map.documents.can_view or perms_map.reports.can_view %}
     <div class="sb-section">Administration</div>
-    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>{% endif %}
-    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>{% endif %}
-    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon">📊</div>Reports & Analytics</a>{% endif %}
+    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-education"></i></div>Medical Clearance</a>{% endif %}
+    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-copy-plus"></i></div>Official Documents</a>{% endif %}
+    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-report"></i></div>Reports & Analytics</a>{% endif %}
     {% endif %}
     {% if perms_map.users.can_view or perms_map.roles.can_view or perms_map.settings.can_view or user.is_superuser %}
     <div class="sb-section">System</div>
-    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>{% endif %}
-    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>{% endif %}
-    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>{% endif %}
+    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-community"></i></div>User Management</a>{% endif %}
+    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-shield"></i></div>Role Permissions</a>{% endif %}
+    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-cog"></i></div>System Settings</a>{% endif %}
     {% endif %}
   </nav>
   <div class="sb-footer">
@@ -524,7 +533,7 @@
     </div>
     <div class="topbar-right">
       <a href="{% url 'patient_list' %}" class="btn-back">← All Patients</a>
-      {% if perms_map.patients.can_edit %}<a href="{% url 'patient_edit' patient.matric_no %}" class="btn-primary">✏ Edit Record</a>{% endif %}
+      {% if perms_map.patients.can_edit %}<a href="{% url 'patient_edit' patient.matric_no %}" class="btn-primary"><i class="bx bx-edit"></i> Edit Record</a>{% endif %}
     </div>
   </div>
 
@@ -581,9 +590,9 @@
 
           <!-- Tabs -->
           <div class="tabs">
-            <button class="tab-btn active" onclick="openTab('personal', this)">👤 Personal</button>
-            <button class="tab-btn" onclick="openTab('academic', this)">🎓 Academic</button>
-            <button class="tab-btn" onclick="openTab('medical', this)">🩺 Medical</button>
+            <button class="tab-btn active" onclick="openTab('personal', this)"><i class="bx bx-community"></i> Personal</button>
+            <button class="tab-btn" onclick="openTab('academic', this)"><i class="bx bx-education"></i> Academic</button>
+            <button class="tab-btn" onclick="openTab('medical', this)"><i class="bx bx-group"></i> Medical</button>
             <button class="tab-btn" onclick="openTab('contacts', this)">📞 Contacts</button>
           </div>
 
@@ -709,7 +718,7 @@
             {% if not latest_clearance %}
             <!-- ── NOT YET CLEARED ───────────────────────────────────────────── -->
             <div style="background:rgba(240,160,74,.05);border:1px solid rgba(240,160,74,.2);border-radius:12px;padding:20px 22px;margin-bottom:20px;display:flex;align-items:flex-start;gap:16px;">
-              <div style="font-size:28px;flex-shrink:0;">📋</div>
+              <div style="font-size:28px;flex-shrink:0;"><i class="bx bx-pill-bottle-alt"></i></div>
               <div>
                 <div style="font-size:15px;font-weight:600;color:#f8c87a;margin-bottom:5px;">Medical Clearance Not Yet Submitted</div>
                 <div style="font-size:13.5px;color:var(--slate);line-height:1.7;">
@@ -735,7 +744,7 @@
             <!-- ── CLEARED ───────────────────────────────────────────────────── -->
             <div style="background:rgba(61,184,122,.04);border:1px solid rgba(61,184,122,.2);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
               <div style="display:flex;align-items:center;gap:10px;">
-                <span style="font-size:18px;">✅</span>
+                <span style="font-size:18px;"><i class="bx bx-check-circle"></i></span>
                 <div>
                   <div style="font-size:13.5px;font-weight:600;color:#90deb5;">Medically Cleared — {{ latest_clearance.session.display_title }}</div>
                   <div style="font-size:12px;color:var(--slate);margin-top:2px;">Ref: <span style="font-family:monospace;">{{ latest_clearance.submission_id }}</span> · Submitted {{ latest_clearance.submitted_at|date:"d M Y" }}</div>
@@ -816,7 +825,7 @@
             <!-- ── CLEARANCE HISTORY ──────────────────────────────────────────── -->
             {% if patient.clearance_submissions.exists %}
             <div style="margin-top:20px;">
-              <div style="font-size:11px;font-weight:600;color:var(--slate-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">📋 Clearance History</div>
+              <div style="font-size:11px;font-weight:600;color:var(--slate-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;"><i class="bx bx-pill-bottle-alt"></i> Clearance History</div>
               {% for sub in patient.clearance_submissions.all %}
               <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:9px;margin-bottom:6px;font-size:13px;">
                 <div>
@@ -846,7 +855,7 @@
 
               <!-- Emergency Contact -->
               <div>
-                <div style="font-size: 11px; font-weight: 600; color: var(--slate-2); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px;">🚨 Emergency Contact</div>
+                <div style="font-size: 11px; font-weight: 600; color: var(--slate-2); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px;"><i class="bx bx-siren-alt"></i> Emergency Contact</div>
                 {% if patient.emergency_name %}
                 <div class="contact-card">
                   <div class="contact-name">{{ patient.emergency_name }}</div>
@@ -865,7 +874,7 @@
 
               <!-- Next of Kin -->
               <div>
-                <div style="font-size: 11px; font-weight: 600; color: var(--slate-2); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px;">👪 Next of Kin</div>
+                <div style="font-size: 11px; font-weight: 600; color: var(--slate-2); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px;"><i class="bx bx-parent-child"></i> Next of Kin</div>
                 {% if patient.nok_name %}
                 <div class="contact-card">
                   <div class="contact-name">{{ patient.nok_name }}</div>
@@ -886,7 +895,7 @@
 
             {% if patient.notes %}
             <div style="margin-top: 20px; padding: 16px 18px; background: rgba(201,168,76,.05); border: 1px solid rgba(201,168,76,.15); border-radius: 11px;">
-              <div style="font-size: 11px; font-weight: 600; color: var(--gold-2); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px;">📝 Internal Notes</div>
+              <div style="font-size: 11px; font-weight: 600; color: var(--gold-2); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px;"><i class="bx bx-note-book"></i> Internal Notes</div>
               <div style="font-size: 13.5px; color: var(--slate); line-height: 1.7;">{{ patient.notes|linebreaksbr }}</div>
             </div>
             {% endif %}
@@ -908,16 +917,16 @@
             <div class="action-list">
               {% if perms_map.patients.can_edit %}
               <a href="{% url 'patient_edit' patient.matric_no %}" class="btn-outline">
-                ✏ Edit Record
+                <i class="bx bx-edit"></i> Edit Record
               </a>
               <div class="section-divider" style="margin-top: 4px;">Record Status</div>
               {% if patient.is_active %}
                 <button class="btn-danger-outline" onclick="openModal('deactivateModal')">
-                  ⛔ Deactivate Record
+                  <i class="bx bx-no-entry"></i> Deactivate Record
                 </button>
               {% else %}
                 <button class="btn-success-outline" onclick="openModal('activateModal')">
-                  ✅ Activate Record
+                  <i class="bx bx-check-circle"></i> Activate Record
                 </button>
               {% endif %}
               {% endif %}
@@ -928,18 +937,18 @@
         <!-- Quick Medical Summary -->
         <div class="card" style="margin-bottom: 16px;">
           <div class="card-header">
-            <div class="card-title">🩺 Medical Summary</div>
+            <div class="card-title"><i class="bx bx-group"></i> Medical Summary</div>
           </div>
           <div class="card-body">
             {% with latest_clearance=patient.clearance_submissions.first %}
             {% if not latest_clearance %}
             <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:rgba(240,160,74,.05);border:1px solid rgba(240,160,74,.18);border-radius:8px;margin-bottom:12px;">
-              <span style="font-size:14px;">📋</span>
+              <span style="font-size:14px;"><i class="bx bx-pill-bottle-alt"></i></span>
               <span style="font-size:12px;color:#f8c87a;font-weight:500;">Not yet cleared</span>
             </div>
             {% elif latest_clearance.status == 'Approved' %}
             <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:rgba(61,184,122,.05);border:1px solid rgba(61,184,122,.18);border-radius:8px;margin-bottom:12px;">
-              <span style="font-size:14px;">✅</span>
+              <span style="font-size:14px;"><i class="bx bx-check-circle"></i></span>
               <span style="font-size:12px;color:#90deb5;font-weight:500;">Cleared — {{ latest_clearance.session.academic_session }}</span>
             </div>
             {% else %}
@@ -1013,7 +1022,7 @@
 <!-- ══ MODALS ══ -->
 <div class="modal-backdrop" id="deactivateModal">
   <div class="modal">
-    <div class="modal-icon">⛔</div>
+    <div class="modal-icon"><i class="bx bx-no-entry"></i></div>
     <div class="modal-title">Deactivate Record?</div>
     <div class="modal-desc">
       <strong>{{ patient.get_full_name }}</strong>'s record will be marked inactive.
@@ -1033,7 +1042,7 @@
 
 <div class="modal-backdrop" id="activateModal">
   <div class="modal">
-    <div class="modal-icon">✅</div>
+    <div class="modal-icon"><i class="bx bx-check-circle"></i></div>
     <div class="modal-title">Activate Record?</div>
     <div class="modal-desc">
       <strong>{{ patient.get_full_name }}</strong>'s record will be marked active again.

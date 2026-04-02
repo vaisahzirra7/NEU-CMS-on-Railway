@@ -105,7 +105,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # }
 
 
-# Database fallback to sqlite3 locally if no DATABASE_URL is defined.
+# Database fallback to mySQL locally if no DATABASE_URL is defined.
 # This prevents dj_database_url from crashing when DATABASE_URL is None or an empty string.
 DATABASE_URL = os.environ.get('DATABASE_URL') or config('DATABASE_URL', default=None)
 

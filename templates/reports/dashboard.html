@@ -5,6 +5,15 @@
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Reports & Analytics — VanaraUniCare</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  
+  <!--Boxicons Reference-->
+  <!-- Basic Icons -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/basic/boxicons.min.css" rel="stylesheet">
+  <!-- Filled Icons -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/filled/boxicons-filled.min.css" rel="stylesheet">
+  <!-- Brand Icons -->
+  <link href="https://cdn.boxicons.com/3.0.8/fonts/brands/boxicons-brands.min.css" rel="stylesheet">
+  
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     :root{--ink:#08131F;--panel:#0C1B2E;--panel-2:#0F2040;--surface:rgba(255,255,255,.03);--surface-2:rgba(255,255,255,.055);--border:rgba(255,255,255,.07);--border-2:rgba(255,255,255,.12);--gold:#C9A84C;--gold-2:#E2C47A;--slate:#6B84A3;--slate-2:#4A6380;--white:#FFF;--success:#3DB87A;--warning:#F0A04A;--danger:#E05555;--info:#4A9EE0;--sw:252px;}
@@ -414,32 +423,32 @@
   <div class="sb-logo"><div class="sb-mark">⚕</div><div><div class="sb-name">VanaraUniCare</div><div class="sb-sub">NEU Health Center</div></div></div>
   <nav class="sb-nav">
     <div class="sb-section">Main</div>
-    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon">🏠</div>Dashboard</a>
+    <a href="{% url 'dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-home"></i></div>Dashboard</a>
     {% if perms_map.patients.can_view or perms_map.appointments.can_view or perms_map.consultations.can_view or perms_map.prescriptions.can_view or perms_map.laboratory.can_view or perms_map.wards.can_view %}
     <div class="sb-section">Clinical</div>
-    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon">🩺</div>Patient Records</a>{% endif %}
-    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon">📅</div>Appointments</a>{% endif %}
-    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon">🔬</div>Consultations</a>{% endif %}
-    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon">📋</div>Prescriptions</a>{% endif %}
-    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon">🧪</div>Laboratory</a>{% endif %}
-    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon">🛏</div>Ward Management</a>{% endif %}
+    {% if perms_map.patients.can_view %}<a href="{% url 'patient_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-group"></i></div>Patient Records</a>{% endif %}
+    {% if perms_map.appointments.can_view %}<a href="{% url 'appointment_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-note-book"></i></div>Appointments</a>{% endif %}
+    {% if perms_map.consultations.can_view %}<a href="{% url 'consultation_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-microscope"></i></div>Consultations</a>{% endif %}
+    {% if perms_map.prescriptions.can_view %}<a href="{% url 'prescription_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-pill-bottle-alt"></i></div>Prescriptions</a>{% endif %}
+    {% if perms_map.laboratory.can_view %}<a href="{% url 'lab_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-medical-flask"></i></div>Laboratory</a>{% endif %}
+    {% if perms_map.wards.can_view %}<a href="{% url 'ward_overview' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-bed-alt"></i></div>Ward Management</a>{% endif %}
     {% endif %}
     {% if perms_map.inventory.can_view or perms_map.dispensing.can_view %}
     <div class="sb-section">Pharmacy</div>
-    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon">💊</div>Drug Inventory</a>{% endif %}
-    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon">🏥</div>Dispensing</a>{% endif %}
+    {% if perms_map.inventory.can_view %}<a href="{% url 'drug_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-pill"></i></div>Drug Inventory</a>{% endif %}
+    {% if perms_map.dispensing.can_view %}<a href="{% url 'dispensing_queue' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-pill-bottle"></i></div>Dispensing</a>{% endif %}
     {% endif %}
     {% if perms_map.clearance.can_view or perms_map.documents.can_view or perms_map.reports.can_view %}
     <div class="sb-section">Administration</div>
-    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon">🎓</div>Medical Clearance</a>{% endif %}
-    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon">📄</div>Official Documents</a>{% endif %}
-    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item active"><div class="sb-icon">📊</div>Reports & Analytics</a>{% endif %}
+    {% if perms_map.clearance.can_view %}<a href="{% url 'clearance_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-education"></i></div>Medical Clearance</a>{% endif %}
+    {% if perms_map.documents.can_view %}<a href="{% url 'documents_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-copy-plus"></i></div>Official Documents</a>{% endif %}
+    {% if perms_map.reports.can_view %}<a href="{% url 'reports_dashboard' %}" class="sb-item active"><div class="sb-icon"><i class="bx bx-report"></i></div>Reports & Analytics</a>{% endif %}
     {% endif %}
     {% if perms_map.users.can_view or perms_map.roles.can_view or perms_map.settings.can_view or user.is_superuser %}
     <div class="sb-section">System</div>
-    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon">👥</div>User Management</a>{% endif %}
-    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon">🛡</div>Role Permissions</a>{% endif %}
-    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon">⚙</div>System Settings</a>{% endif %}
+    {% if perms_map.users.can_view %}<a href="{% url 'user_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-community"></i></div>User Management</a>{% endif %}
+    {% if perms_map.roles.can_view %}<a href="{% url 'role_list' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-shield"></i></div>Role Permissions</a>{% endif %}
+    {% if perms_map.settings.can_view %}<a href="{% url 'settings_dashboard' %}" class="sb-item"><div class="sb-icon"><i class="bx bx-cog"></i></div>System Settings</a>{% endif %}
     {% endif %}
   </nav>
   <div class="sb-footer"><div class="sb-user">
@@ -505,11 +514,11 @@
 
     <!-- TAB NAV -->
     <div class="tab-nav no-print">
-      <button class="tab-btn {% if active_tab == 'patients' %}active{% endif %}" onclick="switchTab('patients', this)">👥 Patients</button>
-      <button class="tab-btn {% if active_tab == 'clinical' %}active{% endif %}" onclick="switchTab('clinical', this)">🔬 Clinical</button>
-      <button class="tab-btn {% if active_tab == 'laboratory' %}active{% endif %}" onclick="switchTab('laboratory', this)">🧪 Laboratory</button>
-      <button class="tab-btn {% if active_tab == 'pharmacy' %}active{% endif %}" onclick="switchTab('pharmacy', this)">💊 Pharmacy</button>
-      <button class="tab-btn {% if active_tab == 'clearance' %}active{% endif %}" onclick="switchTab('clearance', this)">🎓 Clearance</button>
+      <button class="tab-btn {% if active_tab == 'patients' %}active{% endif %}" onclick="switchTab('patients', this)"><i class="bx bx-community"></i> Patients</button>
+      <button class="tab-btn {% if active_tab == 'clinical' %}active{% endif %}" onclick="switchTab('clinical', this)"><i class="bx bx-microscope"></i> Clinical</button>
+      <button class="tab-btn {% if active_tab == 'laboratory' %}active{% endif %}" onclick="switchTab('laboratory', this)"><i class="bx bx-medical-flask"></i> Laboratory</button>
+      <button class="tab-btn {% if active_tab == 'pharmacy' %}active{% endif %}" onclick="switchTab('pharmacy', this)"><i class="bx bx-pill"></i> Pharmacy</button>
+      <button class="tab-btn {% if active_tab == 'clearance' %}active{% endif %}" onclick="switchTab('clearance', this)"><i class="bx bx-education"></i> Clearance</button>
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════
@@ -517,15 +526,15 @@
     ════════════════════════════════════════════════════════════ -->
     <div class="tab-pane {% if active_tab == 'patients' %}active{% endif %}" id="tab-patients">
       <div class="export-bar">
-        <div class="export-bar-title">👥 Patient Analytics</div>
+        <div class="export-bar-title"><i class="bx bx-community"></i> Patient Analytics</div>
         <div class="export-bar-right no-print">
           {% if perms_map.reports.can_export %}<a href="{% url 'reports_export_csv' 'patients' %}?{{ request.GET.urlencode }}" class="btn-secondary">⬇ CSV</a>{% endif %}
         </div>
       </div>
 
       <div class="stat-row">
-        <div class="stat-card c-gold"><div class="stat-icon">🏥</div><div class="stat-num">{{ total_patients }}</div><div class="stat-label">Total Patients</div></div>
-        <div class="stat-card c-success"><div class="stat-icon">✅</div><div class="stat-num">{{ active_patients }}</div><div class="stat-label">Active Patients</div></div>
+        <div class="stat-card c-gold"><div class="stat-icon"><i class="bx bx-pill-bottle"></i></div><div class="stat-num">{{ total_patients }}</div><div class="stat-label">Total Patients</div></div>
+        <div class="stat-card c-success"><div class="stat-icon"><i class="bx bx-check-circle"></i></div><div class="stat-num">{{ active_patients }}</div><div class="stat-label">Active Patients</div></div>
         <div class="stat-card c-info"><div class="stat-icon">🆕</div><div class="stat-num">{{ new_this_period }}</div><div class="stat-label">New This Period</div></div>
         <div class="stat-card c-warning"><div class="stat-icon">❌</div><div class="stat-num">{{ inactive_patients }}</div><div class="stat-label">Inactive</div></div>
       </div>
@@ -540,7 +549,7 @@
           <div class="chart-card-body"><div class="chart-wrap" id="genderChart" style="height:220px;"></div></div>
         </div>
         <div class="chart-card">
-          <div class="chart-card-header"><div class="chart-card-title">🎓 Patient Type</div></div>
+          <div class="chart-card-header"><div class="chart-card-title"><i class="bx bx-education"></i> Patient Type</div></div>
           <div class="chart-card-body"><div class="chart-wrap" id="ptypeChart" style="height:220px;"></div></div>
         </div>
       </div>
@@ -562,16 +571,16 @@
     ════════════════════════════════════════════════════════════ -->
     <div class="tab-pane {% if active_tab == 'clinical' %}active{% endif %}" id="tab-clinical">
       <div class="export-bar">
-        <div class="export-bar-title">🔬 Clinical Reports</div>
+        <div class="export-bar-title"><i class="bx bx-microscope"></i> Clinical Reports</div>
         <div class="export-bar-right no-print">
           {% if perms_map.reports.can_export %}<a href="{% url 'reports_export_csv' 'clinical' %}?{{ request.GET.urlencode }}" class="btn-secondary">⬇ CSV</a>{% endif %}
         </div>
       </div>
 
       <div class="stat-row cols-3">
-        <div class="stat-card c-gold"><div class="stat-icon">🔬</div><div class="stat-num">{{ total_consultations }}</div><div class="stat-label">Total Consultations</div></div>
-        <div class="stat-card c-success"><div class="stat-icon">✅</div><div class="stat-num">{{ total_consultations }}</div><div class="stat-label">This Period</div></div>
-        <div class="stat-card c-info"><div class="stat-icon">📋</div><div class="stat-num" id="diagCount">—</div><div class="stat-label">Unique Diagnoses</div></div>
+        <div class="stat-card c-gold"><div class="stat-icon"><i class="bx bx-microscope"></i></div><div class="stat-num">{{ total_consultations }}</div><div class="stat-label">Total Consultations</div></div>
+        <div class="stat-card c-success"><div class="stat-icon"><i class="bx bx-check-circle"></i></div><div class="stat-num">{{ total_consultations }}</div><div class="stat-label">This Period</div></div>
+        <div class="stat-card c-info"><div class="stat-icon"><i class="bx bx-pill-bottle-alt"></i></div><div class="stat-num" id="diagCount">—</div><div class="stat-label">Unique Diagnoses</div></div>
       </div>
 
       <div class="chart-grid">
@@ -580,18 +589,18 @@
           <div class="chart-card-body"><div class="chart-wrap" id="consultChart" style="height:220px;"></div></div>
         </div>
         <div class="chart-card" style="grid-column:span 2;">
-          <div class="chart-card-header"><div class="chart-card-title">🏥 Top 10 Diagnoses</div><div class="chart-card-sub">By frequency</div></div>
+          <div class="chart-card-header"><div class="chart-card-title"><i class="bx bx-pill-bottle"></i> Top 10 Diagnoses</div><div class="chart-card-sub">By frequency</div></div>
           <div class="chart-card-body"><div class="chart-wrap" id="diagChart" style="height:280px;"></div></div>
         </div>
       </div>
 
       <div class="chart-grid">
         <div class="chart-card">
-          <div class="chart-card-header"><div class="chart-card-title">📊 Consultation Status</div></div>
+          <div class="chart-card-header"><div class="chart-card-title"><i class="bx bx-report"></i> Consultation Status</div></div>
           <div class="chart-card-body"><div class="chart-wrap" id="consultStatusChart" style="height:220px;"></div></div>
         </div>
         <div class="chart-card">
-          <div class="chart-card-header"><div class="chart-card-title">🏥 Top Diagnoses Table</div></div>
+          <div class="chart-card-header"><div class="chart-card-title"><i class="bx bx-pill-bottle"></i> Top Diagnoses Table</div></div>
           <div class="chart-card-body" style="padding:0;">
             <table class="report-table">
               <thead><tr><th>#</th><th>Diagnosis</th><th>Count</th><th>Share</th></tr></thead>
@@ -607,15 +616,15 @@
     ════════════════════════════════════════════════════════════ -->
     <div class="tab-pane {% if active_tab == 'laboratory' %}active{% endif %}" id="tab-laboratory">
       <div class="export-bar">
-        <div class="export-bar-title">🧪 Laboratory Reports</div>
+        <div class="export-bar-title"><i class="bx bx-medical-flask"></i> Laboratory Reports</div>
         <div class="export-bar-right no-print">
           {% if perms_map.reports.can_export %}<a href="{% url 'reports_export_csv' 'laboratory' %}?{{ request.GET.urlencode }}" class="btn-secondary">⬇ CSV</a>{% endif %}
         </div>
       </div>
 
       <div class="stat-row cols-3">
-        <div class="stat-card c-gold"><div class="stat-icon">🧪</div><div class="stat-num">{{ total_lab }}</div><div class="stat-label">Total Requests</div></div>
-        <div class="stat-card c-success"><div class="stat-icon">✅</div><div class="stat-num">{{ completed_lab }}</div><div class="stat-label">Completed</div></div>
+        <div class="stat-card c-gold"><div class="stat-icon"><i class="bx bx-medical-flask"></i></div><div class="stat-num">{{ total_lab }}</div><div class="stat-label">Total Requests</div></div>
+        <div class="stat-card c-success"><div class="stat-icon"><i class="bx bx-check-circle"></i></div><div class="stat-num">{{ completed_lab }}</div><div class="stat-label">Completed</div></div>
         <div class="stat-card c-warning"><div class="stat-icon">⏳</div><div class="stat-num">{{ total_lab|add:"-"|add:completed_lab }}</div><div class="stat-label">Pending / In Progress</div></div>
       </div>
 
@@ -625,14 +634,14 @@
           <div class="chart-card-body"><div class="chart-wrap" id="labChart" style="height:220px;"></div></div>
         </div>
         <div class="chart-card" style="grid-column:span 2;">
-          <div class="chart-card-header"><div class="chart-card-title">🔬 Top Tests Ordered</div><div class="chart-card-sub">By volume</div></div>
+          <div class="chart-card-header"><div class="chart-card-title"><i class="bx bx-microscope"></i> Top Tests Ordered</div><div class="chart-card-sub">By volume</div></div>
           <div class="chart-card-body"><div class="chart-wrap" id="testChart" style="height:260px;"></div></div>
         </div>
       </div>
 
       <div class="chart-grid">
         <div class="chart-card">
-          <div class="chart-card-header"><div class="chart-card-title">📊 Request Status</div></div>
+          <div class="chart-card-header"><div class="chart-card-title"><i class="bx bx-report"></i> Request Status</div></div>
           <div class="chart-card-body"><div class="chart-wrap" id="labStatusChart" style="height:220px;"></div></div>
         </div>
         <div class="chart-card">
@@ -647,15 +656,15 @@
     ════════════════════════════════════════════════════════════ -->
     <div class="tab-pane {% if active_tab == 'pharmacy' %}active{% endif %}" id="tab-pharmacy">
       <div class="export-bar">
-        <div class="export-bar-title">💊 Pharmacy Reports</div>
+        <div class="export-bar-title"><i class="bx bx-pill"></i> Pharmacy Reports</div>
         <div class="export-bar-right no-print">
           {% if perms_map.reports.can_export %}<a href="{% url 'reports_export_csv' 'pharmacy' %}?{{ request.GET.urlencode }}" class="btn-secondary">⬇ CSV</a>{% endif %}
         </div>
       </div>
 
       <div class="stat-row cols-3">
-        <div class="stat-card c-gold"><div class="stat-icon">💊</div><div class="stat-num">{{ total_rx }}</div><div class="stat-label">Total Prescriptions</div></div>
-        <div class="stat-card c-success"><div class="stat-icon">✅</div><div class="stat-num">{{ dispensed_rx }}</div><div class="stat-label">Dispensed</div></div>
+        <div class="stat-card c-gold"><div class="stat-icon"><i class="bx bx-pill"></i></div><div class="stat-num">{{ total_rx }}</div><div class="stat-label">Total Prescriptions</div></div>
+        <div class="stat-card c-success"><div class="stat-icon"><i class="bx bx-check-circle"></i></div><div class="stat-num">{{ dispensed_rx }}</div><div class="stat-label">Dispensed</div></div>
         <div class="stat-card c-warning"><div class="stat-icon">⏳</div><div class="stat-num">{{ pending_rx }}</div><div class="stat-label">Pending</div></div>
       </div>
 
@@ -672,11 +681,11 @@
 
       <div class="chart-grid">
         <div class="chart-card">
-          <div class="chart-card-header"><div class="chart-card-title">📊 Prescription Status</div></div>
+          <div class="chart-card-header"><div class="chart-card-title"><i class="bx bx-report"></i> Prescription Status</div></div>
           <div class="chart-card-body"><div class="chart-wrap" id="rxStatusChart" style="height:220px;"></div></div>
         </div>
         <div class="chart-card">
-          <div class="chart-card-header"><div class="chart-card-title">💊 Top Drugs Table</div></div>
+          <div class="chart-card-header"><div class="chart-card-title"><i class="bx bx-pill"></i> Top Drugs Table</div></div>
           <div class="chart-card-body" style="padding:0;">
             <table class="report-table">
               <thead><tr><th>#</th><th>Drug</th><th>Count</th><th>Share</th></tr></thead>
@@ -692,16 +701,16 @@
     ════════════════════════════════════════════════════════════ -->
     <div class="tab-pane {% if active_tab == 'clearance' %}active{% endif %}" id="tab-clearance">
       <div class="export-bar">
-        <div class="export-bar-title">🎓 Clearance Reports</div>
+        <div class="export-bar-title"><i class="bx bx-education"></i> Clearance Reports</div>
         <div class="export-bar-right no-print">
           {% if perms_map.reports.can_export %}<a href="{% url 'reports_export_csv' 'clearance' %}?{{ request.GET.urlencode }}" class="btn-secondary">⬇ CSV</a>{% endif %}
         </div>
       </div>
 
       <div class="stat-row cols-3">
-        <div class="stat-card c-gold"><div class="stat-icon">🎓</div><div class="stat-num">{{ total_cl }}</div><div class="stat-label">Total Submissions</div></div>
-        <div class="stat-card c-success"><div class="stat-icon">✅</div><div class="stat-num">{{ approved_cl }}</div><div class="stat-label">Approved</div></div>
-        <div class="stat-card c-info"><div class="stat-icon">📊</div><div class="stat-num">{{ approval_rate }}%</div><div class="stat-label">Approval Rate</div></div>
+        <div class="stat-card c-gold"><div class="stat-icon"><i class="bx bx-education"></i></div><div class="stat-num">{{ total_cl }}</div><div class="stat-label">Total Submissions</div></div>
+        <div class="stat-card c-success"><div class="stat-icon"><i class="bx bx-check-circle"></i></div><div class="stat-num">{{ approved_cl }}</div><div class="stat-label">Approved</div></div>
+        <div class="stat-card c-info"><div class="stat-icon"><i class="bx bx-report"></i></div><div class="stat-num">{{ approval_rate }}%</div><div class="stat-label">Approval Rate</div></div>
       </div>
 
       <div class="chart-grid">
@@ -710,7 +719,7 @@
           <div class="chart-card-body"><div class="chart-wrap" id="clChart" style="height:220px;"></div></div>
         </div>
         <div class="chart-card">
-          <div class="chart-card-header"><div class="chart-card-title">📊 Submission Status</div></div>
+          <div class="chart-card-header"><div class="chart-card-title"><i class="bx bx-report"></i> Submission Status</div></div>
           <div class="chart-card-body"><div class="chart-wrap" id="clStatusChart" style="height:220px;"></div></div>
         </div>
         <div class="chart-card">

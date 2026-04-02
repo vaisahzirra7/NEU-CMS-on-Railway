@@ -222,14 +222,14 @@
         <div class="ss-text">✓ This is an officially issued document from the North-Eastern University Health Center</div>
         <!-- <div class="ss-meta">Issued by {{ doc.issued_by.get_full_name }} · {{ doc.date_issued|date:"d F Y" }} · Ref: {{ doc.doc_id }}</div> -->
       </div>
-      <div class="ss-badge">🩺</div>
+      <div class="ss-badge"><i class="bx bx-group"></i></div>
     </div>
     {% endif %}
 
 
     <!-- PATIENT INFO -->
     <div class="section">
-      <div class="section-title accent-gold">🎓 Patient Information</div>
+      <div class="section-title accent-gold"><i class="bx bx-education"></i> Patient Information</div>
       <div class="info-grid">
         <div class="info-item"><div class="info-label">Full Name</div><div class="info-value">{{ doc.patient.get_full_name }}</div></div>
         <div class="info-item"><div class="info-label">Matric Number</div><div class="info-value" style="font-family:monospace;">{{ doc.patient.matric_no }}</div></div>
@@ -269,7 +269,7 @@
     </div>
     {% if doc.notes %}
     <div class="section">
-      <div class="section-title accent-gold">📝 Clinical Notes &amp; Recommendations</div>
+      <div class="section-title accent-gold"><i class="bx bx-note-book"></i> Clinical Notes &amp; Recommendations</div>
       <div class="notes-block">{{ doc.notes }}</div>
     </div>
     {% endif %}
@@ -283,7 +283,7 @@
 
     <!-- FIT TO RESUME -->
     <div class="section">
-      <div class="section-title accent-green">✅ Certificate of Fitness</div>
+      <div class="section-title accent-green"><i class="bx bx-check-circle"></i> Certificate of Fitness</div>
       <div class="statement">
         This is to certify that <strong>{{ doc.patient.get_full_name }}</strong> ({{ doc.patient.matric_no }}),
         a student of <strong>{% if doc.patient.department %}{{ doc.patient.department }}, {% endif %}North-Eastern University, Gombe</strong>,
@@ -299,7 +299,7 @@
     </div>
     {% if doc.notes %}
     <div class="section">
-      <div class="section-title accent-green">📝 Restrictions / Follow-up</div>
+      <div class="section-title accent-green"><i class="bx bx-note-book"></i> Restrictions / Follow-up</div>
       <div class="notes-block">{{ doc.notes }}</div>
     </div>
     {% endif %}
@@ -310,7 +310,7 @@
     
     <!-- REFERRAL -->
     <div class="section">
-      <div class="section-title accent-blue">🏥 Referral Details</div>
+      <div class="section-title accent-blue"><i class="bx bx-pill-bottle"></i> Referral Details</div>
       <div class="statement">
         This letter serves as a formal referral for <strong>{{ doc.patient.get_full_name }}</strong> ({{ doc.patient.matric_no }})
         to <strong>{{ doc.referral_to|default:"the named facility" }}</strong>, for further management. We kindly request your expert assessment and care.
@@ -320,7 +320,7 @@
         {% if doc.referral_department %}<tr><td class="detail-label">Department / Specialty</td><td class="detail-value">{{ doc.referral_department }}</td></tr>{% endif %}
         <tr><td class="detail-label">Urgency</td>
           <td class="detail-value">
-            {% if doc.referral_urgency == 'emergency' %}<span class="urgency-emergency">🚨 EMERGENCY</span>
+            {% if doc.referral_urgency == 'emergency' %}<span class="urgency-emergency"><i class="bx bx-siren-alt"></i> EMERGENCY</span>
             {% elif doc.referral_urgency == 'urgent' %}<span class="urgency-urgent">⚡ URGENT</span>
             {% else %}<span class="urgency-routine">ROUTINE</span>{% endif %}
           </td>
@@ -331,13 +331,13 @@
     </div>
     {% if doc.referral_reason %}
     <div class="section">
-      <div class="section-title accent-blue">📋 Reason for Referral</div>
+      <div class="section-title accent-blue"><i class="bx bx-pill-bottle-alt"></i> Reason for Referral</div>
       <div class="notes-block">{{ doc.referral_reason }}</div>
     </div>
     {% endif %}
     {% if doc.notes %}
     <div class="section">
-      <div class="section-title accent-blue">📝 Additional Clinical Information</div>
+      <div class="section-title accent-blue"><i class="bx bx-note-book"></i> Additional Clinical Information</div>
       <div class="notes-block">{{ doc.notes }}</div>
     </div>
     {% endif %}
@@ -345,7 +345,7 @@
     {% else %}
     <!-- MEDICAL REPORT -->
     <div class="section">
-      <div class="section-title accent-slate">📋 Medical Summary</div>
+      <div class="section-title accent-slate"><i class="bx bx-pill-bottle-alt"></i> Medical Summary</div>
       {% if doc.diagnosis %}
       <table class="detail-table" style="margin-bottom:14px;">
         <tr><td class="detail-label">Diagnosis</td><td class="detail-value">{{ doc.diagnosis }}</td></tr>
@@ -355,13 +355,13 @@
     </div>
     {% if doc.notes %}
     <div class="section">
-      <div class="section-title accent-slate">📄 Clinical Report</div>
+      <div class="section-title accent-slate"><i class="bx bx-copy-plus"></i> Clinical Report</div>
       <div class="notes-block">{{ doc.notes }}</div>
     </div>
     {% endif %}
     {% if doc.additional_info %}
     <div class="section">
-      <div class="section-title accent-slate">💊 Recommendations</div>
+      <div class="section-title accent-slate"><i class="bx bx-pill"></i> Recommendations</div>
       <div class="notes-block">{{ doc.additional_info }}</div>
     </div>
     {% endif %}
